@@ -1,0 +1,213 @@
+---
+title: "Differential DNA Methylation Analysis Workflow"
+author: "Izar de Villasante"
+format: html
+server: shiny
+params:
+  path_to_Samples_on_array_excel: "W:/GENOMICS_UNIT/SampleDB/Samples_on_array_last.xls"
+  path_to_SDNA.xls: "W:/GENOMICS_UNIT/DBB/SDNA.xls"
+  path_to_storage: "/ijc/LABS/GENOMICS/RAW/Arrays/"
+  path_to_LTS: "/ijc/LABS/GENOMICS/LTS" 
+  par: 1 # test placeholder
+  report_name: "default" # name to show as the first header
+  qc_include: "true" # include qc section
+  parameter_tunning_plots: "true" # include parameter tuning section
+  code_fold: false
+  show_warning: true
+  shows_message: true
+  
+  values_row: '[{"data_names":"test_set","data_paths":"inst/extdata/EPIC/sample_sheet_EPIC.rds","arraytype":"EPIC","norm":"noob"}]'
+  paths: '{"results_folder":["results/"],"qc_folder":["results/ex_EPIC/QC/"],"ss_clean_path":["analysis/ex_EPIC"],"bplots_folder":["results/ex_EPIC/plots/pca/bplots/"],"corrplot_folder":["results/ex_EPIC/plots/pca/corrplot/"],"dmp_folder":["results/ex_EPIC/dmps/"],"dmpplots_folder":["results/ex_EPIC/dmps/"],"dmrs_folder":["results/ex_EPIC/dmrs/"],"pathway_folder":["results/ex_EPIC/gopath/"],"report_folder":["results/ex_EPIC/reports/"]}'
+---
+```{r}
+library(data.table)
+library(shiny)
+library(DT)
+library(rmarkdown)
+```
+
+
+```{r dtable function}
+#| include: false
+#| eval: true
+# Define a function to create a DataTable with download buttons
+dtable <- function(data) {
+  DT::datatable(
+    { data },
+    filter = 'top',
+    fillContainer = FALSE,
+    extensions = 'Buttons',
+    options = list(
+      paging = TRUE,
+      pageLength = 10,
+      searching = TRUE,
+      fixedColumns = TRUE,
+      autoWidth = FALSE,
+      scrollX = TRUE,
+      digits = 4,
+      ordering = TRUE,
+      dom = 'Bfrtip',
+      buttons = list(
+        list(
+          extend = "collection",
+          text = 'download entire dataset',
+          action = DT::JS("function ( e, dt, node, config ) {
+                                            Shiny.setInputValue('test', true, {priority: 'event'});
+                                            }")
+        ),
+        'copy',
+        'csv',
+        'excel'
+      ),
+      class = "display",
+      server = TRUE
+    ),
+  ) |> DT::formatRound(which(sapply(data, is.double)), 4)
+}
+```
+
+```{r dtable function server}
+#| include: false
+#| eval: true
+#| context: server
+
+# Define a function to render DataTable and handle download events
+renderDT <- function(data) {
+  # Localize data to potentially improve loading speed
+  local({
+    # Assign data to a variable
+    my_data <- data
+    
+    # Render DataTable
+    output$dtable <- DT::renderDataTable({
+      dtable(my_data)
+    })
+    
+    # Observe event to show modal when 'test' is triggered
+    shiny::observeEvent(input$test, {
+      print("hello")
+      showModal(myModal())
+    })
+
+    # Download handler for CSV
+    output$download1 <- shiny::downloadHandler(
+      filename = function() {
+        paste("data-", Sys.Date(), ".csv", sep="")
+      },
+      content = function(file) {
+        write.csv(my_data, file)
+      }
+    )
+
+    # Download handler for Excel
+    output$download2 <- shiny::downloadHandler(
+      filename = function() {
+        paste("data-", Sys.Date(), ".xlsx", sep="")
+      },
+      content = function(file) {
+        writexl::write_xlsx(my_data, file)
+      }
+    )
+  })
+}
+
+# Load necessary libraries
+library(targets)
+library(DT)
+```
+
+# `r params$report_name` version 
+
+## Shiny Documents
+
+This Quarto document is made interactive using Shiny. Interactive documents allow readers to modify parameters and see the results immediately. Learn more about Shiny interactive documents at <https://quarto.org/docs/interactive/shiny/>.
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change. This demonstrates how a standard R plot can be made interactive:
+
+```{r}
+sliderInput("bins", "Number of bins:", 
+            min = 1, max = 50, value = params$par)
+plotOutput("distPlot")
+```
+
+```{r}
+#| context: server
+output$distPlot <- renderPlot({
+   x <- faithful[, 2]  # Old Faithful Geyser data
+   bins <- seq(min(x), max(x), length.out = input$bins + 1)
+   hist(x, breaks = bins, col = 'darkgray', border = 'white',
+        xlab = 'Waiting time to the next eruption (in mins)',
+        main = 'Histogram of waiting times')
+})
+```
+
+```{r}
+# Load necessary libraries
+library(targets)
+```
+
+# AIM
+
+`r idx = 0`
+Detection and characterization of epigenetic changes between different conditions, genes potentially affected, and pathways involved. [Platform: EPIC, EPICv2, 450k human, mouse microarrays] 
+
+# Description
+
+Some description here about the project (could be copied from project notes or Confluence page).
+
+# Data Inspection
+
+## Values
+
+It is always nice to check the values introduced by the user in the `values` data.frame as the full row of values:
+
+```{r load values, asis}
+# Load values from JSON
+values_row <- jsonlite::fromJSON(params$values_row)
+
+# Display the values
+values_row
+```
+
+```{r load paths}
+# Load paths from JSON
+paths <- jsonlite::fromJSON(params$paths)
+```
+
+## Sample Sheet
+
+The sample_sheet contains most of the information and it is typical to find annoying errors downstream if something is messed up with the sample sheet.
+
+ Thus it is always good to double-check its content:
+
+```{r load ss}
+# Localize sample sheet to potentially improve loading speed
+local({
+  # Load sample sheet
+  ss <- tar_read("ss")
+  
+  # Display the sample sheet using the custom DataTable function
+  dtable(ss)
+})
+```
+
+## Step 1: Quality Control and Filtering
+
+```{r}
+# Display the QC folder path
+paths$qc_folder
+```
+
+
+```{r child_qc}
+#| results: asis
+#| echo: false
+#| include: !expr params$qc_include
+# paths <- jsonlite::fromJSON(params$paths)
+cat("\n")
+a <- knitr::knit_child('_qmd/_quality_control.qmd', quiet = TRUE)
+cat(a, sep = "\n")
+```
+

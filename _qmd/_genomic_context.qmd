@@ -1,0 +1,21 @@
+
+## `r paste0("Step ", idx, ": Genomic context and annotation")
+
+Plots for genomic annotation Genomic context for methylation:
+
+- Counts
+- Relation to island
+- Genomic context
+
+::: {#fig-dmps-m1 layout-nrow=2 layout-ncol=2}
+
+![DMPs count](plots/m1/DMP_count.png){#fig-dmp-count-m1}
+
+![DMPs count Hyper/Hypo](plots/m1/DMP_count_facet.png){#fig-dmp-facet-m1}
+
+![CGI annotation](plots/m1/DMP_annCGI.png){#fig-dmp-cgi-m1}
+
+![Genomic annotation](plots/m1/DMP_annGenomic.png){#fig-dmp-Genomic-m1}
+
+Differentially Methylated Probes (DMPs) counts & annotation for Model 1
+:::

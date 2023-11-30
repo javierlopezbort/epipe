@@ -1,2 +1,5 @@
+^renv$
+^renv\.lock$
 ^epipe\.Rproj$
 ^\.Rproj\.user$
+^LICENSE\.md$

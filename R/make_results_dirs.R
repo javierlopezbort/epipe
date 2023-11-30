@@ -17,7 +17,7 @@
 #' make_results_dirs(results_folder = "./my_results/", analysis_folder = "./my_analysis/", subf = "custom_analysis")
 #'
 #' @export
-make_results_dirs <- function(results_folder = "./results/", analysis_folder = "./analysis/", subf) {
+make_results_dirs <- function(subf, results_folder = "./results/", analysis_folder = "./analysis/") {
   params <- list(
     results_folder = results_folder,
     qc_folder = paste(results_folder, subf, "/QC/", sep = .Platform$file.sep),
@@ -27,7 +27,9 @@ make_results_dirs <- function(results_folder = "./results/", analysis_folder = "
     dmp_folder = paste(results_folder, subf, "dmps/", sep = .Platform$file.sep),
     dmpplots_folder = paste(results_folder, subf, "dmps/", sep = .Platform$file.sep),
     dmrs_folder = paste(results_folder, subf, "dmrs/", sep = .Platform$file.sep),
-    pathway_folder = paste(results_folder, subf, "gopath/", sep = .Platform$file.sep)
+    pathway_folder = paste(results_folder, subf, "gopath/", sep = .Platform$file.sep),
+    report_folder = paste(results_folder, subf, "reports/", sep = .Platform$file.sep),
+    temp = paste(analysis_folder, subf,"temp", sep = .Platform$file.sep)
   )
   sapply(params, function(x) dir.create(x, recursive = TRUE, showWarnings = FALSE))
 
