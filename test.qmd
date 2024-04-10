@@ -1,0 +1,293 @@
+---
+title: "DIFFERENTIAL DNA METHYLATION ANALYSIS WORKFLOW"
+author: "Izar de Villasante and Marina Vilardell"
+format: html
+embed-resources: true	
+
+server: shiny
+params:
+  path_to_Samples_on_array_excel: "W:/GENOMICS_UNIT/SampleDB/Samples_on_array_last.xls"
+  path_to_SDNA.xls: "W:/GENOMICS_UNIT/DBB/SDNA.xls"
+  path_to_storage: "/ijc/LABS/GENOMICS/RAW/Arrays/"
+  path_to_LTS: "/ijc/LABS/GENOMICS/LTS" 
+  par: 1 # test placeholder
+  report_name: "default" # name to show as the first header
+  qc_include: "true" # include qc section
+  corrplot_include: "true" #Include corrplots
+  parameter_tunning_plots: "true" # include parameter tuning section
+  code_fold: false
+  show_warning: true
+  shows_message: true
+  
+  values_row: '[{"data_names":"ex_EPIC","data_paths":"inst/extdata/EPIC/sample_sheet_EPIC.rds","arraytype":"EPIC","norm":"noob"}]'
+  paths: '{"results_folder":["results/"],"qc_folder":["results/ex_EPIC/QC/"],"ss_clean_path":["analysis/ex_EPIC"],"bplots_folder":["results/ex_EPIC/plots/pca/bplots/"],"corrplot_folder":["results/ex_EPIC/plots/pca/corrplot/"],"dmp_folder":["results/ex_EPIC/dmps/"],"dmpplots_folder":["results/ex_EPIC/dmps/"],"dmrs_folder":["results/ex_EPIC/dmrs/"],"pathway_folder":["results/ex_EPIC/gopath/"],"report_folder":["results/ex_EPIC/reports/"],"sexplot_folder":["results/ex_EPIC/plots/sex/"],"heatmap_folder":["results/ex_EPIC/plots/heatmap/"]}'
+---
+```{r}
+#| include: false
+library(data.table)
+library(shiny)
+library(DT)
+library(rmarkdown)
+```
+
+
+```{r dtable function}
+#| include: false
+#| eval: true
+# Define a function to create a DataTable with download buttons
+dtable <- function(data) {
+  
+   formatted_data <- data
+  for (i in which(sapply(data, is.numeric))) {
+    formatted_data[[i]] <- formatC(data[[i]], digits = 10)
+  }
+  
+  
+  DT::datatable(
+    { formatted_data },
+    filter = 'top',
+    fillContainer = FALSE,
+    extensions = 'Buttons',
+    options = list(
+      paging = TRUE,
+      pageLength = 10,
+      searching = TRUE,
+      fixedColumns = TRUE,
+      autoWidth = FALSE,
+      scrollX = TRUE,
+      digits = 4,
+      ordering = TRUE,
+      dom = 'Bfrtip',
+      buttons = list(
+        list(
+          extend = "collection",
+          text = 'download entire dataset',
+          action = DT::JS("function ( e, dt, node, config ) {
+                                            Shiny.setInputValue('test', true, {priority: 'event'});
+                                            }")
+        ),
+        'copy',
+        'csv',
+        'excel'
+      ),
+      class = "display",
+      server = TRUE
+    ),
+  ) |> DT::formatRound(which(sapply(formatted_data, is.double)), 4)
+}
+```
+
+```{r dtable function server}
+#| include: false
+#| eval: true
+#| context: server
+
+# Define a function to render DataTable and handle download events
+renderDT <- function(data) {
+  # Localize data to potentially improve loading speed
+  local({
+    # Assign data to a variable
+    my_data <- data
+    
+    # Render DataTable
+    output$dtable <- DT::renderDataTable({
+      dtable(my_data)
+    })
+    
+    # Observe event to show modal when 'test' is triggered
+    shiny::observeEvent(input$test, {
+      print("hello")
+      showModal(myModal())
+    })
+
+    # Download handler for CSV
+    output$download1 <- shiny::downloadHandler(
+      filename = function() {
+        paste("data-", Sys.Date(), ".csv", sep="")
+      },
+      content = function(file) {
+        write.csv(my_data, file)
+      }
+    )
+
+    # Download handler for Excel
+    output$download2 <- shiny::downloadHandler(
+      filename = function() {
+        paste("data-", Sys.Date(), ".xlsx", sep="")
+      },
+      content = function(file) {
+        writexl::write_xlsx(my_data, file)
+      }
+    )
+  })
+}
+
+# Load necessary libraries
+library(targets)
+library(DT)
+```
+
+# `r params$report_name` version 
+
+```{r}
+#| include: false
+# Load necessary libraries
+library(targets)
+library(minfi)
+```
+
+# Aim
+
+`r idx = 0`
+Detection and characterization of epigenetic changes between different conditions, genes potentially affected, and pathways involved. [Platform: EPIC, EPICv2, 450k human, mouse microarrays] 
+
+# Description
+
+Some description here about the project (could be copied from project notes or Confluence page).
+
+# Data Inspection
+
+## Values
+
+It is always nice to check the values introduced by the user in the `values` data.frame as the full row of values:
+
+```{r load values, asis}
+# Load values from JSON
+values_row <- jsonlite::fromJSON(params$values_row)
+
+# Display the values
+knitr::kable(values_row,format = "html")
+```
+
+```{r load paths}
+# Load paths from JSON
+paths <- jsonlite::fromJSON(params$paths)
+
+```
+
+## Sample Sheet
+
+The sample_sheet contains most of the information and it is typical to find annoying errors downstream if something is messed up with the sample sheet.
+
+ Thus, it is always good to double-check its content:
+
+```{r load ss,interactive=TRUE}
+# Localize sample sheet to potentially improve loading speed
+local({
+  # Load sample sheet
+  eval(
+   substitute(
+     ss <- tar_read(ss_array),
+     env = list(ss_array=paste0("ss_",values_row$data_names))
+     )
+   )
+   
+  
+  #ss<-readRDS("inst/extdata/EPICv2/sample_sheet_EPICv2.rds")
+  
+  # Display the sample sheet using the custom DataTable function
+  dtable(ss)
+})
+```
+
+
+```{r child_qc}
+#| results: asis
+#| echo: false
+#| include: !expr params$qc_include
+
+# paths <- jsonlite::fromJSON(params$paths)
+
+cat("\n")
+a <- knitr::knit_child('_qmd/_quality_control.qmd', quiet = TRUE)
+cat(a, sep = "\n")
+
+
+```
+
+
+```{r child_PCA}
+#| results: asis
+#| echo: false
+#| include: true
+
+#!expr params$corrplot_include
+
+# paths <- jsonlite::fromJSON(params$paths)
+cat("\n")
+b <- knitr::knit_child('_qmd/_PCA.qmd', quiet = TRUE)
+cat(b, sep = "\n")
+
+
+```
+
+
+```{r child_corrplot}
+#| results: asis
+#| echo: false
+#| include: !expr params$corrplot_include
+
+if (params$corrplot_include == "true") {
+  # If true, include the child document content
+  b <- knitr::knit_child('_qmd/_Corrplot.qmd', quiet=TRUE)
+  cat(b)
+}
+
+
+
+# paths <- jsonlite::fromJSON(params$paths)
+ # cat("\n")
+ # b <- knitr::knit_child('_qmd/_Corrplot.qmd', quiet = TRUE)
+ # cat(b, sep = "\n")
+ # 
+
+```
+
+
+```{r child_heatmap}
+#| results: asis
+#| echo: false
+#| include: true
+
+# paths <- jsonlite::fromJSON(params$paths)
+cat("\n")
+c <- knitr::knit_child('_qmd/_Heatmap.qmd', quiet = TRUE)
+cat(c, sep = "\n")
+
+
+```
+
+
+
+```{r DMPs}
+#| results: asis
+#| echo: false
+#| include: true
+
+# paths <- jsonlite::fromJSON(params$paths)
+cat("\n")
+c <- knitr::knit_child('_qmd/_DMPs.qmd', quiet = TRUE)
+cat(c, sep = "\n")
+
+```
+
+
+
+```{r DMRs}
+#| results: asis
+#| echo: false
+#| include: true
+
+# paths <- jsonlite::fromJSON(params$paths)
+cat("\n")
+d <- knitr::knit_child('_qmd/_DMRs.qmd', quiet = TRUE)
+cat(d, sep = "\n")
+
+
+```
+
+
+
+
+
+

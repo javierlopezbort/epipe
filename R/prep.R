@@ -11,7 +11,7 @@
 #' @import minfi
 #' @import maxprobes
 #' @export
-prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL) {
+prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL,sexplot_folder= NULL) {
   # Save the initial set of probe IDs
   probeID_start <- rownames(mSetSqn)
 
@@ -46,7 +46,12 @@ prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arrayty
 
   # Step 3: Sex prediction & removal
   mSetSqn$predictedSex <- minfi::getSex(mSetSqn, cutoff = -2)$predictedSex
-
+  grDevices::png(file = paste0(sexplot_folder,"sex_estimation.png"))
+  plotSex(addSex(minfi::mapToGenome(mSetSqn)))
+  grDevices::dev.off()
+  
+  
+  
   # Check if sex chromosomes need to be removed
   if (remove_sex) {
     mSetSqn <- remove_sex_chromosomes(mSetSqn, sexchr)

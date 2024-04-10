@@ -109,3 +109,20 @@ Em <- function(rgSet, arraytype = NULL){
   mSetSqn@colData <- pd
   return(mSetSqn)
 }
+
+
+
+
+makelist<-function(vals){
+  vals$norm<-as.character(vals$norm)
+  return(vals)
+  
+}
+
+
+
+
+
+
+
+

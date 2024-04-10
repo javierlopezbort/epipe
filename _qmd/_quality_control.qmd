@@ -3,40 +3,168 @@
 <!-- # Generate a dynamic step title -->
 ## `r paste0("Step ",idx,": Quality Control and Filtering")`
 
-### Signal distribution:
 
-::: {#fig-qc-distribution layout="[70, 30]" }
+```{r}
+# Display the QC folder path
+paths$qc_folder
+```
 
-![density_plot](`r file.path(paths$qc_folder, "density_plot.png")`){#fig-density_plot}
 
-![bean_plot](`r file.path(paths$qc_folder, "bean_plot.png")`){#fig-bean_plot}
+The aim of the quality control is to ensure the reliability and accuracy of the methylation data, by identifying potential sources of bias and noise that could effect the integrity of the results. In this pipeline, data quality will be assessed by examining various metrics such as signal detection and distribution of beta values. This helps to detect samples or probes with poor quality that may need to be removed from downstream analysis. 
 
-:::
 
 ### Signal quality:
 
-::: {#fig-qc-quality layout-nrow=1 }
+Each probe has an specific detection p-value, which represent the statistical significance of detecting a signal above background noise. A lower mean detection p-value indicates a higher signal-to-noise ratio and better quality data. Conversely, a higher mean detection p-value suggests higher background noise and lower signal reliability. This can be assessed in the following plot, where the mean of the detection p-value is computed for each sample.  
 
-![mean_detection](`r file.path(paths$qc_folder, "mean_detection_pvalues.jpeg")`){#fig-bean_plot}
 
-![mean_qc](`r file.path(paths$qc_folder, "mean_qc.png")`){#fig-mean_qc}
+![Mean detection p-value](`r file.path(paths$qc_folder, "mean_detection_pvalues.jpeg")`){#fig-mean width=80%}
 
+
+
+In the mean quality control plot the log median intensity in the methylated and unmentylated channels is calculated. When plotting these two medians against each other, it has been observed that bad samples will have lower median intensities, and good samples high median intensities. 
+
+![Mean quality control plot](`r file.path(paths$qc_folder, "mean_qc.png")`){#fig-mean_qc}
+
+
+
+### Signal detection:
+
+Density plots provide a visual representation of the distribution of methylation levels across multiple samples. The distribution of beta values lay across a range from 0 (unmethylated) to 1 (fully methylated). 
+
+The next plot illustrates the distribution of beta values before and after normalization. 
+
+::: {#fig-densityplots layout="[50,50]"}
+![](`r file.path(paths$qc_folder, "density_plot_before_norm.png")`)
+
+![](`r file.path(paths$qc_folder, "density_plot_after_norm.png")`)
+
+Beta values distribution
 :::
+
 
 For a full report you can check the pdf provided by minfi [here](`r file.path(paths$qc_folder, "Report.pdf")`) 
 
-### Removed data:
+
+
+### SEX:
+
+Sample sex was estimated based on methylation data using the R package 'minfi', and was added to the samplesheet (or metadata data.frame). It can be added to the model to perform differential methylation CpGs analysis.
+
+Estimation of sex is based on the median values of measurements on the X and Y chromosomes respectively.
+
+
+![Sex estimation](`r file.path(paths$sexplot_folder, "sex_distribution.png")`){#fig-density_plot}
 
 ```{r}
-# eval(
-#   substitute(
-#     filtered <- tar_read(filtered_rgSet),
-#     env = list(filtered_rgSet=paste0("filtered_",values_row$data_names))
-#     )
-#   )
-filtered <- tar_read(filtered)
-metadata(filtered)$bad_samples
-metadata(filtered)$bad_probes
+ eval(
+   substitute(
+     clean <- tar_read(clean_n),
+     env = list(clean_n=paste0("clean_",values_row$data_names))
+     )
+   )
+#clean<-tar_read(clean_ex_EPICv2)
+
+df<-colData(clean)
+subset_df <- df[, c("Sample_Name", "Sample_Group", "predictedSex")]
+
+# Convert subset_df to a data frame
+subset_df <- as.data.frame(subset_df)
+
+# Remove row names
+rownames(subset_df) <- NULL
+
+# Use dtable with the converted data frame
+dtable(subset_df)
+
+
 ```
+
+
+### Removed data:
+
+Not only low-quality samples and probes where checked, but also probes with SNPs located at CpG sites, probes located in the sexual chromosomes and cross-reactive probes. 
+
+```{r}
+ eval(
+   substitute(
+     filtered <- tar_read(filtered_rgSet),
+     env = list(filtered_rgSet=paste0("filtered_",values_row$data_names))
+     )
+   )
+
+
+ eval(
+   substitute(
+     clean <- tar_read(clean_n),
+     env = list(clean_n=paste0("clean_",values_row$data_names))
+     )
+   )
+
+
+
+#filtered <- tar_read(filtered_ex_EPICv2)
+#clean <- tar_read(clean_ex_EPICv2)
+
+```
+
+```{r, datatable=TRUE}
+bad_samples <- metadata(filtered)$bad_samples
+
+if (length(bad_samples) == 0) {
+  message<-'No bad samples were removed as all pass the quality control.'
+}else{
+  # Extract the probe names
+  probe_names <- names(bad_samples)
+  message<-paste0(length(probe_names),'samples were removed:',paste(bad_samples, collapse = ", "))
+}
+
+```
+
+`r message`
+
+```{r}
+bad_probes <- metadata(filtered)$bad_probes
+#
+#clean <- tar_read(clean_ex_EPICv2)
+
+if('removed_sex' %in% attributes(metadata(clean))$names){
+  removed_probes_sex<-metadata(clean)$removed_sex
+}else{removed_probes_sex<-NULL}
+
+if('preprocess' %in% attributes(metadata(clean))$names){
+  removed_probes_cr<-metadata(clean)$preprocess
+}else{removed_probes_cr<-NULL}
+
+if('removed_Snps' %in% attributes(metadata(clean))$names){
+  removed_probes_Snps<-metadata(clean)$removed_Snps
+}else{removed_probes_Snps<-NULL}
+
+```
+
+
+#### Summary of removed probes: 
+```{r, datatable=TRUE}
+# Sample data (replace this with your actual data)
+removed_probes <- list(
+  'Bad probes' = length(bad_probes),
+  'Probes in sex chromosomes'= length(removed_probes_sex),
+  'Probes with SNPs at CpGs' = length(removed_probes_Snps),
+  'Cross-reactive probes' =length(removed_probes_cr),
+  'Total'=(sum(length(bad_samples)+length(bad_probes)+length(removed_probes_sex)+length(removed_probes_Snps)+length(removed_probes_cr)))
+ 
+)
+
+# Convert the list to a data frame
+removed_probes_df <- data.frame(Count = unlist(removed_probes))
+
+knitr::kable(removed_probes_df,format = "html")
+```
+
+
+
+### Variable correlation: 
+
+![Variable Correlation plot](`r file.path(paths$qc_folder, "correlation_analysis.png")`){#fig-correlation_analysis}
 
 
