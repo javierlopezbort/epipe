@@ -33,7 +33,7 @@ arraytype <- c(
 values <- data.table(cbind(data_names,data_paths,arraytype))
 
 # Normalization:
-nomr_function <-c("noob") #
+norm_function <-c("noob") #
 
 # Filters:
 remove_sex <- TRUE
