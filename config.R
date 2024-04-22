@@ -30,8 +30,11 @@ arraytype <- c(
   "EPICv2"
 )
 
-values <- data.table(cbind(data_names,data_paths,arraytype))
+project_name<-'Epipe test'
+
+values <- data.table(cbind(data_names,data_paths,arraytype,project_name))
 #values <- data.table(data_names="",data_paths="inst/extdata/EPICv2/sample_sheet_EPICv2.rds", arraytype="EPICv2")
+
 
 
 # Sample sheet:

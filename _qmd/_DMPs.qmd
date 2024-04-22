@@ -1,18 +1,12 @@
-<!-- # Increment the index -->
-`r idx = idx+1` 
-<!-- # Generate a dynamic step title -->
-## `r paste0("Step ",idx,": Differentially mehtylated CpG positions")`
 
+# Differential methylation analysis
 
-```{r}
-# Display the folder path
-paths$dmp_folder
-```
+Significant differences between conditions are calculated by fitting linear regression models (using the limma R-package) and testing for group differences using moderate t-statistics and the associated p-values. 
 
-
-
-- Model created with limma (Linear Models for Microarray)
-
+Based on the experimental design, specific research and exploratory analysis, we
+ 
+ i) implement the model 
+ 
 ```{r}
  eval(
    substitute(
@@ -27,10 +21,31 @@ contrasts_name<-colnames(model$contrasts)
 
 ```
 
-- Contrasts analyzed: `r contrasts_name`
+
+ii) analyse the following contrasts (list of comparisons): `r contrasts_name`
 
 
-### DMPs filtered
+
+
+
+<!-- # Increment the index -->
+`r idx = idx+1` 
+<!-- # Generate a dynamic step title -->
+## `r paste0("Step ",idx,": Differentially methylated CpG probes (DMPs) ")`
+
+
+```{r}
+# Display the folder path
+paths$dmp_folder
+```
+
+- Minimum mean methylation difference between groups: mdiff > 0.1 
+
+- Significantly different when: p < 0.05 
+
+
+
+### DMPs summary
 
 ```{r,warning=FALSE}
 
@@ -45,9 +60,9 @@ eval(
 
 
 if (nrow(dmps_f)>0){
-  message<-'Summary of differentially methylated probes per each contrast and type (Hyper-methylated and Hypo-methylated):'
+  message<-'Summary of differentially methylated probes for each contrast and type (Hyper-methylated and Hypo-methylated), and the number of associated genes:'
 }else{
-  message<-' No differential mehtylation positions were found'
+  message<-' No differential mehtylation probes were found'
 }
 
 ```
@@ -71,9 +86,6 @@ if (nrow(dmps_f)>0){
   knitr::kable(dmps_summary_pl,format = "html")
 }
 
-
-
-
 ```
 
 
@@ -92,7 +104,7 @@ if (nrow(dmps_f)>0){
 
 ```{r}
 if (nrow(dmps_f)>0){
-  message<-'### Genomic context and annotation plots:'
+  message<-'### DMP annotation: Genomic context and association with CG-islands (sequence context)'
 }else{
   message<-NULL
 }
@@ -116,9 +128,23 @@ if (nrow(dmps_f)>0){
 ```
 
 
-### DMP genes and enrichment 
+### DMP genes and functional annotation (pathway enrichment) 
 
-The aim of this step is to identify which biological pathways are over represented in those differentially methylated CpGs. Gprofiiler2 R package is used to perform functional enrichment analysis.
+To better understand the underlying biological implication of the identified DMPs, we perform functional enrichment analysis for genes overlapping these DMPs (DMP genes) to identify biological functions or pathways that they may be associated with. Epipe implements the gprofiler2 R-package to perform the analysis and test the following sets/databases (FDR < 0.05):
+
+- Gene Ontology (GO): Molecular Function (MF)
+
+- Gene Ontology (GO): Cellular Component (CC) 
+
+- Gene Ontology (GO): Biological Process (BP) 
+
+- KEGG 
+
+- Reactome (React) 
+
+- Human Phenotype (HP) 
+
+- Transcription Factor binding (TF) 
 
 
 ```{r}
@@ -152,7 +178,7 @@ if (nrow(dmps_f)>0){
 
 ```{r}
 if (nrow(dmps_f)>0){
-  message<-'#### Enrichment plot of all the pathways per each contrast: '
+  message<-' The plots below show all significantly enriched functional terms for each contrast; each table shows the top three significant results for each category (source) '
 }else{
   message<-NULL
 }
@@ -196,7 +222,9 @@ for (contrast in contrast_names) {
 
 ```{r}
 if (nrow(dmps_f)>0){
- message<-'You can also visualize the plot interactively, which it is found within gopath/DMPS folder'
+ message<-paste('An interactive version of the plots can be found here: ',paths$dmp_folder )
+ 
+ 
 }else{
   message<-NULL
 }

@@ -1,3 +1,4 @@
+
 #' Apply Noob normalization to RGChannelSet.
 #'
 #' @param rgSet RGChannelSet object to be normalized.

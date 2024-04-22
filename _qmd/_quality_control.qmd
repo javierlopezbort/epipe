@@ -1,7 +1,7 @@
 <!-- # Increment the index -->
 `r idx = idx+1` 
 <!-- # Generate a dynamic step title -->
-## `r paste0("Step ",idx,": Quality Control and Filtering")`
+## `r paste0("Step ", idx,". Quality Control")`
 
 
 ```{r}
@@ -10,29 +10,42 @@ paths$qc_folder
 ```
 
 
-The aim of the quality control is to ensure the reliability and accuracy of the methylation data, by identifying potential sources of bias and noise that could effect the integrity of the results. In this pipeline, data quality will be assessed by examining various metrics such as signal detection and distribution of beta values. This helps to detect samples or probes with poor quality that may need to be removed from downstream analysis. 
+Quality control ensures the reliability and accuracy of the methylation data, by identifying potential sources of bias and noise stemming from the microarray experiment.
 
 
 ### Signal quality:
 
-Each probe has an specific detection p-value, which represent the statistical significance of detecting a signal above background noise. A lower mean detection p-value indicates a higher signal-to-noise ratio and better quality data. Conversely, a higher mean detection p-value suggests higher background noise and lower signal reliability. This can be assessed in the following plot, where the mean of the detection p-value is computed for each sample.  
+To check the quality of the experiment, the total signal from each probe (methylated+unmethylated, derived from red and green channel) is evaluated against the background signal distribution derived from a set of negative control probes. Low p-values suggest a more reliable signal (higher signal-to-noise ratio), higher p-values indicated higher background noise and lower signal reliability. 
 
+The following plot shows the mean detection p-value for each sample (p <0.001 is recommended, samples with higher values should be excluded): 
 
 ![Mean detection p-value](`r file.path(paths$qc_folder, "mean_detection_pvalues.jpeg")`){#fig-mean width=80%}
 
 
-
-In the mean quality control plot the log median intensity in the methylated and unmentylated channels is calculated. When plotting these two medians against each other, it has been observed that bad samples will have lower median intensities, and good samples high median intensities. 
+Another quality metric is the ratio of the median methylated and unmethylated signal intensities. In the plot below ‘good’ samples will cluster together; ‘bad’ samples will fall into the left lower corner. 
 
 ![Mean quality control plot](`r file.path(paths$qc_folder, "mean_qc.png")`){#fig-mean_qc}
 
 
+For a comprehensive qc report including the validation of specific experimental steps you can check the pdf provided by minfi [here](`r file.path(paths$qc_folder, "Report.pdf")`).
 
-### Signal detection:
 
-Density plots provide a visual representation of the distribution of methylation levels across multiple samples. The distribution of beta values lay across a range from 0 (unmethylated) to 1 (fully methylated). 
 
-The next plot illustrates the distribution of beta values before and after normalization. 
+### Normalization:
+
+Plotting the distribution of beta values (methylated/(methylated+unmethylated)) before and after signal normalization provides a good indicator of the sample homogeneity and if the normalization is appropriate for the data set. The correct normalization should homogenize the distribution and make the samples more comparable.
+
+Recommendations: 
+
+Noob= normal-exponential out-of-band background correction, a simple way to estimate and correct for background binding. 
+
+ssNoob = suitable for incremental preprocessing of individual methylation arrays, should be used when integrating data from multiple generations of Infinium methylation arrays. 
+
+funNorm()= based on control probes to aijust between-array variation: if global biological differences are present (e.g. cancer normal); function includes Noob as first step 
+
+PreprocessSWAN() = subset-quantile within array normalization correcting for the technical differences between the Type I and Type II array designs separately for different subsets of probes (divided by CpG content). 
+
+PreprocessQuantile() = stratified quantile normalization preprocessing applied to the methylated and unmethylated intensities separately. The distribution of type I and type II signals is forced to be the same by first quantile normalizing the type II probes across samples and then interpolating a reference distribution to which we normalize the type I probes. 
 
 ::: {#fig-densityplots layout="[50,50]"}
 ![](`r file.path(paths$qc_folder, "density_plot_before_norm.png")`)
@@ -43,15 +56,12 @@ Beta values distribution
 :::
 
 
-For a full report you can check the pdf provided by minfi [here](`r file.path(paths$qc_folder, "Report.pdf")`) 
 
+### Sex:
 
+Sex specific DNA methylation differences are are well known (sex is a common co-variate in EWAS studies). Therefore, it pays to include sex as a factor in the downstream analysis. Sex can be predicted based the methylation of sex chromosomes if gender information is not available or as simply control. 
 
-### SEX:
-
-Sample sex was estimated based on methylation data using the R package 'minfi', and was added to the samplesheet (or metadata data.frame). It can be added to the model to perform differential methylation CpGs analysis.
-
-Estimation of sex is based on the median values of measurements on the X and Y chromosomes respectively.
+The plot below shows the sex predicted (The information is added to the metadata).
 
 
 ![Sex estimation](`r file.path(paths$sexplot_folder, "sex_distribution.png")`){#fig-density_plot}
@@ -81,9 +91,9 @@ dtable(subset_df)
 ```
 
 
-### Removed data:
 
-Not only low-quality samples and probes where checked, but also probes with SNPs located at CpG sites, probes located in the sexual chromosomes and cross-reactive probes. 
+### Filtering:
+
 
 ```{r}
  eval(
@@ -112,7 +122,7 @@ Not only low-quality samples and probes where checked, but also probes with SNPs
 bad_samples <- metadata(filtered)$bad_samples
 
 if (length(bad_samples) == 0) {
-  message<-'No bad samples were removed as all pass the quality control.'
+  message<-'No bad samples were removed as all pass the quality control (n=0)'
 }else{
   # Extract the probe names
   probe_names <- names(bad_samples)
@@ -121,7 +131,12 @@ if (length(bad_samples) == 0) {
 
 ```
 
-`r message`
+- `r message`
+
+
+- All probes with low detection p-value were removed previously.
+
+Additionally,probes with confounfing factors are filtered out. Sex chromosomes, known SNPs, and cross-reactive probes are removed from the analysis by default. 
 
 ```{r}
 bad_probes <- metadata(filtered)$bad_probes
@@ -161,10 +176,5 @@ removed_probes_df <- data.frame(Count = unlist(removed_probes))
 knitr::kable(removed_probes_df,format = "html")
 ```
 
-
-
-### Variable correlation: 
-
-![Variable Correlation plot](`r file.path(paths$qc_folder, "correlation_analysis.png")`){#fig-correlation_analysis}
 
 

@@ -1,6 +1,5 @@
 ---
-title: "DIFFERENTIAL DNA METHYLATION ANALYSIS WORKFLOW"
-author: "Izar de Villasante and Marina Vilardell"
+title: "REPORT: DNA METHYLATION ANALYSIS"
 format: html
 embed-resources: true	
 
@@ -19,7 +18,7 @@ params:
   show_warning: true
   shows_message: true
   
-  values_row: '[{"data_names":"ex_EPIC","data_paths":"inst/extdata/EPIC/sample_sheet_EPIC.rds","arraytype":"EPIC","norm":"noob"}]'
+  values_row: '[{"data_names":"ex_EPIC","data_paths":"inst/extdata/EPIC/sample_sheet_EPIC.rds","arraytype":"EPIC","norm":"noob","project_name":"name"}]'
   paths: '{"results_folder":["results/"],"qc_folder":["results/ex_EPIC/QC/"],"ss_clean_path":["analysis/ex_EPIC"],"bplots_folder":["results/ex_EPIC/plots/pca/bplots/"],"corrplot_folder":["results/ex_EPIC/plots/pca/corrplot/"],"dmp_folder":["results/ex_EPIC/dmps/"],"dmpplots_folder":["results/ex_EPIC/dmps/"],"dmrs_folder":["results/ex_EPIC/dmrs/"],"pathway_folder":["results/ex_EPIC/gopath/"],"report_folder":["results/ex_EPIC/reports/"],"sexplot_folder":["results/ex_EPIC/plots/sex/"],"heatmap_folder":["results/ex_EPIC/plots/heatmap/"]}'
 ---
 ```{r}
@@ -127,7 +126,7 @@ library(targets)
 library(DT)
 ```
 
-# `r params$report_name` version 
+# [`r params$report_name` version]
 
 ```{r}
 #| include: false
@@ -136,27 +135,44 @@ library(targets)
 library(minfi)
 ```
 
-# Aim
-
-`r idx = 0`
-Detection and characterization of epigenetic changes between different conditions, genes potentially affected, and pathways involved. [Platform: EPIC, EPICv2, 450k human, mouse microarrays] 
-
-# Description
-
-Some description here about the project (could be copied from project notes or Confluence page).
-
-# Data Inspection
-
-## Values
-
-It is always nice to check the values introduced by the user in the `values` data.frame as the full row of values:
-
 ```{r load values, asis}
 # Load values from JSON
 values_row <- jsonlite::fromJSON(params$values_row)
 
+project_name<-values_row[,'project_name']
+
+```
+
+
+Project: `r project_name`
+
+Platform: [EPIC,EPICv2,450K Human, mouse]
+
+Date: 
+`r format(Sys.time(), '%B %d, %Y')`
+
+
+# Description
+
+`r idx = 0`
+
+Detection and characterization of epigenetic changes between different conditions, genes potentially affected, and pathways involved. This report has been produced with Epipe, an analysis pipeline for DNA methylation microarrays. Epipe is freely available from [Github](https://github.com/ijcBIT/epipe).
+
+
+
+# 0. Set-up check
+
+## 0.1. Epipe configuration
+
+Check the configuration introduced by the user in the `values` data.frame (no empty fields allowed):
+
+
+```{r}
+# Load values from JSON
+values_row <- jsonlite::fromJSON(params$values_row)
+
 # Display the values
-knitr::kable(values_row,format = "html")
+knitr::kable(subset(values_row, select=-project_name),format = "html")
 ```
 
 ```{r load paths}
@@ -165,11 +181,9 @@ paths <- jsonlite::fromJSON(params$paths)
 
 ```
 
-## Sample Sheet
+## 0.2. Sample Sheet
 
-The sample_sheet contains most of the information and it is typical to find annoying errors downstream if something is messed up with the sample sheet.
-
- Thus, it is always good to double-check its content:
+Double check the sample_sheet (Raw data is available, factors are defined, sample names are uniq).
 
 ```{r load ss,interactive=TRUE}
 # Localize sample sheet to potentially improve loading speed
@@ -206,7 +220,7 @@ cat(a, sep = "\n")
 ```
 
 
-```{r child_PCA}
+```{r child_exploratory_analysis}
 #| results: asis
 #| echo: false
 #| include: true
@@ -215,44 +229,8 @@ cat(a, sep = "\n")
 
 # paths <- jsonlite::fromJSON(params$paths)
 cat("\n")
-b <- knitr::knit_child('_qmd/_PCA.qmd', quiet = TRUE)
+b <- knitr::knit_child('_qmd/_exploratory_analysis.qmd', quiet = TRUE)
 cat(b, sep = "\n")
-
-
-```
-
-
-```{r child_corrplot}
-#| results: asis
-#| echo: false
-#| include: !expr params$corrplot_include
-
-if (params$corrplot_include == "true") {
-  # If true, include the child document content
-  b <- knitr::knit_child('_qmd/_Corrplot.qmd', quiet=TRUE)
-  cat(b)
-}
-
-
-
-# paths <- jsonlite::fromJSON(params$paths)
- # cat("\n")
- # b <- knitr::knit_child('_qmd/_Corrplot.qmd', quiet = TRUE)
- # cat(b, sep = "\n")
- # 
-
-```
-
-
-```{r child_heatmap}
-#| results: asis
-#| echo: false
-#| include: true
-
-# paths <- jsonlite::fromJSON(params$paths)
-cat("\n")
-c <- knitr::knit_child('_qmd/_Heatmap.qmd', quiet = TRUE)
-cat(c, sep = "\n")
 
 
 ```
@@ -282,8 +260,7 @@ cat(c, sep = "\n")
 cat("\n")
 d <- knitr::knit_child('_qmd/_DMRs.qmd', quiet = TRUE)
 cat(d, sep = "\n")
-
-
+n<-NULL
 ```
 
 

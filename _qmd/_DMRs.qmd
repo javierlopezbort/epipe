@@ -1,7 +1,7 @@
 <!-- # Increment the index -->
 `r idx = idx+1` 
 <!-- # Generate a dynamic step title -->
-## `r paste0("Step ",idx,": Differentially mehtylated CpG regions")`
+## `r paste0("Step ",idx,": Differentially methylated Regions (DMRs)")`
 
 
 ```{r}
@@ -10,10 +10,17 @@ paths$dmrs_folder
 ```
 
 
-As differential methylation CpG positions may not be so informative, differentially methylation regions will be detected using DMRcate R package. 
+Neighboring CpGs are known to be similarly methylated due to the enzymatic process by which CpG’s become methylated. As individual differentially methylated CpG positions may not be so informative, identifying differentially methylation regions (DMRs) provides an alternative approach. Epipe implements the R-package DMRcate for DMR detection which in turn uses linear regression models (limma package). The same model and contrasts as for the DMPs are used. 
 
 
-Thresholds used to filter Differentially methylated CpG positions: 3 minimum CpGs, methylation differences < 0.05 and FDR<0.01 (default).
+Thresholds used to filter DMRs: 
+
+- Minimum length: three CpGs  
+
+- Minimum mean group methylation differences: < 0.05 
+
+- Statistically different at: FDR<0.01 (default). 
+
 
 ```{r}
 
@@ -26,7 +33,7 @@ Thresholds used to filter Differentially methylated CpG positions: 3 minimum CpG
 if (nrow(dmrs_f)>0){
   message<-' - Summary of differentially methylated regions per each contrast:' 
 }else{
-  message<-' - No differential mehtylation regions were found'
+  message<-' No differential mehtylation regions were found'
 }
 ```
 
@@ -66,10 +73,23 @@ if (nrow(dmrs_f)>0){
 
 
 
-### DMR genes and enrichment 
+### DMR genes and functional annotation (pathway enrichment) 
 
-The aim of this step is to identify which biological pathways are over represented in those differentially methylated CpGs. Gprofiiler2 R package is used to perform functional enrichment analysis.
+To better understand the underlying biological implication of the identified DMRs, we perform functional enrichment analysis for genes overlapping these DMRs (DMR genes) to identify biological functions or pathways that they may be associated with.  Epipe implements the gprofiler2 R-package  to perform the analysis and test the following sets/databases (FDR <0.05): 
 
+- Gene Ontology (GO): Molecular Function (MF) 
+
+- Gene Ontology (GO): Cellular Component (CC) 
+
+- Gene Ontology (GO): Biological Process (BP) 
+
+- KEGG 
+
+- Reactome (React) 
+
+- Human Phenotype (HP) 
+
+- Transcription Factor binding (TF) 
 
 
 ```{r}
@@ -86,7 +106,7 @@ if (nrow(dmrs_f)>0){
 
 ```{r}
 if (nrow(dmrs_f)>0){
-  message<-'#### Enrichment plot of all the pathways per each contrast: '
+  message<-' The plots below show all significantly enriched functional terms for each contrast; each table shows the top three significant results for each category (source) '
  
 }else{
   message<-NULL
@@ -135,7 +155,7 @@ if (nrow(dmrs_f)>0){
 
 ```{r}
 if (nrow(dmrs_f)>0){
-  message<-'You can also visualize the plot interactively, which it is found within gopath/DMRs folder'
+  message<-paste('An interactive version of the plots can be found here: ',paths$dmrs_folder)
 }else{
   message<-NULL
 }
@@ -147,15 +167,14 @@ if (nrow(dmrs_f)>0){
 
 
 
-### Summary
-
-It can be useful to visualize a general summary of all the differential methylation positions and regions found per each contrast. This summary is stored in the following directory: 
+### Differential methylation summary
 
 ```{r}
 # Display the QC folder path
 paste0(paths$results_folder,values_row$data_names)
 ```
 
+General summary of all differential methylation positions and regions per contrast and the associated genes:
 
 
 ```{r,message=FALSE}

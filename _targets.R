@@ -13,12 +13,16 @@ library(quarto)
 library(crew)
 library(crew.cluster)
 
+# Libraries from Illumina
+library(IlluminaHumanMethylationEPICv2manifest)
+library(IlluminaHumanMethylationEPICv2anno.20a1.hg38)
+
 max_ncores=RcppParallel::defaultNumThreads() # Not in use but may be useful
 
 # Run the R scripts in the R/ folder with your custom functions:
 tar_source()
 
-# source("config.R") # Source other scripts as needed. # nolint
+source("config.R") # Source other scripts as needed. # nolint
 
 # Set the number of workers proportional to the number of rows in values.
 # workers are downgraded if idle for 3 seconds.
