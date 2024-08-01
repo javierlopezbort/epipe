@@ -4,16 +4,12 @@
 \alias{name_rgset}
 \title{Rename RGSet and Adjust Column Names}
 \usage{
-name_rgset(res, targets, newname = NULL, exclude = NULL, idcol = "barcode")
+name_rgset(res, targets, idcol = "Sample_Name")
 }
 \arguments{
 \item{res}{An RGSet object to be processed.}
 
 \item{targets}{Target information for column renaming.}
-
-\item{newname}{New name for column renaming (optional).}
-
-\item{exclude}{Columns to exclude from the result.}
 
 \item{idcol}{Identifier column for matching with the RGSet columns.}
 }

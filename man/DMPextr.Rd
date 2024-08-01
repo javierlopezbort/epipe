@@ -52,7 +52,7 @@ fit<-readRDS("data/fit2.rds")
 ann<-readRDS("data/ann.rds")
 DMPann <- DMPextr(fit = fit,                       # linear contrast model
                   ContrastsDM = ContrastsDM,          # contrasts
-                  p.value = 0.01,                      # filter significantly different probes
+                  p.value = 0.01,                      # filter significantly different probes based on adjusted p.value)
                   beta_normalized = beta_noob,        # extract mean group betas
                   mDiff = 0.5,                        # select mean methylation differences
                   ann = ann,                          # annotate positions (CGI, RefGene, etc)

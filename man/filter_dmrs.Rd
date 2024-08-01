@@ -4,7 +4,7 @@
 \alias{filter_dmrs}
 \title{Filter DMRs}
 \usage{
-filter_dmrs(dmrs, p.value = 0.01, mDiff = 0.2, min.cpg = 5, s = FALSE)
+filter_dmrs(dmrs, p.value = 0.05, mDiff = 0.05, min.cpg = 3, s = FALSE)
 }
 \arguments{
 \item{dmrs}{Data.table containing DMR information.}

@@ -161,12 +161,12 @@ targets <- tarchetypes::tar_map(
   tar_target(boxplot,ttest_boxplot(data=ss_clean_allvariables,
                                    sampGroup = sampGroups,
                                    path = custom_paths[["qc_folder"]])),
-  
-  # Distribution plots: 
+
+  # Distribution plots:
   tar_target(distribution_pl,distribution_plots(data=ss_clean_allvariables,
                                                 variable_interest = sampGroups,
                                                 path = custom_paths[["qc_folder"]])),
-  
+
   #Get annotation
   tar_target(ann, minfi::getAnnotation(clean_age)),
   # tar_target(betas_path, file.path(custom_paths$temp,"betas.bk"), format = "file"),
@@ -272,21 +272,21 @@ targets <- tarchetypes::tar_map(
   tar_target(dmps_summary,                                                       # Summary statistics for DMPs
             summary_dmps(dmps_f, dir = custom_paths$dmp_folder,name=data_names,write=TRUE),error ="continue"),
   tar_target(dmpplots, plotDMP(dmps_f,path=custom_paths$dmpplots_folder),error ="continue"),   # Barplots hipo/hyper, genomic region, CpG islands.
-  
+
   # DMRS
 
-  tar_target(
-    dmrs,
-    { nrow(dmps_summary)
-      load('dmrs_obj.RData')
-      return(dmrs_obj)  # Return the dmrs object
-    }
-  ),
+  # tar_target(
+  #   dmrs,
+  #   { nrow(dmps_summary)
+  #     load('dmrs_obj.RData')
+  #     return(dmrs_obj)  # Return the dmrs object
+  #   }
+  # ),
 
-  # tar_target(dmrs,                                                              # Finds DMRs with dmrcate can be relaxed here and filter by HMFDR later
-  #            find_dmrs(object=dmps_f,model=model,
-  #                      fdr = fdrDMR,bcutoff = 0.05, min.cpg=min.cpgDMR),
-  #            deployment = "worker"),
+  tar_target(dmrs,                                                              # Finds DMRs with dmrcate can be relaxed here and filter by HMFDR later
+             find_dmrs(object=dmps_f,model=model,
+                       fdr = fdrDMR,bcutoff = 0.05, min.cpg=min.cpgDMR),
+             deployment = "worker"),
   #tar_target(dmrs_battery,  priority = 1, error ="continue",                                       # DMRs distribution along params
              # apply_filter_dmrs(
              #   dmrs = dmrs,path=paste0(custom_paths$dmrs_folder,data_names))),
@@ -338,7 +338,7 @@ targets <- tarchetypes::tar_map(
   # ))
   )),
   tar_quarto_rep(report,
-                 path = "test.qmd",
+                 path = "report.qmd",
                  execute_params = ep,
                  priority = 0
   )
