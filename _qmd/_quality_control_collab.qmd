@@ -128,7 +128,7 @@ if ('sex' %in% colnames(df)) {
 
 
 ```{r}
-setwd("~/Documents/20240724_MGRAUPERA_PIK3CA-meth.3")
+
  eval(
    substitute(
      filtered <- tar_read(filtered_rgSet),

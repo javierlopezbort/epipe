@@ -10,9 +10,7 @@ pathway(
   cols = c("term_size", "query_size", "intersection_size"),
   pval = 0.05,
   topN = 50,
-  savefile = FALSE,
-  re.folder = "./",
-  enrich_plots = FALSE
+  savefile = FALSE
 )
 }
 \arguments{
@@ -59,7 +57,7 @@ For gprofiler2 package documentation, see: https://cran.r-project.org/package=gp
 \code{\link{path_results}} for additional details on result formatting.
 }
 \author{
-izar de Villasante and Marina Vilardell
+izar de Villasante
 }
 \keyword{DMRs}
 \keyword{data.table}

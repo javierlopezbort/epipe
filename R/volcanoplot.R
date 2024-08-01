@@ -6,7 +6,7 @@
 #' Volcano plot
 #'
 #' @param object Data frame containing DMPs or DMRs.
-#' @param path to the folder where the plots will be saved.
+#' @path path to the folder where the plots will be saved.
 
 volcanoplot<-function(object,path="./"){
 
@@ -25,39 +25,39 @@ volcanoplot<-function(object,path="./"){
     # To plot just the DMP that fall in a GENE region:
     # Subset the DMPs that have a gene associated to
     #df<-df[which(df$UCSC_RefGene_Name!=''),]
-
-
+    
+    
     # Add a column to the data frame to specify if they are UP or DOWN regulated
     df$diffexpression<-'NS' # No significative
-
-
+    
+    
     # IF there are DMPS with an adjusted.pvalue less than 0.05. Use the adj.P.Val as a treshold.
-
-
+    
+    
     if (!is.null(nrow(df[df$adj.P.Val < 0.05, ]))){
       threshold<-'adj.P.Val'
     }else{
       threshold<-'P.Value'
     }
-
+    
     df$diffexpression[df$logFC>0.5 & df[[threshold]]<0.05]<-'UP'
     df$diffexpression[df$logFC< -0.5 & df[[threshold]]<0.05]<-'DOWN'
-
+  
      # Select TOP genes DOWN and UP regulated.
     df_upregulated <- df[df$diffexpression == "UP", ]
     df_upregulated <- df_upregulated[order(df_upregulated[[threshold]], -df_upregulated$logFC), ]
-
+  
     df_downregulated <- df[df$diffexpression == "DOWN", ]
     df_downregulated <- df_downregulated[order(df_downregulated[[threshold]], df_downregulated$logFC), ]
-
+  
     top_upregulated <- head(df_upregulated, 10)
     top_downregulated <- head(df_downregulated, 10)
-
+  
     top_genes <- rbind(top_upregulated, top_downregulated)
-
+  
     colors <- c('DOWN' = '#FF4455', 'NS' = 'black', 'UP' = '#00AFBB')
     colors <- colors[unique(df$diffexpression)]
-
+  
     volcano<-ggplot(data=df, aes(x=logFC, y=-log10(!!rlang::sym(threshold)),col = diffexpression))+
       geom_hline(yintercept = -log10(0.05), col = "gray", linetype = 'dashed') +
       geom_vline(xintercept = c(-0.5, 0.5), col = "gray", linetype = 'dashed') +
@@ -70,7 +70,7 @@ volcanoplot<-function(object,path="./"){
       geom_text_repel(data=top_genes,aes(label=ProbeID),max.overlaps = 30,
                        box.padding = 0.35,
                        point.padding = 0.3,show.legend = F)
-
+       
 
     # Save the plot
     ggplot2::ggsave(filename = paste0(path,"volacanoplot_",contrast_name,".png"),
@@ -133,7 +133,7 @@ volcanoplot<-function(object,path="./"){
 #' Manhtattan plot
 #'
 #' @param object Data frame containing DMPs or DMRs.
-#' @param path to the folder where the plots will be saved.
+#' @path path to the folder where the plots will be saved.
 
 manhattanplot<-function(object,path="./"){
 
@@ -146,13 +146,13 @@ manhattanplot<-function(object,path="./"){
   for (df in df_contrasts){
 
     contrast_name<-names(df_contrasts)[list_element]
-
+    
     if (!is.null(nrow(df[df$adj.P.Val < 0.05, ]))){
       threshold<-'adj.P.Val'
     }else{
       threshold<-'P.Value'
     }
-
+    
     png(filename = paste(path,'manhattanplot_',contrast_name,'.png',sep=''),width = 2000,height = 1600,res = 300,units = 'px')
     # Create a Granges object
     gr<-makeGRangesFromDataFrame(df,start.field = 'pos',end.field = 'pos')

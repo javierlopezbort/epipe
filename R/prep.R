@@ -14,7 +14,7 @@
 prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL,sexplot_folder= NULL,predict_sex=TRUE) {
   # Save the initial set of probe IDs
   probeID_start <- rownames(mSetSqn)
-
+  
   # Step 0: Set array-specific annotation if not provided
   if (length(annotation(mSetSqn)) < 2) {
     # Determine array type if not provided
@@ -52,8 +52,8 @@ prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arrayty
     plotSex(addSex(minfi::mapToGenome(mSetSqn)))
     grDevices::dev.off()
   }
-
-
+  
+  
   # Check if sex chromosomes need to be removed
   if (remove_sex) {
     mSetSqn <- remove_sex_chromosomes(mSetSqn, sexchr)
@@ -75,7 +75,7 @@ remove_cross_reactive_probes <- function(mSetSqn, sexchr) {
   probeID_start <- rownames(mSetSqn)
   if (annotation(mSetSqn)[1] == "IlluminaHumanMethylationEPICv2") {
     # Read the cross-reactive probe mask for EPICv2
-    mask <- qs::qread("Reference/EPICv2_xreactive.qs")
+    mask <- qs::qread("data/EPICv2_xreactive.qs")
     mSetSqn <- mSetSqn[!rownames(mSetSqn) %in% mask, ]
   } else {
     # For other arrays, use maxprobes::dropXreactiveLoci

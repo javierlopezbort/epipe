@@ -18,7 +18,7 @@ params:
   code_fold: false
   show_warning: true
   shows_message: true
-  values_row: '[{"data_names":"ex","data_paths":"samplesheet.rds","arraytype":"EPIC","norm":"noob","project_name":"Methylation","mDiffDMP":"0.01","p.valueDMP":"value","fdrDMR":"value","mdiffDMR":"value","min.cpgDMR":"value"}]'
+  values_row: '[{"data_names":"ex__quantile__sex","data_paths":"samplesheet.rds","arraytype":"EPIC","norm":"noob","project_name":"Methylation","mDiffDMP":"0.01","p.valueDMP":"value","fdrDMR":"value","mdiffDMR":"value","min.cpgDMR":"value","adjp.valueDMP":"value"}]'
   paths: '{"results_folder":["results/"],"qc_folder":["results/ex_EPIC/QC/"],"ss_clean_path":["analysis/ex_EPIC"],"bplots_folder":["results/ex_EPIC/plots/pca/bplots/"],"corrplot_folder":["results/ex_EPIC/plots/pca/corrplot/"],"dmp_folder":["results/ex_EPIC/dmps/"],"dmpplots_folder":["results/ex_EPIC/dmps/"],"dmrs_folder":["results/ex_EPIC/dmrs/"],"pathway_folder":["results/ex_EPIC/gopath/"],"report_folder":["results/ex_EPIC/reports/"],"sexplot_folder":["results/ex_EPIC/plots/sex/"],"heatmap_folder":["results/ex_EPIC/plots/heatmap/"]}'
 ---
 
@@ -138,14 +138,14 @@ library(minfi)
 ```{r load values, asis}
 # Load values from JSON
 values_row <- jsonlite::fromJSON(params$values_row)
-array_type<-values_row[,'arraytype']
+
 project_name<-values_row[,'project_name']
 
 ```
 
 Project: `r project_name`
 
-Platform: `r array_type`
+Platform: EPIC
 
 Date: `r format(Sys.time(), '%B %d, %Y')`
 

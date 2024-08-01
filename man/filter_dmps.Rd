@@ -4,7 +4,7 @@
 \alias{filter_dmps}
 \title{Filter DMPs Function}
 \usage{
-filter_dmps(dmps, adj.p.value = 0.05, p.value = 0.01, mDiff = 0.3, s = F)
+filter_dmps(dmps, p.value = 0.01, mDiff = 0.3, s = F)
 }
 \arguments{
 \item{dmps}{Data table containing DMPs.}

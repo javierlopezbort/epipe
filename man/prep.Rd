@@ -4,14 +4,7 @@
 \alias{prep}
 \title{Preprocess Methylation Data}
 \usage{
-prep(
-  mSetSqn,
-  remove_sex = TRUE,
-  sexchr = c("chrX", "chrY"),
-  arraytype = NULL,
-  sexplot_folder = NULL,
-  predict_sex = TRUE
-)
+prep(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL)
 }
 \arguments{
 \item{mSetSqn}{MethylSet object to be preprocessed.}
