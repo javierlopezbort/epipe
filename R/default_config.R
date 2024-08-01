@@ -33,7 +33,8 @@ arraytype <- c(
 values <- data.table(cbind(data_names,data_paths,arraytype))
 
 # Normalization:
-norm_function <-c("noob") #
+# Methods: noob, ssnoob, swan, funn, pq (quantile), noob_pq (noob+quantile), noob_swan
+norm_function <-c("ssnoob") #
 
 # Filters:
 remove_sex <- TRUE

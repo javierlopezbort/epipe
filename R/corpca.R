@@ -17,7 +17,7 @@
 corpca <- function(beta_top100, metadata, vars = NULL, idcol = "barcode",
                    path = "./", filename = "", title = 'PC1-6 clinical correlations') {
   requireNamespace("PCAtools")
-  
+
   #Check if the columns are present in the data frame and remove them if they are.
   if ("Basename" %in% colnames(metadata)) {
     metadata <- subset(metadata, select = -Basename)
@@ -25,17 +25,28 @@ corpca <- function(beta_top100, metadata, vars = NULL, idcol = "barcode",
   if ("barcode" %in% colnames(metadata)) {
     metadata <- subset(metadata, select = -barcode)
   }
+  if ("yMed" %in% colnames(metadata)) {
+    metadata <- subset(metadata, select = -yMed)
+  }
+  if ("xMed" %in% colnames(metadata)) {
+    metadata <- subset(metadata, select = -xMed)
+  }
   if ("Sample_Name" %in% colnames(metadata)) {
     metadata <- subset(metadata, select = -Sample_Name)
   }
   if ("Sentrix_Position" %in% colnames(metadata)) {
     metadata <- subset(metadata, select = -Sentrix_Position)
   }
+  if ('Sex' %in% colnames(metadata) & 'predictedSex' %in% colnames(metadata)){
+    metadata<-subset(metadata, select = -predictedSex)
+  }
+  if ('Age' %in% colnames(metadata) & 'predictedAge' %in% colnames(metadata)){
+    metadata<-subset(metadata, select = -predictedAge)
+  }
 
-  
   # Convert metadata to data frame
   metadata <- data.frame(metadata, stringsAsFactors = TRUE)
-  rownames(metadata) <- metadata[[idcol]]
+  #rownames(metadata) <- metadata[[idcol]]
   colnames(beta_top100) <- rownames(metadata)
 
   # Perform PCA with PCAtools package
@@ -48,9 +59,9 @@ corpca <- function(beta_top100, metadata, vars = NULL, idcol = "barcode",
 
   # Filter vars based on unique values
   vars <- vars[sapply(p$metadata[, vars], function(x) length(unique(x)) > 1)]
-  
-  #par(cex.main = 0.8)  
-  
+
+  #par(cex.main = 0.8)
+
   # Generate eigencorplot
   pcaplt <- PCAtools::eigencorplot(
     p,

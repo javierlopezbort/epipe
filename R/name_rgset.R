@@ -4,8 +4,6 @@
 #'
 #' @param res An RGSet object to be processed.
 #' @param targets Target information for column renaming.
-#' @param newname New name for column renaming (optional).
-#' @param exclude Columns to exclude from the result.
 #' @param idcol Identifier column for matching with the RGSet columns.
 #'
 #' @return Modified RGSet object with adjusted column names and optional renaming.
@@ -21,7 +19,7 @@
 #' renamed_data <- name_rgset(res, targets, newname = "new_name", exclude = c("excluded_col1", "excluded_col2"))
 #'
 #' @export
-name_rgset <- function(res, targets, newname = NULL, exclude = NULL, idcol = "barcode") {
+name_rgset <- function(res, targets, idcol = "Sample_Name") {
   if (!requireNamespace("Biobase", quietly = TRUE) || !requireNamespace("SummarizedExperiment", quietly = TRUE) || !requireNamespace("data.table", quietly = TRUE)) {
     stop("Required packages 'Biobase', 'SummarizedExperiment', or 'data.table' are not installed.")
   }
@@ -37,7 +35,7 @@ name_rgset <- function(res, targets, newname = NULL, exclude = NULL, idcol = "ba
   colnames(res@assays@data$Green) <- cn
   colnames(res@assays@data$Red) <- cn
 
-  data.table::setkey(targets, "barcode")
+  #data.table::setkey(targets, "Sample_Name")
 
   pheno <- as(targets, "DataFrame")
   rownames(pheno) <- cn
@@ -45,17 +43,6 @@ name_rgset <- function(res, targets, newname = NULL, exclude = NULL, idcol = "ba
   stopifnot(rownames(pheno) == colnames(res))
 
   res@colData <- pheno
-
-  if (!is.null(newname)){
-    if(newname %in% colnames(pheno) & !any(duplicated(pheno[[newname]]))){
-      colnames(res) <- res@colData[[newname]]
-      rownames(pheno)<-colnames(res)
-      res@colData <- pheno
-    }
-
-  }
-
-  if (!is.null(exclude)) res <- res[, !colnames(res) %in% exclude]
 
   return(res)
 }

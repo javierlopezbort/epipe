@@ -1,0 +1,239 @@
+<!-- # Generate a dynamic step title -->
+## `r "Step 1. Quality Control"`
+
+
+```{r}
+# Display the QC folder path
+paths$qc_folder
+```
+
+
+Quality control ensures the reliability and accuracy of the methylation data, by identifying potential sources of bias and noise stemming from the microarray experiment.
+
+
+### Normalization:
+
+Plotting the distribution of beta values (methylated/(methylated+unmethylated)) before and after signal normalization provides a good indicator of the sample homogeneity and if the normalization is appropriate for the data set. The correct normalization should homogenize the distribution and make the samples more comparable.
+
+Method used for normalization: 
+
+```{r}
+norm<-values_row[,'norm']
+
+if (norm == 'noob'){
+  message<-'Noob= normal-exponential out-of-band background correction, a simple way to estimate and correct for background binding. '
+}else if (norm == 'ssnoob'){
+  message<-'ssNoob = suitable for incremental preprocessing of individual methylation arrays, should be used when integrating data from multiple generations of Infinium methylation arrays. '
+}else if (norm =='swan'){
+  message<-'PreprocessSWAN() = subset-quantile within array normalization correcting for the technical differences between the Type I and Type II array designs separately for different subsets of probes (divided by CpG content). '
+}else if (norm =='funn'){
+  message<-'funNorm()= based on control probes to aijust between-array variation: if global biological differences are present (e.g. cancer normal); function includes Noob as first step '
+}else if (norm =='noob_pq'){
+  message<-'Noob= normal-exponential out-of-band background correction, a simple way to estimate and correct for background binding. 
+  
+ PreprocessQuantile() = stratified quantile normalization preprocessing applied to the methylated and unmethylated intensities separately. The distribution of type I and type II signals is forced to be the same by first quantile normalizing the type II probes across samples and then interpolating a reference distribution to which we normalize the type I probes. '
+}else if (norm =='noob_swan'){
+  message<-'Noob= normal-exponential out-of-band background correction, a simple way to estimate and correct for background binding.
+  
+  PreprocessSWAN() = subset-quantile within array normalization correcting for the technical differences between the Type I and Type II array designs separately for different subsets of probes (divided by CpG content). '
+}else if (norm =='quantile'){
+  message<-'PreprocessQuantile() = stratified quantile normalization preprocessing applied to the methylated and unmethylated intensities separately. The distribution of type I and type II signals is forced to be the same by first quantile normalizing the type II probes across samples and then interpolating a reference distribution to which we normalize the type I probes. '
+}
+
+```
+
+
+`r message`
+
+
+::: {#fig-densityplots layout="[50,50]"}
+![](`r file.path(paths$qc_folder, "density_plot_before_norm.png")`)
+
+![](`r file.path(paths$qc_folder, "density_plot_after_norm.png")`)
+
+Beta values distribution
+:::
+
+### Sex:
+
+Sex specific DNA methylation differences are are well known (sex is a common co-variate in EWAS studies). Therefore, it pays to include sex as a factor in the downstream analysis. Sex can be predicted based the methylation of sex chromosomes if gender information is not available or as simply control. 
+
+The plot below shows the sex predicted (The information is added to the metadata).
+
+
+![Sex estimation](`r file.path(paths$sexplot_folder, "sex_estimation.png")`){#fig-density_plot}
+
+```{r}
+ eval(
+   substitute(
+     clean <- tar_read(clean_n),
+     env = list(clean_n=paste0("clean_",values_row$data_names))
+     )
+   )
+ 
+eval(
+   substitute(
+     sample_name_n <- tar_read(sample_names_config_n),
+     env = list(sample_names_config_n=paste0("sample_names_config_",values_row$data_names))
+     )
+ )
+  
+eval(
+   substitute(
+     sample_groups_n <- tar_read(sample_groups_config_n),
+     env = list(sample_groups_config_n=paste0("sample_groups_config_",values_row$data_names))
+     )
+ )
+
+
+
+#clean<-tar_read(clean_ex_EPICv2)
+
+df<-colData(clean)
+subset_df <- df[, c(sample_name_n, sample_groups_n, "predictedSex")]
+
+# Convert subset_df to a data frame
+subset_df <- as.data.frame(subset_df)
+
+# Remove row names
+rownames(subset_df) <- NULL
+
+# Use dtable with the converted data frame
+dtable(subset_df)
+
+knitr::kable(subset_df,format = "html")
+
+colnames(df) <- tolower(colnames(df))
+
+# Check if the 'sex' column is present
+if ('sex' %in% colnames(df)) {
+  # Compare 'sex' and 'predictedsex' columns
+   df$sex_mapped <- ifelse(tolower(df$sex) == 'male', 'M',
+                          ifelse(tolower(df$sex) == 'female', 'F', NA))
+  
+  # Compare 'sex_mapped' with 'predictedSex'
+  matched_samples <- sum(df$sex_mapped == df$predictedsex, na.rm = TRUE)
+  total_samples <- nrow(df)
+  
+  # Print the number of matched samples
+  message<-paste("Out of", total_samples, "samples,", matched_samples, "samples were correctly predicted.")
+}else {
+  message<-NULL
+}
+```
+
+`r message`
+
+### Filtering:
+
+
+```{r}
+setwd("~/Documents/20240724_MGRAUPERA_PIK3CA-meth.3")
+ eval(
+   substitute(
+     filtered <- tar_read(filtered_rgSet),
+     env = list(filtered_rgSet=paste0("filtered_",values_row$data_names))
+     )
+   )
+
+
+ eval(
+   substitute(
+     clean <- tar_read(clean_n),
+     env = list(clean_n=paste0("clean_",values_row$data_names))
+     )
+   )
+
+ 
+
+
+#filtered <- tar_read(filtered_ex_EPICv2)
+#clean <- tar_read(clean_ex_EPICv2)
+
+```
+
+```{r, datatable=TRUE}
+bad_samples <- metadata(filtered)$bad_samples
+
+if (length(bad_samples) == 0) {
+  message<-'No bad samples were removed as all pass the quality control (n=0)'
+}else{
+  # Extract the probe names
+  probe_names <- names(bad_samples)
+  message<-paste0(length(probe_names),'samples were removed:',paste(bad_samples, collapse = ", "))
+}
+
+```
+
+- `r message`
+
+
+Additionally,probes with confounfing factors are filtered out. Sex chromosomes, known SNPs, and cross-reactive probes are removed from the analysis by default. 
+
+```{r}
+bad_probes <- metadata(filtered)$bad_probes
+#
+#clean <- tar_read(clean_ex_EPICv2)
+
+if('removed_sex' %in% attributes(metadata(clean))$names){
+  removed_probes_sex<-metadata(clean)$removed_sex
+}else{removed_probes_sex<-NULL}
+
+if('preprocess' %in% attributes(metadata(clean))$names){
+  removed_probes_cr<-metadata(clean)$preprocess
+}else{removed_probes_cr<-NULL}
+
+if('removed_Snps' %in% attributes(metadata(clean))$names){
+  removed_probes_Snps<-metadata(clean)$removed_Snps
+}else{removed_probes_Snps<-NULL}
+
+```
+
+
+#### Summary of removed probes: 
+```{r, datatable=TRUE}
+# Sample data (replace this with your actual data)
+removed_probes <- list(
+  'Bad probes' = length(bad_probes),
+  'Probes in sex chromosomes'= length(removed_probes_sex),
+  'Probes with SNPs at CpGs' = length(removed_probes_Snps),
+  'Cross-reactive probes' =length(removed_probes_cr),
+  'Total'=(sum(length(bad_samples)+length(bad_probes)+length(removed_probes_sex)+length(removed_probes_Snps)+length(removed_probes_cr)))
+ 
+)
+
+# Convert the list to a data frame
+removed_probes_df <- data.frame(Count = unlist(removed_probes))
+
+knitr::kable(removed_probes_df,format = "html")
+```
+
+
+### Cell type proportion:
+
+
+To account for the heterogeneity of cell types in our biological samples, we performed a deconvolution analysis to estimate the proportions of different immune cell types. In studies comparing different groups it is important to ensure comparable cell type proportions across samples to avoid bias and to ensure that observed differences are due to biological factors rather than variations in cell composition.
+
+The following immune cell type proportion were predicted: 
+
+- Leukocytes
+
+- Neutrophils
+
+- Monocytes
+
+- B cells
+
+- NK
+
+- CD4T
+
+- CD8T
+
+
+Subsequently, a t-test was performed for each cell type to compare the proportions between the control and lymphatic conditions. The p-values from these tests indicated the statistical significance of the observed differences in cell type proportions.
+
+The results, depicted in the boxplot, show the distribution of cell type proportions across the conditions with the corresponding p-values indicating significant differences.
+
+![Boxplot Cell type proportion](`r file.path(paths$qc_folder, "Cell_type_prop.png")`){#fig-boxplot_deconv}
+

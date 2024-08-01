@@ -1,7 +1,5 @@
-<!-- # Increment the index -->
-`r idx = idx+1` 
 <!-- # Generate a dynamic step title -->
-## `r paste0("Step ",idx,": Differentially methylated Regions (DMRs)")`
+## `r "Step 4: Differentially methylated Regions (DMRs)"`
 
 
 ```{r}
@@ -15,11 +13,23 @@ Neighboring CpGs are known to be similarly methylated due to the enzymatic proce
 
 Thresholds used to filter DMRs: 
 
-- Minimum length: three CpGs  
+```{r}
+# Load mdiffDMP values from JSON
+values_row <- jsonlite::fromJSON(params$values_row)
 
-- Minimum mean group methylation differences: < 0.05 
+min.cpg<-values_row[,'min.cpgDMR']
+mdiffDMR<-values_row[,'mdiffDMR']
+fdrDMR<-values_row[,'fdrDMR']
+```
 
-- Statistically different at: FDR<0.01 (default). 
+
+
+- Minimum length: `r min.cpg` CpGs  
+
+- Minimum mean group methylation differences: < `r mdiffDMR`
+
+- Statistically different at: FDR< `r fdrDMR` . 
+
 
 
 ```{r}
@@ -124,7 +134,7 @@ if (nrow(dmrs_f)>0){
 #dmrs_f<-tar_read(dmrs_f_ex_EPICv2)
 markdown_text <- NULL
 if (nrow(dmrs_f)>0){
-  custom_paths<-tar_read(custom_paths_ex_EPICv2)
+  #custom_paths<-tar_read(custom_paths_ex)
   # Get the list of contrast names
   contrast_names <- unique(dmrs_f$Contrast)
   

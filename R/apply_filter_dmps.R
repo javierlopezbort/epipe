@@ -61,11 +61,19 @@ apply_filter_dmps <- function(dmps, dev = "png", p.value = seq(0.00, 0.1, .01),
 #' @param s Logical indicating whether to include summary statistics.
 #'
 #' @return Filtered DMPs.
-filter_dmps <- function(dmps, p.value = 0.01, mDiff = 0.3, s = F) {
+filter_dmps <- function(dmps, adj.p.value=0.05,p.value = 0.01, mDiff = 0.3, s = F) {
   require(data.table)
   dmps <- data.table::as.data.table(dmps)
-  dmps_f <- dmps[adj.P.Val <= p.value &
-                   abs(diff_meanMeth) >= mDiff, ]
+  
+  if (!is.null(nrow(dmps[dmps$adj.P.Val < 0.05, ]))){
+    dmps_f <- dmps[adj.P.Val <= adj.p.value &
+                     abs(diff_meanMeth) >= mDiff, ]
+  }else{
+    dmps_f <- dmps[P.value <= p.value &
+                     abs(diff_meanMeth) >= mDiff, ]
+  }
+  
+  
   dmps_s <- summary_dmps(dmps_f)
   if(nrow(dmps_f)==0)warning("no DMPs detected with p.value = ",p.value," & mDiff = ",mDiff)
   if (s == T) {
@@ -89,24 +97,24 @@ summary_dmps <- function(DMPextr_object, dir = "./results/dmps/", name = "raw", 
 
   # Convert DMPextr_object to a data.table
   dt <- data.table::as.data.table(DMPextr_object)
- 
-  
+
+
   # Calculate summary statistics for Hyper and Hypo DMPs by Contrast
   dt_summary <- dt[, .(Total_DMPs = .N, Hyper_DMPs=sum(Type == "Hyper")), by = c("Contrast")]
-  
-  
+
+
   dmrs.l <- dt[, .(Total_DMPS=.N,Hyper_DMPS = sum(Type == "Hyper"), Hypo_DMPS = sum(Type == "Hypo")), by = c("Contrast")]
   genes.l <- dt[, .(Total_Genes_DMPS=length(unique(unlist(strsplit(UCSC_RefGene_Name,';')))),Hyper_Genes_DMPS = length(unique(unlist(strsplit(UCSC_RefGene_Name[Type == "Hyper"], ";")))),
                       Hypo_Genes_DMPS = length(unique(unlist(strsplit(UCSC_RefGene_Name[Type == "Hypo"], ";"))))), by = c("Contrast")]
   summary <- merge(dmrs.l, genes.l)
-  
+
   #Order the data frame:
   library(dplyr)
 
   dt_summary <- summary %>%
     select(Contrast, matches("^Total"),matches("Hyper"),matches("Hypo"))
-  
-  
+
+
   # Write raw DMPs and summary statistics to file if requested
   if (write) {
     data.table::fwrite(dt, paste0(dir, name, "_dmp_raw.csv.gz"))

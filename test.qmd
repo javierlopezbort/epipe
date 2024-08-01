@@ -11,16 +11,17 @@ params:
   path_to_LTS: "/ijc/LABS/GENOMICS/LTS" 
   par: 1 # test placeholder
   report_name: "default" # name to show as the first header
-  qc_include: "true" # include qc section
+  qc_include_analyst: "true" # include qc section for analyst
+  qc_include_collab: "false" # not qc section for collab
   corrplot_include: "true" #Include corrplots
   parameter_tunning_plots: "true" # include parameter tuning section
   code_fold: false
   show_warning: true
   shows_message: true
-  
-  values_row: '[{"data_names":"ex_EPIC","data_paths":"inst/extdata/EPIC/sample_sheet_EPIC.rds","arraytype":"EPIC","norm":"noob","project_name":"name"}]'
+  values_row: '[{"data_names":"ex","data_paths":"samplesheet.rds","arraytype":"EPIC","norm":"noob","project_name":"Methylation","mDiffDMP":"0.01","p.valueDMP":"value","fdrDMR":"value","mdiffDMR":"value","min.cpgDMR":"value"}]'
   paths: '{"results_folder":["results/"],"qc_folder":["results/ex_EPIC/QC/"],"ss_clean_path":["analysis/ex_EPIC"],"bplots_folder":["results/ex_EPIC/plots/pca/bplots/"],"corrplot_folder":["results/ex_EPIC/plots/pca/corrplot/"],"dmp_folder":["results/ex_EPIC/dmps/"],"dmpplots_folder":["results/ex_EPIC/dmps/"],"dmrs_folder":["results/ex_EPIC/dmrs/"],"pathway_folder":["results/ex_EPIC/gopath/"],"report_folder":["results/ex_EPIC/reports/"],"sexplot_folder":["results/ex_EPIC/plots/sex/"],"heatmap_folder":["results/ex_EPIC/plots/heatmap/"]}'
 ---
+
 ```{r}
 #| include: false
 library(data.table)
@@ -28,7 +29,6 @@ library(shiny)
 library(DT)
 library(rmarkdown)
 ```
-
 
 ```{r dtable function}
 #| include: false
@@ -126,7 +126,7 @@ library(targets)
 library(DT)
 ```
 
-# [`r params$report_name` version]
+# \[`r params$report_name` version\]
 
 ```{r}
 #| include: false
@@ -143,14 +143,11 @@ project_name<-values_row[,'project_name']
 
 ```
 
-
 Project: `r project_name`
 
-Platform: [EPIC,EPICv2,450K Human, mouse]
+Platform: EPIC
 
-Date: 
-`r format(Sys.time(), '%B %d, %Y')`
-
+Date: `r format(Sys.time(), '%B %d, %Y')`
 
 # Description
 
@@ -158,14 +155,9 @@ Date:
 
 Detection and characterization of epigenetic changes between different conditions, genes potentially affected, and pathways involved. This report has been produced with Epipe, an analysis pipeline for DNA methylation microarrays. Epipe is freely available from [Github](https://github.com/ijcBIT/epipe).
 
-
-
 # 0. Set-up check
 
-## 0.1. Epipe configuration
-
 Check the configuration introduced by the user in the `values` data.frame (no empty fields allowed):
-
 
 ```{r}
 # Load values from JSON
@@ -181,41 +173,49 @@ paths <- jsonlite::fromJSON(params$paths)
 
 ```
 
-## 0.2. Sample Sheet
-
-Double check the sample_sheet (Raw data is available, factors are defined, sample names are uniq).
-
 ```{r load ss,interactive=TRUE}
-# Localize sample sheet to potentially improve loading speed
-local({
-  # Load sample sheet
-  eval(
-   substitute(
-     ss <- tar_read(ss_array),
-     env = list(ss_array=paste0("ss_",values_row$data_names))
-     )
-   )
-   
-  
-  #ss<-readRDS("inst/extdata/EPICv2/sample_sheet_EPICv2.rds")
-  
-  # Display the sample sheet using the custom DataTable function
-  dtable(ss)
-})
+# # Localize sample sheet to potentially improve loading speed
+# local({
+#   # Load sample sheet
+#   eval(
+#    substitute(
+#      ss <- tar_read(ss_array),
+#      env = list(ss_array=paste0("ss_",values_row$data_names))
+#      )
+#    )
+#    
+#   
+#   #ss<-readRDS("inst/extdata/EPICv2/sample_sheet_EPICv2.rds")
+#   
+#   # Display the sample sheet using the custom DataTable function
+#   dtable(ss)
+# })
 ```
 
-
-```{r child_qc}
+```{r child_qc_analyst}
 #| results: asis
 #| echo: false
-#| include: !expr params$qc_include
+#| include: !expr params$qc_include_analyst
 
 # paths <- jsonlite::fromJSON(params$paths)
 
 cat("\n")
-a <- knitr::knit_child('_qmd/_quality_control.qmd', quiet = TRUE)
+a <- knitr::knit_child('_qmd/_quality_control_analyst.qmd', quiet = TRUE)
 cat(a, sep = "\n")
 
+
+```
+
+```{r child_qc_analyst_collab}
+#| results: asis
+#| echo: false
+#| include: !expr params$qc_include_collab
+
+# paths <- jsonlite::fromJSON(params$paths)
+
+cat("\n")
+a <- knitr::knit_child('_qmd/_quality_control_collab.qmd', quiet = TRUE)
+cat(a, sep = "\n")
 
 ```
 
@@ -235,8 +235,6 @@ cat(b, sep = "\n")
 
 ```
 
-
-
 ```{r DMPs}
 #| results: asis
 #| echo: false
@@ -249,8 +247,6 @@ cat(c, sep = "\n")
 
 ```
 
-
-
 ```{r DMRs}
 #| results: asis
 #| echo: false
@@ -260,11 +256,5 @@ cat(c, sep = "\n")
 cat("\n")
 d <- knitr::knit_child('_qmd/_DMRs.qmd', quiet = TRUE)
 cat(d, sep = "\n")
-n<-NULL
+#N<-NULL
 ```
-
-
-
-
-
-

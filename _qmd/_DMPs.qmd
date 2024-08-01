@@ -1,17 +1,18 @@
 
 # Differential methylation analysis
 
-Significant differences between conditions are calculated by fitting linear regression models (using the limma R-package) and testing for group differences using moderate t-statistics and the associated p-values. 
-
-Based on the experimental design, specific research and exploratory analysis, we
- 
- i) implement the model 
- 
 ```{r}
  eval(
    substitute(
      model <- tar_read(model_n),
      env = list(model_n=paste0("model_",values_row$data_names))
+     )
+   )
+
+ eval(
+   substitute(
+     covs <- tar_read(model_covs),
+     env = list(model_covs=paste0("model_covs_",values_row$data_names))
      )
    )
 
@@ -22,16 +23,24 @@ contrasts_name<-colnames(model$contrasts)
 ```
 
 
-ii) analyse the following contrasts (list of comparisons): `r contrasts_name`
+Significant differences between conditions are calculated by fitting linear regression models (using the limma R-package) and testing for group differences using moderate t-statistics and the associated p-values. 
+
+Based on the experimental design, specific research and exploratory analysis, we
+ 
+ i) implement the model: ( Group + `r covs` )
+ 
+
+ii) analyse the following contrasts (list of comparisons): 
+
+     `r contrasts_name`
 
 
 
 
 
-<!-- # Increment the index -->
-`r idx = idx+1` 
+
 <!-- # Generate a dynamic step title -->
-## `r paste0("Step ",idx,": Differentially methylated CpG probes (DMPs) ")`
+## `r "Step 3: Differentially methylated CpG probes (DMPs)"`
 
 
 ```{r}
@@ -39,15 +48,15 @@ ii) analyse the following contrasts (list of comparisons): `r contrasts_name`
 paths$dmp_folder
 ```
 
-- Minimum mean methylation difference between groups: mdiff > 0.1 
-
-- Significantly different when: p < 0.05 
 
 
+```{r}
+# Load mdiffDMP values from JSON
+values_row <- jsonlite::fromJSON(params$values_row)
 
-### DMPs summary
-
-```{r,warning=FALSE}
+mdiffDMPs<-values_row[,'mDiffDMP']
+pvalueDMPs<-values_row[,'p.valueDMP']
+adjpvalueDMP<-values_row[,'adjp.valueDMP']
 
 eval(
    substitute(
@@ -55,6 +64,26 @@ eval(
      env = list(dmp_f_rgset=paste0("dmps_f_",values_row$data_names))
      )
    )
+
+if (!is.null(nrow(dmps_f[dmps_f$adj.P.Val < 0.05, ]))){
+    treshold<-'adjusted.p.value'
+    value_filter<-adjpvalueDMP
+} else{
+  treshold<-'p.value'
+  value_filter<-pvalueDMPs
+}
+```
+
+
+- Minimum mean methylation difference between groups: mdiff > `r mdiffDMPs`
+
+- Significantly different when: `r treshold` < `r value_filter`
+
+
+### DMPs summary
+
+```{r,warning=FALSE}
+
 
 #dmps_f<-tar_read(dmps_f_ex_EPICv2)
 

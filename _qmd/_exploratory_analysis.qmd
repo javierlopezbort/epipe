@@ -1,19 +1,7 @@
-<!-- # Increment the index -->
-`r idx = idx+1` 
 <!-- # Generate a dynamic step title -->
-## `r paste0("Step ",idx,": Exploratory analysis")`
+## `r "Step 2: Exploratory analysis"`
 
 Exploratory analysis allows to understand better the underlying data structure, distribution (outliers), relationships amongst variables and allows to identify potential trends. 
-
-First, we check the experimental design (balanced, unbalance) and whether there is any correlation amongst variables (biological as well as technical). 
-
-The plot below shows pairwise comparisons of all variables, highlighting significant correlations and similarities (Pearson corr. test for two continuous variable, chi-square/equal proportions for two categorical variables, Anova for a continuous and a categorical variable). 
-
-
-
-![ Variable association plot ](`r file.path(paths$qc_folder, "correlation_analysis.png")`){#fig-correlation_analysis}
-
-
 
 ### Principal Component Analysis (PCA)
 
@@ -40,7 +28,7 @@ PCA plots
 
 #### PC correlation analysis
 
-Testing for significant correlations between principal components and (all) variables given in the sample sheet allos to identify batch effect and important biological variables. 
+Testing for significant correlations between principal components and (all) variables given in the sample sheet allows to identify batch effect and important biological variables. 
 
 ```{r}
 # Display the Heatmap folder path
@@ -48,7 +36,23 @@ paths$corrplot_folder
 ```
 
 
-![Correlation plot](`r file.path(paths$corrplot_folder, paste0('/1000/',values_row$data_names,"_pca_corrplot1000.png.png"))`){#fig-Heatmap}
+![Correlation plot](`r file.path(paths$corrplot_folder, paste0('/10000/',values_row$data_names,"_pca_corrplot10000.png.png"))`){#fig-Corrplot}
+
+
+
+Variables with significant correlation for PC1 and PC2: Leukocyte, Neutrophil, Age, Sex, purity,mutation
+
+![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.leuk.prop_shape.condition1_10000.png'))`){#fig-Biplot}
+
+![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.Neu_shape.condition1_10000.png'))`){#fig-Biplot}
+
+![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.age_shape.condition1_10000.png'))`){#fig-Biplot}
+
+![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.predictedSex_shape.condition1_10000.png'))`){#fig-Biplot}
+
+![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.purity_shape.condition1_10000.png'))`){#fig-Biplot}
+
+![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.mutation_shape.condition1_10000.png'))`){#fig-Biplot}
 
 
 
@@ -67,5 +71,5 @@ paths$heatmap_folder
 ```
 
 
-![Heatmap](`r file.path(paths$heatmap_folder, paste0(values_row$data_names,"_heatmap_1000.png"))`){#fig-Heatmap}
+![Heatmap](`r file.path(paths$heatmap_folder, paste0(values_row$data_names,"_heatmap_10000.png"))`){#fig-Heatmap}
 

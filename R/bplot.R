@@ -28,13 +28,145 @@
 #' @import ggfortify
 #' @import RColorBrewer
 #'
-bplot <- function(pca, ss, colgroup, s, combs = NULL, pal=NULL, tit = NULL, labs = TRUE, overlap = Inf, alfa = 0.3, folder = "analysis/pca/bplots/", idcol = "Sample_Name") {
+# bplot <- function(pca, ss, colgroup, s, combs = NULL, pal=NULL, tit = NULL, labs = TRUE, overlap = Inf, alfa = 0.3, folder = "analysis/pca/bplots/", idcol = "Sample_Name") {
+# 
+#   # Check for required packages and install if necessary
+#   # install_if_missing <- function(pkg) {
+#   #   if (!requireNamespace(pkg, quietly = TRUE)) renv::install(pkg)
+#   # }
+#   # sapply(c("ggplot2", "gplots", "ggrepel", "ggfortify", "RColorBrewer"), install_if_missing)
+# 
+#   require(ggplot2)
+#   require(gplots)
+#   require(ggrepel)
+#   require(ggfortify)
+#   require(RColorBrewer)
+# 
+#   # Ensure ss is a data.table
+#   ss <- droplevels.data.frame(ss)
+#   ss <- data.table::as.data.table(ss)
+#   ss <- ss[get(idcol) == rownames(pca$x)]
+#   n <- nrow(pca$rotation)
+# 
+#   # Iterate over colgroup variables
+#   lapply(colgroup, function(f) {
+# 
+#     # Set color scale based on whether the variable is numeric or categorical
+#     if (is.numeric(ss[[f]])) {
+#       myPalette <- colorRampPalette(rev(RColorBrewer::brewer.pal(11, "RdYlGn")))
+#       sc <- scale_colour_gradientn(colours = myPalette(100), limits = range(ss[[f]]))
+#     } else {
+#       cols<-get_cols(factor_variable = factor(ss[[f]]), pal = pal)
+#       sc <- scale_color_manual(values = unique(cols))
+#     }
+# 
+#     # Set default combs if NULL
+#     if (is.null(combs)) combs <- combn(4, 2)
+# 
+#     # Iterate over combs to create plots
+#     for (i in 1:dim(combs)[2]) {
+#       if (is.null(tit)) tit <- paste0("colored.by.", f, "_shape.", s)
+#       ap <- ggplot2::autoplot(pca, x = combs[1, i], y = combs[2, i], data = ss, colour = f, shape = s, alpha = alfa, size = 1) +
+#         sc +
+#         ggtitle(tit) +
+#         theme_bw(base_size = 7) +
+#         theme(legend.key = element_blank(),
+#               legend.key.size = unit(1, "point"),
+#               legend.text = element_text(size = 8),  # Increase legend text size
+#               legend.title = element_text(size = 10))
+# 
+#       # Add labels if labs is TRUE
+#       if (isTRUE(labs)) {
+#         ap <- ap +
+#           geom_text_repel(
+#             aes(label = get(idcol), color = with(ss, get(f))),
+#             show.legend = FALSE, size = 1.5, max.overlaps = overlap, segment.size = 0.2,
+#             min.segment.length = 0.8, point.size = 0.5
+#           ) +
+#           labs(colour = f)
+#       }
+# 
+#       # Create folder if not exists and save plot
+#       dir.create(folder)
+#       ggsave(paste0(folder, tit, i, "_", n, ".png"), plot = ap, width = 5.56, height = 2.80, units = "in")
+#     }
+#   })
+# 
+#   return(folder)
+# }
 
-  # Check for required packages and install if necessary
-  # install_if_missing <- function(pkg) {
-  #   if (!requireNamespace(pkg, quietly = TRUE)) renv::install(pkg)
-  # }
-  # sapply(c("ggplot2", "gplots", "ggrepel", "ggfortify", "RColorBrewer"), install_if_missing)
+
+# bplot <- function(pca, ss, colgroup, s, combs = NULL, pal = NULL, tit = NULL, labs = TRUE, overlap = Inf, folder = "analysis/pca/bplots/", idcol = "Sample_Name") {
+#
+#   require(ggplot2)
+#   require(gplots)
+#   require(ggrepel)
+#   require(RColorBrewer)
+#   require(data.table)
+#
+#   # Ensure ss is a data.table
+#   ss <- droplevels.data.frame(ss)
+#   ss <- data.table::as.data.table(ss)
+#   ss <- ss[get(idcol) %in% rownames(pca$x)]
+#   n <- nrow(pca$rotation)
+#
+#   # Prepare PCA data for ggplot
+#   pca_data <- as.data.frame(pca$x)
+#   pca_data[[idcol]] <- rownames(pca_data)
+#   pca_data <- merge(pca_data, ss, by = idcol)
+#
+#   # Set default combs if NULL
+#   if (is.null(combs)) combs <- combn(4, 2)
+#
+#   # Iterate over colgroup variables
+#   lapply(colgroup, function(f) {
+#
+#     # Set color scale based on whether the variable is numeric or categorical
+#     if (is.numeric(ss[[f]])) {
+#       # Use a discrete color palette instead of a gradient
+#       pca_data[[f]] <- cut(ss[[f]], breaks = 6)  # Adjust the number of breaks as needed
+#       cols <- get_cols(factor_variable = factor(pca_data[[f]]), pal = pal)
+#       sc <- scale_color_manual(values = unique(cols))
+#     } else {
+#       cols <- get_cols(factor_variable = factor(ss[[f]]), pal = pal)
+#       sc <- scale_color_manual(values = unique(cols))
+#     }
+#
+#     # Iterate over combs to create plots
+#     for (i in 1:dim(combs)[2]) {
+#       if (is.null(tit)) tit <- paste0("colored.by.", f, "_shape.", s)
+#
+#       # Create the plot manually
+#       ap <- ggplot(pca_data, aes_string(x = paste0("PC", combs[1, i]), y = paste0("PC", combs[2, i]), color = f, shape = s)) +
+#         geom_point(size = 2, alpha = 1) +  # Ensure points are fully opaque
+#         sc +
+#         ggtitle(tit) +
+#         theme_bw(base_size = 7) +
+#         theme(legend.key = element_blank(), legend.key.size = unit(1, "point"))
+#
+#       # Add labels if labs is TRUE
+#       if (isTRUE(labs)) {
+#         ap <- ap +
+#           geom_text_repel(
+#             aes(label = get(idcol)),
+#             show.legend = FALSE, size = 1.5, max.overlaps = overlap, segment.size = 0.2,
+#             min.segment.length = 0.8, point.size = 0.5
+#           ) +
+#           labs(colour = f)
+#       }
+#
+#       # Create folder if not exists and save plot
+#       dir.create(folder, showWarnings = FALSE)
+#       ggsave(paste0(folder, tit, i, "_", n, ".png"), plot = ap, width = 5.56, height = 2.80, units = "in")
+#     }
+#   })
+#
+#   return(folder)
+# }
+#
+# ###########################33
+#
+bplot <- function(pca, ss, colgroup, s, combs = NULL, pal = NULL, tit = NULL, labs = TRUE, overlap = Inf, alfa = 0.3, folder = "analysis/pca/bplots/", idcol = "Sample_Name") {
 
   require(ggplot2)
   require(gplots)
@@ -53,10 +185,28 @@ bplot <- function(pca, ss, colgroup, s, combs = NULL, pal=NULL, tit = NULL, labs
 
     # Set color scale based on whether the variable is numeric or categorical
     if (is.numeric(ss[[f]])) {
-      myPalette <- colorRampPalette(rev(RColorBrewer::brewer.pal(11, "RdBu")))
-      sc <- scale_colour_gradientn(colours = myPalette(100), limits = range(ss[[f]]))
+      # Define custom color palette excluding middle light colors
+      customPalette <- function(n) {
+        allColors <- rev(RColorBrewer::brewer.pal(11, "RdYlGn"))
+        # Exclude the middle light colors (e.g., the middle 3 colors)
+        limitedColors <- allColors[c(1:4, 8:11)]
+        colorRampPalette(limitedColors)(n)
+      }
+      sc <- scale_colour_gradientn(
+        colours = customPalette(100),
+        limits = range(ss[[f]]),
+        guide = guide_colorbar(
+          barwidth = 0.8,
+          barheight = 8,
+          title.position = "top",
+          title.hjust = 0.5,
+          label.position = "right",
+          ticks.colour = "black",
+          ticks.linewidth = 3
+        )
+      )
     } else {
-      cols<-get_cols(factor_variable = factor(ss[[f]]), pal = pal)
+      cols <- get_cols(factor_variable = factor(ss[[f]]), pal = pal)
       sc <- scale_color_manual(values = unique(cols))
     }
 
@@ -70,13 +220,22 @@ bplot <- function(pca, ss, colgroup, s, combs = NULL, pal=NULL, tit = NULL, labs
         sc +
         ggtitle(tit) +
         theme_bw(base_size = 7) +
-        theme(legend.key = element_blank(), legend.key.size = unit(1, "point"))
+        theme(
+          legend.key = element_blank(),
+          legend.key.size = unit(1, "point"),
+          legend.text = element_text(size = 5),  # Increase legend text size
+          legend.title = element_text(size = 5),  # Increase legend title size
+          legend.position = "right",  # Position the legend on the right
+          #legend.background = element_rect(fill = "white", colour = "black"),  # Add background to the legend
+          #legend.box.background = element_rect(colour = "black"),
+          legend.margin = margin(6, 6, 6, 6)
+        )
 
       # Add labels if labs is TRUE
       if (isTRUE(labs)) {
         ap <- ap +
           geom_text_repel(
-            aes(label = Sample_Name, color = with(ss, get(f))),
+            aes(label = get(idcol), color = with(ss, get(f))),
             show.legend = FALSE, size = 1.5, max.overlaps = overlap, segment.size = 0.2,
             min.segment.length = 0.8, point.size = 0.5
           ) +
@@ -84,10 +243,11 @@ bplot <- function(pca, ss, colgroup, s, combs = NULL, pal=NULL, tit = NULL, labs
       }
 
       # Create folder if not exists and save plot
-      dir.create(folder)
+      dir.create(folder, showWarnings = FALSE, recursive = TRUE)
       ggsave(paste0(folder, tit, i, "_", n, ".png"), plot = ap, width = 5.56, height = 2.80, units = "in")
     }
   })
 
   return(folder)
 }
+

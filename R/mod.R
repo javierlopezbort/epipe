@@ -67,12 +67,28 @@ mod <- function(object, betas_idx = NULL, group_var = "Sample_Group", covs.formu
   }
 
   colnames(design) <- make.names(colnames(design))
-
+  
+  # Remove group_var prefix
+  out <- tryCatch(
+    {
+      if (!is.null(rename)) {
+        colnames(design) <- rename
+      } else {
+        colnames(design) <- stringi::stri_replace_all_fixed(colnames(design), group_var, "", vectorize_all = FALSE)
+      }
+    },
+    error = function(cond) {
+      colnames(design) <- stringi::stri_replace_all_fixed(colnames(design), group_var, "", vectorize_all = FALSE)
+      message(cond)
+    }
+  )
+  
+ 
   # Fit linear model
   fit <- limma::lmFit(object, design)
 
   # Generate contrasts
-  cols <- with(metadata, paste0(group_var, unique(get(group_var))))
+  cols <- with(metadata,unique(get(group_var)))
   cont_sing = cont_pair = gr_cont_sing = gr_cont_pair = NULL
 
   if (pairwise) {
@@ -125,26 +141,10 @@ mod <- function(object, betas_idx = NULL, group_var = "Sample_Group", covs.formu
     colnames(contMatrix)[large], function(x) paste0("sing_", strsplit(x, "-")[[1]][1])
   )
 
-  # Remove group_var prefix
-  out <- tryCatch(
-    {
-      if (!is.null(rename)) {
-        colnames(contMatrix) <- rename
-      } else {
-        colnames(contMatrix) <- stringi::stri_replace_all_fixed(colnames(contMatrix), group_var, "", vectorize_all = FALSE)
-      }
-    },
-    error = function(cond) {
-      colnames(contMatrix) <- stringi::stri_replace_all_fixed(colnames(contMatrix), group_var, "", vectorize_all = FALSE)
-      message(cond)
-    }
-  )
-  print(out)
-
   # Fit model and return eBayes model
   fit2 <- limma::contrasts.fit(fit, contMatrix)
   fit2 <- limma::eBayes(fit2)
-
+  rownames(fit2$cov.coefficients)
   return(fit2)
 }
 
@@ -154,3 +154,4 @@ contgroup <- function(name, levels) {
   l <- length(cols)
   paste0("(", paste(cols, collapse = "+"), ")/", l)
 }
+

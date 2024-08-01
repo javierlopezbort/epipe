@@ -45,7 +45,7 @@ savecoldata <- function(rgset, file = "results/ss_clean.csv", quote = FALSE,
 
   # Save file
   output_path <- file.path(dir, file)
-  utils::write.table(ss, file = output_path, sep = sep, quote = quote, row.names = TRUE)
+  utils::write.table(ss, file = output_path, sep = sep, quote = quote, row.names = FALSE)
 
   # Informative message
   if (verbose) {

@@ -20,6 +20,7 @@
 #'
 #' @export
 purify <- function(rgSet, arraytype = NULL) {
+  library(cnv.methyl)
   if (is.null(arraytype)) {
     guess_arraytype(nrow(rgSet))
   }
@@ -58,5 +59,7 @@ purify <- function(rgSet, arraytype = NULL) {
   } else {
     stop("Unsupported 'arraytype'. Please use 'EPICv2', 'EPIC', or '450K'.")
   }
-  return(rgSet)
+  return(purity)
 }
+
+

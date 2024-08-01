@@ -25,7 +25,7 @@ pca_res <- function(beta_top100,ss,sampGroups,path="./", scale = TRUE, center = 
   proportion<-summary(pca_result)$importance['Proportion of Variance',]
   
   #PC1 and PC2
-  plt<-ggplot(pca_result,aes(x=PC1,y=PC2,color=ss$Sample_Group))+
+  plt<-ggplot(pca_result,aes(x=PC1,y=PC2,color=ss[[sampGroups]]))+
     geom_point()+
     ggtitle('PC1 and PC2')+
     theme_bw()+ labs(color = 'Sample Group', 
@@ -34,7 +34,7 @@ pca_res <- function(beta_top100,ss,sampGroups,path="./", scale = TRUE, center = 
   save_plot(plt, path = path, filename = paste0(filename,'PC1PC2')) #"pcaplot_PC1PC2")
   
   #Plot PC3 and PC4
-  plt34<-ggplot(pca_result,aes(x=PC3,y=PC4,color=ss$Sample_Group))+
+  plt34<-ggplot(pca_result,aes(x=PC3,y=PC4,color=ss[[sampGroups]]))+
     geom_point()+
     ggtitle('PC3 and PC4')+
     theme_bw()+ labs(color = 'Sample Group',

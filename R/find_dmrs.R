@@ -52,27 +52,7 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
 
   conts <- colnames(model$contrasts)
 
-  # If ncores is not provided, set it to a default value
-  if (is.null(ncores)) ncores <- min(RcppParallel::defaultNumThreads(), 124, 22 * length(conts))
-
-  # Set up parallel processing
-  cl <- parallel::makeCluster(ncores, outfile = "", useXDR = FALSE, type = "FORK")
-  parallel::clusterEvalQ(
-    cl, {
-      requireNamespace(c("limma", "data.table", "DMRcate", "S4Vectors"))
-    }
-  )
-
-  dm_threads <- max(ncores %/% length(conts), 1)
-  doParallel::registerDoParallel(cl)
-
-  message("Processing ", length(conts), " contrasts. Using ", ncores, " cores.")
-  results <- foreach::foreach(
-    i = conts,
-    .combine = 'rbind',
-    .inorder = FALSE,
-    .errorhandling = "pass"
-  ) %dopar% {
+  i = conts
 
     myAnnotation <- object
     out <- tryCatch(
@@ -96,8 +76,8 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
             IRanges(object_sub$pos, object_sub$pos),
             stat = object_sub$t,
             diff = object_sub$logFC,
-            ind.fdr = object_sub$adj.P.Val,
-            is.sig = object_sub$adj.P.Val < 0.05,
+            ind.fdr = object_sub$P.Value,
+            is.sig = object_sub$P.Value < 0.05,
             Contrast = i
           )
         }
@@ -123,7 +103,7 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
           no.cpgs = integer(),
           min_smoothed_fdr = numeric(),
           Stouffer = numeric(),
-          HMFDR = numeric(),
+          #HMFDR = numeric(),
           Fisher = numeric(),
           maxdiff = numeric(),
           meandiff = numeric()
@@ -147,8 +127,13 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
       ))
     }
     data.table::as.data.table(results.ranges)
-  }
 
   results[HMFDR <= fdr, ]  # Filter the results based on the specified FDR threshold
   return(results)
 }
+
+
+
+
+
+

@@ -93,7 +93,7 @@ apply_filter_dmrs <- function(dmrs, plots = TRUE, p.value = seq(0.001, 0.11, .02
 #' @author Izar de Villasante
 #'
 
-filter_dmrs <- function(dmrs, p.value = 0.01, mDiff = 0.2, min.cpg = 5, s = FALSE) {
+filter_dmrs <- function(dmrs, p.value = 0.05, mDiff = 0.05, min.cpg = 3, s = FALSE) {
   if (length(dmrs) < 1 | is.null(dmrs)) {
     warning("No DMRs available...")
     return(dmrs <- data.table::as.data.table(dmrs))
@@ -101,6 +101,7 @@ filter_dmrs <- function(dmrs, p.value = 0.01, mDiff = 0.2, min.cpg = 5, s = FALS
 
     require(data.table)
     dmrs <- data.table::as.data.table(dmrs)
+    #out <- dmrs[abs(meandiff) >= mDiff & no.cpgs >= min.cpg, ]
     out <- dmrs[HMFDR <= p.value & abs(meandiff) >= mDiff & no.cpgs >= min.cpg, ]
     if (s) out <- summary_dmrs(out, write = FALSE)
     return(out)
@@ -121,21 +122,42 @@ filter_dmrs <- function(dmrs, p.value = 0.01, mDiff = 0.2, min.cpg = 5, s = FALS
 #' @author Izar de Villasante
 #'
 
-summary_dmrs <- function(dmrs, path = "/results/dmrs/", write = FALSE) {
-  dmrs[, Type := ifelse(meandiff > 0, "Hyper", "Hypo")]
-  dmrs.l <- dmrs[, .(Total_DMRS=.N,Hyper_DMRS = sum(Type == "Hyper"), Hypo_DMRS = sum(Type == "Hypo")), by = c("Contrast")]
-  genes.l <- dmrs[, .(Total_Genes_DMRS=length(unique(unlist(strsplit(overlapping.genes,',')))),Hyper_Genes_DMRS = length(unique(unlist(strsplit(overlapping.genes[Type == "Hyper"], ",")))),
-                      Hypo_Genes_DMRS = length(unique(unlist(strsplit(overlapping.genes[Type == "Hypo"], ","))))), by = c("Contrast")]
-  summary <- merge(dmrs.l, genes.l)
-  
-  # Order the data frame:
-  library(dplyr)
-  
-  summary <- summary %>%
-    select(Contrast, matches("^Total"),matches("Hyper"),matches("Hypo"))
-  
-  
-  if (write) data.table::fwrite(summary, path)
+summary_dmrs <- function(dmrs,contrast=NULL, path = "/results/dmrs/", write = TRUE) {
+
+  if (nrow(dmrs) == 0) {
+    # Define the structure of the empty summary dataframe
+    summary <- data.table(
+      Contrast = unique(dmrs$Contrast),
+      Total_DMRS = 0,
+      Hyper_DMRS = 0,
+      Hypo_DMRS = 0,
+      Total_Genes_DMRS = 0,
+      Hyper_Genes_DMRS = 0,
+      Hypo_Genes_DMRS = 0
+    )
+    summary <- rbind(summary, list(contrast, 0, 0, 0, 0, 0, 0))
+
+    # Write the empty summary if write is TRUE
+    if (write) data.table::fwrite(summary, path)
+
+    return(summary)
+  } else {
+
+    dmrs[, Type := ifelse(meandiff > 0, "Hyper", "Hypo")]
+    dmrs.l <- dmrs[, .(Total_DMRS=.N,Hyper_DMRS = sum(Type == "Hyper"), Hypo_DMRS = sum(Type == "Hypo")), by = c("Contrast")]
+    genes.l <- dmrs[, .(Total_Genes_DMRS=length(unique(unlist(strsplit(overlapping.genes,',')))),Hyper_Genes_DMRS = length(unique(unlist(strsplit(overlapping.genes[Type == "Hyper"], ",")))),
+                        Hypo_Genes_DMRS = length(unique(unlist(strsplit(overlapping.genes[Type == "Hypo"], ","))))), by = c("Contrast")]
+    summary <- merge(dmrs.l, genes.l)
+
+    # Order the data frame:
+    library(dplyr)
+
+    summary <- summary %>%
+      select(Contrast, matches("^Total"),matches("Hyper"),matches("Hypo"))
+
+
+    if (write) data.table::fwrite(summary, path)
+  }
   return(summary)
 }
 
@@ -149,7 +171,7 @@ summary_dmrs <- function(dmrs, path = "/results/dmrs/", write = FALSE) {
 #     Hypo_DMRs = sum(Type == 'Hypo'), # Total number of rows with Type 'Hypo'
 #     Hypo_genes=length(unique(unlist(strsplit(overlapping.genes[Type == "Hypo"], ","))))
 #   )
-# 
+#
 
 
 

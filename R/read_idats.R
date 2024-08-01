@@ -16,7 +16,7 @@
 
 requireNamespace("S4Vectors")
 
-read_idats <- function(ss, arraytype = NULL, idcol = NULL, description = "", author = "ijcBIT") {
+read_idats <- function(ss, arraytype = NULL, idats_folder = NULL, idcol = NULL, description = "", author = "ijcBIT") {
   if (is.null(arraytype)) {
     if ("arraytype" %in% colnames(ss)) {
       if (length(unique(ss$arraytype)) > 1) {
@@ -36,8 +36,18 @@ read_idats <- function(ss, arraytype = NULL, idcol = NULL, description = "", aut
     "mammal" = "HorvathMammalMethylChip40",
     "guess"
   )
+
+
+  # Check that the ss has a column named Basename with the path to the green and red idats (including the file of the name, without GRN and RED.Idat)
+  if (!'Basename' %in% names(ss)) {
+      ss<- ss %>%
+        mutate(Basename=paste(idats_folder,ss$Sentrix_ID,'/',ss$Sentrix_ID,'_',ss$Sentrix_Position,sep=''),
+               barcode=paste(ss$Sentrix_ID,'_',ss$Sentrix_Position,sep=''))
+  }
+
+
   rgSet <- read_meth(targets = ss, arraytype = arraytype)
-  rgSet <- name_rgset(rgSet, ss, exclude = NULL, idcol = idcol)
+  rgSet <- name_rgset(rgSet, ss, idcol = idcol) #Adds column names
 
   metadata(rgSet) <- list(
     description = description,

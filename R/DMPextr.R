@@ -27,7 +27,7 @@
 #' ann<-readRDS("data/ann.rds")
 #' DMPann <- DMPextr(fit = fit,                       # linear contrast model
 #'                   ContrastsDM = ContrastsDM,          # contrasts
-#'                   p.value = 0.01,                      # filter significantly different probes
+#'                   p.value = 0.01,                      # filter significantly different probes based on adjusted p.value)
 #'                   beta_normalized = beta_noob,        # extract mean group betas
 #'                   mDiff = 0.5,                        # select mean methylation differences
 #'                   ann = ann,                          # annotate positions (CGI, RefGene, etc)
@@ -59,7 +59,8 @@ DMPextr <- function(
   }
 
   ann <- data.table::as.data.table(ann, keep.rownames = "ProbeID")
-  data.table::setkey(ann, "ProbeID")
+
+  #data.table::setkey(ann2, "ProbeID")
 
   ann$rn <- 1:nrow(ann)
 
@@ -92,7 +93,7 @@ DMPextr <- function(
       num = Inf,
       coef = i,
       genelist = ann,
-      p.value = p.value
+      p.value = 1
     )
     DMP_1$rn<-1:nrow(DMP_1)
     # If no DMPs found, return a data.table with proper column names
