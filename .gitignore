@@ -1,9 +1,13 @@
 .Rproj.user
+.Rbuildignore
+.Rprofile
 .Rhistory
 .Rdata
 .httr-oauth
 .DS_Store
 .quarto
+renv.lock
+renv/
 results/
 analysis/
 _targets/
