@@ -40,39 +40,8 @@ Generate Pathway Results in an Excel Sheet
 \details{
 This function filters pathway analysis results for at least the topN pathways for each group and includes all terms with FDR <= FDR. The filtered results are then saved to a CSV file and returned as a data.table.
 }
-\examples{
-# Example usage:
-pathway_results <- data.table(
-  Contrast = c("Group1", "Group1", "Group2", "Group2"),
-  FDR = c(0.01, 0.02, 0.03, 0.04),
-  term_size = c(20, 25, 18, 22),
-  query_size = c(15, 18, 12, 16),
-  intersection_size = c(10, 12, 8, 11),
-  TERM = c("Pathway1", "Pathway2", "Pathway3", "Pathway4"),
-  method = c("Method1", "Method1", "Method2", "Method2")
-)
-result <- path_results(pathway_results)
-
-# Example usage:
-pathway_results <- data.table(
-  Contrast = c("Group1", "Group1", "Group2", "Group2"),
-  FDR = c(0.01, 0.02, 0.03, 0.04),
-  term_size = c(20, 25, 18, 22),
-  query_size = c(15, 18, 12, 16),
-  intersection_size = c(10, 12, 8, 11),
-  TERM = c("Pathway1", "Pathway2", "Pathway3", "Pathway4"),
-  method = c("Method1", "Method1", "Method2", "Method2")
-)
-result <- path_results(pathway_results)
-
-}
 \seealso{
 \code{\link{pathway}} for pathway analysis.
-
-\code{\link{pathway}} for pathway analysis.
-}
-\author{
-izar de Villasante
 }
 \keyword{analysis}
 \keyword{data.table}

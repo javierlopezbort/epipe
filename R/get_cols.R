@@ -7,11 +7,11 @@
 #' @return Vector with a color palette, same size as levels(factor_variable).
 #' @keywords internal
 #'
-#' @examples
-#' # Generate a color palette for a factor variable
-#' factor_var <- factor(c("A", "B", "C", "A", "B"))
-#' colors <- get_cols(factor_var)
-#'
+# @examples
+# # Generate a color palette for a factor variable
+# factor_var <- factor(c("A", "B", "C", "A", "B"))
+# colors <- get_cols(factor_var)
+#
 #' @import RColorBrewer
 get_cols <- function(factor_variable, pal = NULL) {
   factor(factor_variable)

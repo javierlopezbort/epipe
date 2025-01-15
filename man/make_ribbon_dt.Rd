@@ -19,9 +19,6 @@ This function generates a data.table for ribbon plotting based on a variable and
 }
 \examples{
 # Example usage:
-ribbon_dt <- make_ribbon_dt(var = "min.cpg", dt = dt_data)
+#ribbon_dt <- make_ribbon_dt(var = "min.cpg", dt = dt_data)
 
-}
-\author{
-Izar de Villasante
 }

@@ -4,7 +4,14 @@
 \alias{prep}
 \title{Preprocess Methylation Data}
 \usage{
-prep(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL)
+prep(
+  mSetSqn,
+  remove_sex = TRUE,
+  sexchr = c("chrX", "chrY"),
+  arraytype = NULL,
+  sexplot_folder = NULL,
+  predict_sex = TRUE
+)
 }
 \arguments{
 \item{mSetSqn}{MethylSet object to be preprocessed.}
@@ -14,10 +21,15 @@ prep(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL)
 \item{sexchr}{Vector of chromosome names representing sex chromosomes (default is c("chrX", "chrY")).}
 
 \item{arraytype}{Type of array used for preprocessing. If provided, array-specific annotation is used.}
+
+\item{sexplot_folder}{Path to save the sex plot}
+
+\item{predict_sex}{Logical, whether to predict and plot sex. Default is TRUE.}
 }
 \value{
 Preprocessed MethylSet object.
 }
 \description{
-This function performs preprocessing steps on a MethylSet object.
+This function performs preprocessing steps on a MethylSet object, such as removing probes with known SNPs,
+removing cross-reactive probes, predicting and plotting sex, and optionally removing sex chromosomes.
 }

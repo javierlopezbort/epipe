@@ -2,7 +2,7 @@
 % Please edit documentation in R/DMPextr.R
 \name{DMPextr}
 \alias{DMPextr}
-\title{Extract DMPs, annotation and methylation difference for each contrast}
+\title{Extract DMPs}
 \usage{
 DMPextr(
   fit,
@@ -19,45 +19,33 @@ DMPextr(
 )
 }
 \arguments{
-\item{fit}{list containing a linear model fit produced by \code{lmFit}, \code{lm.series}, \code{gls.series} or \code{mrlm}.
-  For \code{topTable}, \code{fit} should be an object of class \code{MArrayLM} as produced by \code{lmFit} and \code{eBayes}.}
+\item{fit}{A \code{limma} fit object (e.g., result from \code{lmFit()} or \code{eBayes()}).}
 
-\item{ContrastsDM}{list of contrasts as returned by limma::makeContrasts()
-which will pass to limma topTable as input}
+\item{ContrastsDM}{A list of contrasts as returned by \code{limma::makeContrasts()}.}
 
-\item{p.value}{cutoff value for adjusted p-values. Only genes with lower p-values are listed.}
+\item{p.value}{P-value threshold for filtering DMPs based on adjusted p-value.}
 
-\item{beta_normalized}{normalized betavalues, as produce by minfi::getBeta(grSet_noob)),
-where colnames(beta_normalized) == metadata$sample_Name}
+\item{beta_normalized}{A matrix of normalized beta values.}
 
-\item{mDiff}{absolute mean methylation difference between groups to filter by}
+\item{betas_idx}{An index for subsetting beta values.}
 
-\item{ann}{annotation dataset from manifest with metadata such as gene info,
-CGI, RefGene, etc. see topTable genelist arg.}
+\item{mDiff}{Absolute mean methylation difference between groups to filter by.}
 
-\item{writedir}{}
+\item{ann}{Annotation dataset from manifest with metadata such as gene information, CGI, RefGene, etc.}
 
-\item{writeOut}{save result as .csv default = TRUE.}
+\item{writedir}{Directory for saving output files.}
+
+\item{writeOut}{Logical, whether to save results as CSV files (default: \code{TRUE}).}
+
+\item{ncores}{Number of cores to use for parallel processing (optional).}
+
+\item{columns}{Optional columns to select from \code{limma::topTable}.}
 }
 \value{
-data.table
+A \code{data.table} containing the extracted DMPs, including annotation, methylation values, and statistical information.
 }
 \description{
-For each contrast extract a set of DMPs and add gene annotation and methylation values
-}
-\examples{
-
-betas<-readRDS("data/beta_noob.rds")
-fit<-readRDS("data/fit2.rds")
-ann<-readRDS("data/ann.rds")
-DMPann <- DMPextr(fit = fit,                       # linear contrast model
-                  ContrastsDM = ContrastsDM,          # contrasts
-                  p.value = 0.01,                      # filter significantly different probes
-                  beta_normalized = beta_noob,        # extract mean group betas
-                  mDiff = 0.5,                        # select mean methylation differences
-                  ann = ann,                          # annotate positions (CGI, RefGene, etc)
-                  writeOut = FALSE                    # write output to file
-}
-\author{
-Izar de Villasante
+This function processes a set of contrasts, extracts Differentially Methylated Positions (DMPs) using \code{limma::topTable},
+and adds gene annotation and methylation values. The function also filters DMPs based on mean methylation difference
+and allows for saving the results to CSV files.
 }

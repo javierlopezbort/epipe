@@ -1,20 +1,27 @@
 #' Preprocess Methylation Data
 #'
-#' This function performs preprocessing steps on a MethylSet object.
+#' This function performs preprocessing steps on a MethylSet object, such as removing probes with known SNPs,
+#' removing cross-reactive probes, predicting and plotting sex, and optionally removing sex chromosomes.
 #'
 #' @param mSetSqn MethylSet object to be preprocessed.
 #' @param remove_sex Logical, whether to remove sex chromosomes. Default is TRUE.
 #' @param sexchr Vector of chromosome names representing sex chromosomes (default is c("chrX", "chrY")).
 #' @param arraytype Type of array used for preprocessing. If provided, array-specific annotation is used.
+#' @param sexplot_folder Path to save the sex plot
+#' @param predict_sex Logical, whether to predict and plot sex. Default is TRUE.
+#'
 #' @return Preprocessed MethylSet object.
 #'
 #' @import minfi
 #' @import maxprobes
+#' @import grDevices
+#' @import qs
+#'
 #' @export
 prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL,sexplot_folder= NULL,predict_sex=TRUE) {
   # Save the initial set of probe IDs
   probeID_start <- rownames(mSetSqn)
-  
+
   # Step 0: Set array-specific annotation if not provided
   if (length(annotation(mSetSqn)) < 2) {
     # Determine array type if not provided
@@ -52,8 +59,8 @@ prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arrayty
     plotSex(addSex(minfi::mapToGenome(mSetSqn)))
     grDevices::dev.off()
   }
-  
-  
+
+
   # Check if sex chromosomes need to be removed
   if (remove_sex) {
     mSetSqn <- remove_sex_chromosomes(mSetSqn, sexchr)
@@ -75,7 +82,7 @@ remove_cross_reactive_probes <- function(mSetSqn, sexchr) {
   probeID_start <- rownames(mSetSqn)
   if (annotation(mSetSqn)[1] == "IlluminaHumanMethylationEPICv2") {
     # Read the cross-reactive probe mask for EPICv2
-    mask <- qs::qread("data/EPICv2_xreactive.qs")
+    mask <- qs::qread("reference/EPICv2_xreactive.qs")
     mSetSqn <- mSetSqn[!rownames(mSetSqn) %in% mask, ]
   } else {
     # For other arrays, use maxprobes::dropXreactiveLoci

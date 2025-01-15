@@ -2,16 +2,17 @@
 % Please edit documentation in R/normalization_methods.R
 \name{noob}
 \alias{noob}
-\title{Apply Noob normalization to RGChannelSet.}
+\title{Apply Noob Normalization to an RGChannelSet Object}
 \usage{
 noob(rgSet)
 }
 \arguments{
-\item{rgSet}{RGChannelSet object to be normalized.}
+\item{rgSet}{RGChannelSet object to normalize.}
 }
 \value{
 Normalized RGChannelSet object.
 }
 \description{
-Apply Noob normalization to RGChannelSet.
+This function applies the Noob normalization method to an RGChannelSet object.The Noob method (Negative Control
+Probe Normalization) is used to preprocess methylation data, adjusting for dye bias in the data.
 }

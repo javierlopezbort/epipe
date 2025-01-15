@@ -24,11 +24,3 @@ A list of folder paths created for different purposes.
 This function creates directories for storing various types of results and plots
 generated during the pipeline analysis.
 }
-\examples{
-# Create directories with default paths
-make_results_dirs(subf = "sample_analysis")
-
-# Create directories with custom paths
-make_results_dirs(results_folder = "./my_results/", analysis_folder = "./my_analysis/", subf = "custom_analysis")
-
-}

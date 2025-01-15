@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotDMP.R
 \name{plotDMP}
 \alias{plotDMP}
-\title{Plot DMPs}
+\title{Plot Differentially Methylated Probes (DMPs)}
 \usage{
 plotDMP(
   DMPann,
@@ -22,12 +22,10 @@ plotDMP(
 A list of ggplot2 objects representing the generated plots.
 }
 \description{
-Plot Differentially Methylated Probes (DMPs)
-}
-\details{
 This function generates various plots to visualize different aspects of differentially methylated probes (DMPs).
 }
 \examples{
+\dontrun{
 # Example usage:
 DMP_annotations <- data.table(
   Contrast = c("Group1", "Group1", "Group2", "Group2"),
@@ -36,9 +34,11 @@ DMP_annotations <- data.table(
   UCSC_RefGene_Group = c("Gene1;Gene2", "Gene3", "Gene4", ""),
   UCSC_RefGene_Group_short = c("Gene1", "Gene3", "Gene4", ".")
 )
-plot_list <- plotDMP(DMPann = DMP_annotations, names = "DMP_plots", path = "analysis/DNA_methylation/")
-
+plot_list <- plotDMP(
+DMPann = DMP_annotations,
+names = "DMP_plots",
+path = "analysis/DNA_methylation/"
+)
 }
-\author{
-Original version by unknown author, modifications and documentation by ChatGPT.
+
 }

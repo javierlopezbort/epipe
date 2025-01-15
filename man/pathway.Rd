@@ -2,7 +2,7 @@
 % Please edit documentation in R/pathway.R
 \name{pathway}
 \alias{pathway}
-\title{Perform Pathway Enrichment Analysis for Differentially Methylated Regions (DMRs)}
+\title{Perform Pathway Enrichment Analysis for Differentially Methylated Positions or Regions (DMPs or DMRs)}
 \usage{
 pathway(
   dmrs,
@@ -10,12 +10,13 @@ pathway(
   cols = c("term_size", "query_size", "intersection_size"),
   pval = 0.05,
   topN = 50,
-  savefile = FALSE
+  savefile = FALSE,
+  re.folder = "./",
+  enrich_plots = FALSE
 )
 }
 \arguments{
-\item{dmrs}{Data table containing information about DMRs.
-It is assumed to have columns named "Contrast" and "Gene."}
+\item{dmrs}{A data.table containing Differentially Methylated Positions or Regions (DMPs or DMRs), including at least the 'Gene' and 'Contrast' columns.}
 
 \item{path}{Path to save the combined pathway analysis results (default: "results/pathways.csv").}
 
@@ -26,6 +27,10 @@ It is assumed to have columns named "Contrast" and "Gene."}
 \item{topN}{Minimum number of terms for each group (default: 50).}
 
 \item{savefile}{Logical indicating whether to save the results to a file (default: FALSE).}
+
+\item{re.folder}{Path to save additional results, such as interactive plots. Default is \code{'./'}.}
+
+\item{enrich_plots}{A logical indicating whether to generate interactive enrichment plots. Default is \code{FALSE}.}
 }
 \value{
 A data.table containing pathway analysis results for all contrasts.
@@ -34,30 +39,11 @@ A data.table containing pathway analysis results for all contrasts.
 This function conducts pathway analysis using the gprofiler2 package for each contrast defined in the "Contrast" column of the input DMRs table.
 The results for each contrast are combined into a single data.table.
 }
-\examples{
-# Example usage:
-dmrs <- data.table(Contrast = c("Group1", "Group1", "Group2", "Group2"),
-                   Gene = c("Gene1", "Gene2", "Gene3", "Gene4"))
-result <- pathway(dmrs)
-
-# Example usage:
-dmrs <- data.table(Contrast = c("Group1", "Group1", "Group2", "Group2"),
-                   Gene = c("Gene1", "Gene2", "Gene3", "Gene4"))
-result <- pathway(dmrs)
-
-}
 \references{
-For gprofiler2 package documentation, see: https://cran.r-project.org/package=gprofiler2
-
 For gprofiler2 package documentation, see: https://cran.r-project.org/package=gprofiler2
 }
 \seealso{
 \code{\link{path_results}} for additional details on result formatting.
-
-\code{\link{path_results}} for additional details on result formatting.
-}
-\author{
-izar de Villasante
 }
 \keyword{DMRs}
 \keyword{data.table}

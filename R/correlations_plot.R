@@ -1,24 +1,29 @@
-#####################################################################################################
-#####################################################################################################
-
 #' Correlation analysis plot
 #'
 #' @description Pairwise correlation plots. Plots are colored if the variables are correlated.
 #'
-#' @param correlation_list A correlation list containing the names of the variables that are correlated
-#' @param dataset Sample sheet
-#' @param path Path to save the plot (default: './')
+#' @param correlation_list A list of correlated variable pairs, where each entry is a vector containing:
+#'   - The first variable name.
+#'   - The second variable name.
+#'   - The correlation score or p-value as a string (e.g., "0.05").
+#'
+#' @param dataset A data frame containing the sample sheet with variables to analyze.
+#' @param sg A string specifying the grouping variable for coloring points.
+#' @param path A string specifying the path to save the correlation plot (default: './').
+#'
+#' @import GGally
+#' @import ggplot2
+#' @import rlang
+#'
+#' @return Saves the correlation plot as a PNG file in the specified path.
+#'
 
 
 # List with variable correlations
 #correlation_list<-list(c('Sample_Group','Sentrix_ID'),c('Condition','Sentrix_ID'),c('Type','arraytype'))
 
 
-
-
 correlation_plot<-function(correlation_list,dataset,sg,path = "./"){
-
-  library(GGally)
 
   # Initialize ggpairs plot
   pm <- ggpairs(dataset, upper = 'blank')

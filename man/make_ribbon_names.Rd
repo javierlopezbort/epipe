@@ -17,7 +17,7 @@ This function generates ribbon names based on a variable.
 }
 \examples{
 # Example usage:
-ribbon_names <- make_ribbon_names(var = "min.cpg")
+#ribbon_names <- make_ribbon_names(var = "min.cpg")
 
 }
 \author{

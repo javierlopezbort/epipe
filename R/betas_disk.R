@@ -9,9 +9,10 @@
 #' @return A bigstatsr::FBM object representing the beta matrix.
 #'
 #' @importFrom bigstatsr FBM
+#' @importFrom minfi getBeta
 #'
 #' @export
-betas_disk <- function(rgSet, ...) {
+betas_disk <- function(rgSet) {
   requireNamespace("minfi")
   # Extract beta matrix from rgSet
   beta_normalized <- minfi::getBeta(rgSet)

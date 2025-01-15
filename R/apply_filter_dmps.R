@@ -5,14 +5,14 @@
 #' @param p.value Vector of p-values to explore.
 #' @param mDiff Vector of mean methylation differences to explore.
 #' @param path Path to save the plots and intermediate files.
-#'
+#' @import ggplot2
 #' @return None (Plots are saved to the specified path).
 apply_filter_dmps <- function(dmps, dev = "png", p.value = seq(0.00, 0.1, .01),
                               mDiff = seq(0.15, 0.5, .05), path = "analysis/intermediate/dmps/") {
   if (length(dmps) < 1 | is.null(dmps)) {
     warning("No DMPs available...")
   } else {
-    require(ggplot2)
+
 
     # Create the directory if it doesn't exist
     dir.create(path)
@@ -53,18 +53,23 @@ apply_filter_dmps <- function(dmps, dev = "png", p.value = seq(0.00, 0.1, .01),
   }
 }
 
-#' Filter DMPs Function
+#' Filter Differentially Methylated Positions (DMPs)
+#'
+#' This function filters DMPs based on adjusted p-value, p-value, and mean methylation difference thresholds.
 #'
 #' @param dmps Data table containing DMPs.
-#' @param p.value P-value threshold.
-#' @param mDiff Mean methylation difference threshold.
+#' @param adj.p.value Threshold for the adjusted p-value (default: 0.05).
+#' @param p.value Threshold for the raw p-value (default: 0.01).
+#' @param mDiff Threshold for the absolute mean methylation difference (default: 0.3).
 #' @param s Logical indicating whether to include summary statistics.
 #'
-#' @return Filtered DMPs.
+#' @import data.table
+#' @return A data table of filtered DMPs
+#' @export
 filter_dmps <- function(dmps, adj.p.value=0.05,p.value = 0.01, mDiff = 0.3, s = F) {
-  require(data.table)
+
   dmps <- data.table::as.data.table(dmps)
-  
+
   if (!is.null(nrow(dmps[dmps$adj.P.Val < 0.05, ]))){
     dmps_f <- dmps[adj.P.Val <= adj.p.value &
                      abs(diff_meanMeth) >= mDiff, ]
@@ -72,8 +77,8 @@ filter_dmps <- function(dmps, adj.p.value=0.05,p.value = 0.01, mDiff = 0.3, s = 
     dmps_f <- dmps[P.value <= p.value &
                      abs(diff_meanMeth) >= mDiff, ]
   }
-  
-  
+
+
   dmps_s <- summary_dmps(dmps_f)
   if(nrow(dmps_f)==0)warning("no DMPs detected with p.value = ",p.value," & mDiff = ",mDiff)
   if (s == T) {
@@ -84,16 +89,24 @@ filter_dmps <- function(dmps, adj.p.value=0.05,p.value = 0.01, mDiff = 0.3, s = 
   return(out)
 }
 
-#' Summarize DMPs and Write Results to File
+#' Summarize Differentially Methylated Positions (DMPs)
 #'
-#' @param DMPextr_object Object containing DMPs.
-#' @param dir Directory to save the results.
-#' @param name Name for the summary (used in file naming).
-#' @param write Logical indicating whether to write results to file (default is FALSE).
+#' @title Summarize DMPs
 #'
-#' @return Summary of DMPs.
+#' @description Generates a summary of DMPs, including total, hypermethylated, and hypomethylated DMPs and their associated genes, grouped by contrast. Optionally writes the raw DMPs and summary to files.
+#'
+#' @param DMPextr_object An object containing DMPs, typically a data table.
+#' @param dir A character string specifying the directory to save the results (default: "./results/dmps/").
+#' @param name A character string specifying the name for the summary, used in file naming (default: "raw").
+#' @param write Logical indicating whether to write the raw DMPs and summary to files (default: FALSE).
+#'
+#' @return A data table containing the summarized DMPs grouped by contrast.
+#'
+#' @import data.table
+#' @import dplyr
+
 summary_dmps <- function(DMPextr_object, dir = "./results/dmps/", name = "raw", write = FALSE) {
-  require(data.table)
+
 
   # Convert DMPextr_object to a data.table
   dt <- data.table::as.data.table(DMPextr_object)

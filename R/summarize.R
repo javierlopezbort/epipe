@@ -8,8 +8,8 @@
 #'
 #' @return A data.table summarizing DMPs and DMRs.
 #'
-#' @author Izar de Villasante
-#'
+#' @import data.table
+#' @export
 
 summarize <- function(dmps, dmrs, path = "results/") {
   dir.create(path)

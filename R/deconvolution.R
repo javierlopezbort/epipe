@@ -1,12 +1,20 @@
 #' Cell type Deconvolution
 #'
-#' This function performs deconvolution based on DNA methylation data.
+#' This function performs deconvolution based on DNA methylation data, estimating cell type proportions
+#' using raw and normalized methylation datasets. It supports both HM450 and EPIC platforms.
+#'
 #'
 #' @param raw_object The input raw RGChannelSet.
-#' @param object MehtylSet object with normalized data (clean object in the pipeline).
-#' @param arraytype Vector of the name of the platform. Only supports 'HM450' and 'EPIC'
+#' @param object MehtylSet object with normalized data.
+#' @param arraytype Vector containing the name of the array platform. Options: '450K', 'EPIC', 'EPICv2'.
 #'
-#' @return A methylset object containing deconvolution data in the colData slot
+#' @return A MethylSet object containing deconvolution results in the colData slot.
+#'
+#' @import FlowSorted.Blood.EPIC
+#' @import sesame
+#' @import minfi
+#'
+#' @export
 
 
 #Steps:
@@ -15,8 +23,6 @@
 
 
 celldeconvolution<-function(raw_object, object, arraytype){
-
-  library(FlowSorted.Blood.EPIC)
 
   # Cell type proportion estimation ---> Check issues of immunomethylomics/FlowSorted.Blood.EPIC git repo
   if (arraytype %in% c("EPIC", "450K")){
@@ -42,7 +48,6 @@ celldeconvolution<-function(raw_object, object, arraytype){
   beta_values<-minfi::getBeta(object)
 
   ## Estimate leukocyte fraction (sesame)
-  library(sesame)
 
   if (arraytype == 'EPICv2'){
 

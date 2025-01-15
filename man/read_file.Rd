@@ -16,8 +16,3 @@ Data read from the file if successful.
 This function attempts to open a file, first checking if it is an RDS file. If not,
 it tries to open the file using \code{data.table::fread()} for CSV files or \code{readxl::read_excel()} for Excel files.
 }
-\examples{
-# Read a file as RDS, using fread, or readxl
-read_file("path/to/your/file")
-
-}

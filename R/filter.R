@@ -1,6 +1,7 @@
 #' Filter RGChannelSet based on Quality Control Criteria
 #'
 #' This function filters an RGChannelSet based on quality control criteria, including mean detection p-values.
+#' It removes low-quality samples and probes, and generates a barplot of mean detection p-values.
 #'
 #' @param rgSet RGChannelSet object to be filtered.
 #' @param sg Column name indicating sample groups.
@@ -15,15 +16,17 @@
 #'
 #' @return Filtered RGChannelSet.
 #'
-#' @importFrom data.table setdiff
+#' @import data.table
 #' @importFrom minfi detectionP
 #' @importFrom grDevices jpeg
 #'
-#' @examples
-#' # Filter RGChannelSet based on quality control criteria
-#' filter(rgSet, sg = "Sample_Group", sampNames = "Sample_Name")
-#'
 #' @export
+#'
+# @examples
+# # Filter RGChannelSet based on quality control criteria
+# filter(rgSet, sg = "Sample_Group", sampNames = "Sample_Name")
+#
+
 filter <- function(rgSet, sg = NULL, sampNames = "Sample_Name", save_barplot = TRUE,
                    frac = 0.1, pval = 0.01, remove_sex = FALSE, arraytype = NULL, cols = NULL,
                    qc_folder = "analysis/intermediate/QC") {

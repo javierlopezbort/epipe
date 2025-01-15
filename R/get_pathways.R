@@ -1,15 +1,25 @@
-#' Get Pathways function
-#' @title Get Pathways
-#' @description Get pathway results based on DMRS
-#' @param dmrs Data table containing DMRs.
+#' Get Pathways
+#'
+#' This function performs pathway enrichment analysis for differentially methylated positions or regions (DMPs or DMRs) using the
+#' gprofiler2 package. It processes each contrast defined in the "Contrast" column of the input table and
+#' combines the results into a single data.table.
+#' It provides pathway analysis for all DMPs, hypermethylated DMPs, and hypomethylated DMPs.
+#'
+#' @param dmrs A data.table containing Differentially Methylated Positions or Regions (DMPs or DMRs), including at least the 'Gene' and 'Contrast' columns.
 #' @param res.folder Path to save the plots and intermediate files.
-#' @param cols Columns to include in the results.
-#' @param pval P-value threshold.
-#' @param topN Number of pathways to show on the summary.
+#' @param cols A character vector specifying the columns to include in the pathway results (default is c("term_size", "query_size", "intersection_size")).
+#' @param pval A numeric value for the p-value threshold (default is 0.05).
+#' @param topN Number of pathways to show on the summary (default is 50).
 #' @param savefile Logical, whether to save the results to a file.
-#' @return Pathway results as a data.table.
+#'
+#' @return A data.table containing the pathway results for full, hyper, and hypo DMRs. The table includes columns
+#' like 'Contrast', 'FDR', 'p_value', and others specified in the 'cols' parameter. If no data is available,
+#' an empty data.table is returned.
+#'
+#' @import data.table
+#' @export
 get_pathways <- function(dmrs, res.folder = "results/pathways/", cols = c("term_size", "query_size", "intersection_size"), pval = 0.05, topN = 50, savefile = FALSE) {
-  require(data.table)
+
   # Convert dmrs to data.table
   data.table::setDT(dmrs)
   varnames = c("Contrast", "FDR", "p_value",cols, "TERM", "method")

@@ -4,7 +4,6 @@
 #' 2. Read the data using `read_file()` .
 #' 3. Generate category to handle info in sample_sheet.
 #' @return A list of target objects.
-#' @export
 #' @param file Character, Sample sheet file path.
 input_sample_sheet <- function(file) {
   list(

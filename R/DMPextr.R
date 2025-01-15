@@ -1,44 +1,51 @@
-#' For each contrast extract a set of DMPs and add gene annotation and methylation values
+#' Extract DMPs
 #'
+#' @description
+#' This function processes a set of contrasts, extracts Differentially Methylated Positions (DMPs) using `limma::topTable`,
+#' and adds gene annotation and methylation values. The function also filters DMPs based on mean methylation difference
+#' and allows for saving the results to CSV files.
 #'
-#' @title Extract DMPs, annotation and methylation difference for each contrast
+#' @param fit A `limma` fit object (e.g., result from `lmFit()` or `eBayes()`).
+#' @param ContrastsDM A list of contrasts as returned by `limma::makeContrasts()`.
+#' @param p.value P-value threshold for filtering DMPs based on adjusted p-value.
+#' @param beta_normalized A matrix of normalized beta values.
+#' @param betas_idx An index for subsetting beta values.
+#' @param mDiff Absolute mean methylation difference between groups to filter by.
+#' @param ann Annotation dataset from manifest with metadata such as gene information, CGI, RefGene, etc.
+#' @param writedir Directory for saving output files.
+#' @param writeOut Logical, whether to save results as CSV files (default: `TRUE`).
+#' @param ncores Number of cores to use for parallel processing (optional).
+#' @param columns Optional columns to select from `limma::topTable`.
 #'
-#' @return data.table
-#' @author Izar de Villasante
-#' @export
+#' @return A `data.table` containing the extracted DMPs, including annotation, methylation values, and statistical information.
+#'
 #' @import minfi
 #' @import data.table
 #' @import limma
-#' @param beta_normalized normalized betavalues, as produce by minfi::getBeta(grSet_noob)),
-#'  where colnames(beta_normalized) == metadata$sample_Name
-#' @param ContrastsDM list of contrasts as returned by limma::makeContrasts()
-#' which will pass to limma topTable as input
-#' @param mDiff absolute mean methylation difference between groups to filter by
-#' @param ann annotation dataset from manifest with metadata such as gene info,
-#' CGI, RefGene, etc. see topTable genelist arg.
-#' @param writeOut save result as .csv default = TRUE.
-#' @param writedir
+#' @import foreach
+#' @import bigstatsr
+#' @import doParallel
+#' @import itertools
 #'
-#' @inheritParams limma::topTable
-#' @examples
+#' @export
 #'
-#' betas<-readRDS("data/beta_noob.rds")
-#' fit<-readRDS("data/fit2.rds")
-#' ann<-readRDS("data/ann.rds")
-#' DMPann <- DMPextr(fit = fit,                       # linear contrast model
-#'                   ContrastsDM = ContrastsDM,          # contrasts
-#'                   p.value = 0.01,                      # filter significantly different probes based on adjusted p.value)
-#'                   beta_normalized = beta_noob,        # extract mean group betas
-#'                   mDiff = 0.5,                        # select mean methylation differences
-#'                   ann = ann,                          # annotate positions (CGI, RefGene, etc)
-#'                   writeOut = FALSE                    # write output to file
+#
+# @examples
+#
+# betas<-readRDS("data/beta_noob.rds")
+# fit<-readRDS("data/fit2.rds")
+# ann<-readRDS("data/ann.rds")
+# DMPann <- DMPextr(fit = fit,                       # linear contrast model
+#                   ContrastsDM = ContrastsDM,          # contrasts
+#                   p.value = 0.01,                      # filter significantly different probes based on adjusted p.value
+#                   beta_normalized = beta_noob,        # extract mean group betas
+#                   mDiff = 0.5,                        # select mean methylation differences
+#                   ann = ann,                          # annotate positions (CGI, RefGene, etc)
+#                   writeOut = FALSE)                    # write output to file
 DMPextr <- function(
     fit, ContrastsDM = colnames(fit$contrasts), p.value, beta_normalized, betas_idx = NULL,
     mDiff, ann = NULL, writedir = "analysis/DMP_", writeOut = TRUE, ncores = NULL, columns = TRUE
 ) {
-  require(foreach)
-  require(bigstatsr)
-  require(data.table)
 
   # Check if annotation is provided, if not, use Illumina annotation
   if (is.null(ann)) {

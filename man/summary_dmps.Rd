@@ -2,7 +2,7 @@
 % Please edit documentation in R/apply_filter_dmps.R
 \name{summary_dmps}
 \alias{summary_dmps}
-\title{Summarize DMPs and Write Results to File}
+\title{Summarize DMPs}
 \usage{
 summary_dmps(
   DMPextr_object,
@@ -12,17 +12,20 @@ summary_dmps(
 )
 }
 \arguments{
-\item{DMPextr_object}{Object containing DMPs.}
+\item{DMPextr_object}{An object containing DMPs, typically a data table.}
 
-\item{dir}{Directory to save the results.}
+\item{dir}{A character string specifying the directory to save the results (default: "./results/dmps/").}
 
-\item{name}{Name for the summary (used in file naming).}
+\item{name}{A character string specifying the name for the summary, used in file naming (default: "raw").}
 
-\item{write}{Logical indicating whether to write results to file (default is FALSE).}
+\item{write}{Logical indicating whether to write the raw DMPs and summary to files (default: FALSE).}
 }
 \value{
-Summary of DMPs.
+A data table containing the summarized DMPs grouped by contrast.
 }
 \description{
-Summarize DMPs and Write Results to File
+Generates a summary of DMPs, including total, hypermethylated, and hypomethylated DMPs and their associated genes, grouped by contrast. Optionally writes the raw DMPs and summary to files.
+}
+\details{
+Summarize Differentially Methylated Positions (DMPs)
 }

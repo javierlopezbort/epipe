@@ -15,13 +15,13 @@ corpca(
 )
 }
 \arguments{
-\item{beta_top100}{A matrix of beta values.}
+\item{beta_top100}{A matrix of beta values (rows are probes, columns are samples).}
 
 \item{metadata}{A data frame containing sample metadata.}
 
-\item{vars}{Variables in the metadata to include in the eigencorplot.}
+\item{vars}{A vector of metadata variable names to include in the eigencorplot. If \code{NULL}, all variables with more than one unique value will be included (default: \code{NULL}).}
 
-\item{idcol}{Column name in metadata containing unique identifiers for samples (default: "barcode").}
+\item{idcol}{Column name in \code{metadata} containing unique identifiers for samples (default: "barcode").}
 
 \item{path}{Directory path for saving the plot (default: "./").}
 
@@ -33,5 +33,6 @@ corpca(
 A PCAtools eigencorplot object.
 }
 \description{
-This function performs a correlation-based PCA on beta values and generates an eigencorplot.
+This function performs correlation-based Principal Component Analysis (PCA) on beta values
+and generates an eigencorplot to visualize correlations between clinical variables and the principal components.
 }

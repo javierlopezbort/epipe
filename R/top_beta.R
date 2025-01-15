@@ -3,18 +3,23 @@
 #' This function takes a matrix of beta values, computes the standard deviation
 #' for each row, and extracts the top rows with the highest standard deviations.
 #'
-#' @param beta_values A matrix of beta values.
-#' @param bidx A data frame with row and column names for beta_values.
+#' @param beta_values A matrix of beta values (rows represent CpG probes, columns represent samples).
+#' @param bidx A data frame with two columns: `rn` (row names) and `cn` (column names) to set the row and column names for `beta_values`.
+#' @param what A string specifying what to return. If "betas", returns the subset of rows with the highest standard deviations. If "rows", returns the row names (default is "betas").
 #' @param n Number of top rows to extract (default: 1000).
-#' @return A subset of rows from beta_values with the highest standard deviations.
+#'
+#' @return A matrix of beta values corresponding to the top `n` rows with the highest standard deviations
+#'
+#' @importFrom stats sd
+#' @export
 #'
 #' @examples
 #' # Example usage:
 #' # top_beta(matrix_data, data.frame(rn = rownames(matrix_data), cn = colnames(matrix_data)), n = 500)
 #'
-#' @importFrom stats sd
-#'
-#' @export
+
+
+
 top_beta <- function(beta_values, bidx,what="betas", n = 1000) {
   beta_values <- beta_values[]
   # Set row and column names

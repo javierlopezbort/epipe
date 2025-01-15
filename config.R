@@ -1,7 +1,6 @@
 ###################  CONFIGURATION FILE   ####################
 ##############################################################
 
-library(data.table)
 
 ## Project configuration:
 project_name<-'PIK3CA-METH3'
@@ -114,7 +113,7 @@ covs='predictedSex'
 # Parameters for DMP:
 mDiffDMP = 0.01
 adjp.valueDMP =0.05
-p.valueDMP = 0.05 
+p.valueDMP = 0.05
 
 # Parameters for DMR:
 min.cpgDMR = 3

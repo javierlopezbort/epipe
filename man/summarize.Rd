@@ -19,6 +19,3 @@ A data.table summarizing DMPs and DMRs.
 \description{
 This function summarizes Differentially Methylated Positions (DMPs) and Differentially Methylated Regions (DMRs).
 }
-\author{
-Izar de Villasante
-}

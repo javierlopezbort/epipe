@@ -14,24 +14,26 @@ get_pathways(
 )
 }
 \arguments{
-\item{dmrs}{Data table containing DMRs.}
+\item{dmrs}{A data.table containing Differentially Methylated Positions or Regions (DMPs or DMRs), including at least the 'Gene' and 'Contrast' columns.}
 
 \item{res.folder}{Path to save the plots and intermediate files.}
 
-\item{cols}{Columns to include in the results.}
+\item{cols}{A character vector specifying the columns to include in the pathway results (default is c("term_size", "query_size", "intersection_size")).}
 
-\item{pval}{P-value threshold.}
+\item{pval}{A numeric value for the p-value threshold (default is 0.05).}
 
-\item{topN}{Number of pathways to show on the summary.}
+\item{topN}{Number of pathways to show on the summary (default is 50).}
 
 \item{savefile}{Logical, whether to save the results to a file.}
 }
 \value{
-Pathway results as a data.table.
+A data.table containing the pathway results for full, hyper, and hypo DMRs. The table includes columns
+like 'Contrast', 'FDR', 'p_value', and others specified in the 'cols' parameter. If no data is available,
+an empty data.table is returned.
 }
 \description{
-Get pathway results based on DMRS
-}
-\details{
-Get Pathways function
+This function performs pathway enrichment analysis for differentially methylated positions or regions (DMPs or DMRs) using the
+gprofiler2 package. It processes each contrast defined in the "Contrast" column of the input table and
+combines the results into a single data.table.
+It provides pathway analysis for all DMPs, hypermethylated DMPs, and hypomethylated DMPs.
 }

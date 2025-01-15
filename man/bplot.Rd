@@ -30,6 +30,8 @@ bplot(
 
 \item{combs}{2D matrix (default = combn(4,2)) mapping PCs to plot (1st row = X, 2nd row = Y).}
 
+\item{pal}{Color palette to use (default: get_cols() function).}
+
 \item{tit}{Title for the plot.}
 
 \item{labs}{Logical. Add labels if TRUE (default).}
@@ -41,8 +43,6 @@ bplot(
 \item{folder}{Path to folder where plots are saved (default: "analysis/pca/bplots/").}
 
 \item{idcol}{Column name for the sample ID (default: "Sample_Name").}
-
-\item{cols}{Color palette to use (default: get_cols() function).}
 }
 \value{
 Path to the folder where results are saved.
@@ -52,7 +52,4 @@ Generate PCA bi-plots
 }
 \details{
 This function generates PCA bi-plots using ggplot2 and related packages.
-}
-\author{
-izar de Villasante
 }

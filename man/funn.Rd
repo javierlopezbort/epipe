@@ -2,16 +2,16 @@
 % Please edit documentation in R/normalization_methods.R
 \name{funn}
 \alias{funn}
-\title{Apply FunNorm normalization to RGChannelSet.}
+\title{Apply FunNorm normalization to RGChannelSet Object}
 \usage{
 funn(rgSet)
 }
 \arguments{
-\item{rgSet}{RGChannelSet object to be normalized.}
+\item{rgSet}{RGChannelSet object to normalize.}
 }
 \value{
 Normalized RGChannelSet object.
 }
 \description{
-Apply FunNorm normalization to RGChannelSet.
+This function applies the FunNorm (Functional Normalization) method to an RGChannelSet object. It corrects for biases due to the probe design or other unwanted systematic variations.
 }

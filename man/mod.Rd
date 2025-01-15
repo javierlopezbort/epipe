@@ -2,7 +2,7 @@
 % Please edit documentation in R/mod.R
 \name{mod}
 \alias{mod}
-\title{Construct models and contrasts with limma}
+\title{Construct Models and Contrasts with limma}
 \usage{
 mod(
   object,
@@ -21,11 +21,11 @@ mod(
 )
 }
 \arguments{
-\item{object}{Your object containing beta values.}
+\item{object}{A matrix or data frame containing beta values for the analysis.}
 
-\item{betas_idx}{Index for beta values.}
+\item{betas_idx}{A matrix or data frame providing the indices for the beta values}
 
-\item{group_var}{The variable used as an independent variable.}
+\item{group_var}{A string specifying the column name for the grouping variable.}
 
 \item{covs.formula}{Formula for specifying covariates in the model.}
 
@@ -51,11 +51,7 @@ mod(
 A limma eBayes model.
 }
 \description{
-Construct Models and Contrasts with limma
-}
-\details{
 This function is used to construct models and contrasts for differential expression analysis using limma.
-}
-\author{
-izar de Villasante
+It builds a design matrix based on the group variable and optional covariates, fits the linear model, and generates contrasts
+for pairwise or singular group comparisons.
 }

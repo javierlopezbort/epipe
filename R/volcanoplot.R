@@ -2,16 +2,24 @@
 # Volcano and manhattan plots
 ###############################
 
-
 #' Volcano plot
 #'
-#' @param object Data frame containing DMPs or DMRs.
-#' @path path to the folder where the plots will be saved.
-
+#' @description
+#' This function creates a volcano plot from differential methylation or
+#' region data (DMPs or DMRs), including annotations of the top regulated genes.
+#'
+#' @param object A data frame containing differential methylation or region data.
+#'               It should include columns `logFC`, `adj.P.Val`, and `Contrast`.
+#' @param path A string indicating the directory path to save the generated plots. Default is the current directory.
+#'
+#' @return A volcano plot is saved as a PNG image in the specified path.
+#'
+#' @import ggplot2
+#' @import ggrepel
+#' @importFrom rlang sym
+#' @export
 volcanoplot<-function(object,path="./"){
 
-  library(ggplot2)
-  library(ggrepel)
   # split the data frame by contrasts
   df_contrasts<-split(object,object$Contrast)
 
@@ -25,39 +33,39 @@ volcanoplot<-function(object,path="./"){
     # To plot just the DMP that fall in a GENE region:
     # Subset the DMPs that have a gene associated to
     #df<-df[which(df$UCSC_RefGene_Name!=''),]
-    
-    
+
+
     # Add a column to the data frame to specify if they are UP or DOWN regulated
     df$diffexpression<-'NS' # No significative
-    
-    
+
+
     # IF there are DMPS with an adjusted.pvalue less than 0.05. Use the adj.P.Val as a treshold.
-    
-    
+
+
     if (!is.null(nrow(df[df$adj.P.Val < 0.05, ]))){
       threshold<-'adj.P.Val'
     }else{
       threshold<-'P.Value'
     }
-    
+
     df$diffexpression[df$logFC>0.5 & df[[threshold]]<0.05]<-'UP'
     df$diffexpression[df$logFC< -0.5 & df[[threshold]]<0.05]<-'DOWN'
-  
+
      # Select TOP genes DOWN and UP regulated.
     df_upregulated <- df[df$diffexpression == "UP", ]
     df_upregulated <- df_upregulated[order(df_upregulated[[threshold]], -df_upregulated$logFC), ]
-  
+
     df_downregulated <- df[df$diffexpression == "DOWN", ]
     df_downregulated <- df_downregulated[order(df_downregulated[[threshold]], df_downregulated$logFC), ]
-  
+
     top_upregulated <- head(df_upregulated, 10)
     top_downregulated <- head(df_downregulated, 10)
-  
+
     top_genes <- rbind(top_upregulated, top_downregulated)
-  
+
     colors <- c('DOWN' = '#FF4455', 'NS' = 'black', 'UP' = '#00AFBB')
     colors <- colors[unique(df$diffexpression)]
-  
+
     volcano<-ggplot(data=df, aes(x=logFC, y=-log10(!!rlang::sym(threshold)),col = diffexpression))+
       geom_hline(yintercept = -log10(0.05), col = "gray", linetype = 'dashed') +
       geom_vline(xintercept = c(-0.5, 0.5), col = "gray", linetype = 'dashed') +
@@ -70,7 +78,7 @@ volcanoplot<-function(object,path="./"){
       geom_text_repel(data=top_genes,aes(label=ProbeID),max.overlaps = 30,
                        box.padding = 0.35,
                        point.padding = 0.3,show.legend = F)
-       
+
 
     # Save the plot
     ggplot2::ggsave(filename = paste0(path,"volacanoplot_",contrast_name,".png"),
@@ -130,14 +138,21 @@ volcanoplot<-function(object,path="./"){
 # ## MANHATTAN PLOT
 
 
-#' Manhtattan plot
+#' Generate Manhattan Plots from Genomic Data
+#'
+#' This function creates Manhattan plots for genomic data, saving the plots as PNG files.
+#' The function uses `karyoploteR` to create the plots and highlights the top CpG sites with a suggestive threshold.
 #'
 #' @param object Data frame containing DMPs or DMRs.
-#' @path path to the folder where the plots will be saved.
+#' @param path A character string specifying the directory to save the plot files. Default: current directory ("./")
+#'
+#' @import karyoploteR
+#' @importFrom GenomicRanges makeGRangesFromDataFrame
+#' @importFrom graphics par
+#' @importFrom grDevices png dev.off
+#' @export
 
 manhattanplot<-function(object,path="./"){
-
-  library(karyoploteR)
 
   df_contrasts<-split(object,object$Contrast)
 
@@ -146,13 +161,13 @@ manhattanplot<-function(object,path="./"){
   for (df in df_contrasts){
 
     contrast_name<-names(df_contrasts)[list_element]
-    
+
     if (!is.null(nrow(df[df$adj.P.Val < 0.05, ]))){
       threshold<-'adj.P.Val'
     }else{
       threshold<-'P.Value'
     }
-    
+
     png(filename = paste(path,'manhattanplot_',contrast_name,'.png',sep=''),width = 2000,height = 1600,res = 300,units = 'px')
     # Create a Granges object
     gr<-makeGRangesFromDataFrame(df,start.field = 'pos',end.field = 'pos')

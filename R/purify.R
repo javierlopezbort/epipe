@@ -10,24 +10,25 @@
 #' @importFrom randomForest randomForest
 #' @importFrom impute impute.knn
 #' @importFrom cnv.methyl purify
+#' @import minfi
 #'
 #' @examples
+#' \dontrun{
 #' # Purify RGChannelSet for EPICv2 array
 #' purify(rgSet, arraytype = "EPICv2")
 #'
 #' # Purify RGChannelSet for EPIC or 450K array
 #' purify(rgSet, arraytype = "EPIC")
+#' }
 #'
 #' @export
 purify <- function(rgSet, arraytype = NULL) {
-  library(cnv.methyl)
+
   if (is.null(arraytype)) {
     guess_arraytype(nrow(rgSet))
   }
 
   if (arraytype == "EPICv2") {
-    library("randomForest")
-    library(impute)
 
     # Load the internal RFpurify_ABSOLUTE function from the cnv.methyl package
     RFpurify_ABSOLUTE <- cnv.methyl:::RFpurify_ABSOLUTE

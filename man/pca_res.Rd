@@ -4,23 +4,35 @@
 \alias{pca_res}
 \title{Perform Principal Component Analysis (PCA) on Beta Values}
 \usage{
-pca_res(beta_top100, scale = TRUE, center = TRUE)
+pca_res(
+  beta_top100,
+  ss,
+  sampGroups,
+  path = "./",
+  scale = TRUE,
+  center = TRUE,
+  filename = ""
+)
 }
 \arguments{
-\item{beta_top100}{A matrix of beta values.}
+\item{beta_top100}{A matrix of beta values. The rows represent probes, and the columns represent samples.}
+
+\item{ss}{A data frame or data.table containing the sample sheet information.}
+
+\item{sampGroups}{The name of the column in \code{ss} that contains sample group identifiers.}
+
+\item{path}{A character string specifying the directory where plots will be saved (default: "./").}
 
 \item{scale}{Logical, indicating whether to scale the variables (default: TRUE).}
 
 \item{center}{Logical, indicating whether to center the variables (default: TRUE).}
+
+\item{filename}{A prefix for the saved plot filenames (default: "")}
 }
 \value{
-A prcomp object representing the results of PCA.
+A \code{prcomp} object representing the results of PCA.
 }
 \description{
-This function applies Principal Component Analysis (PCA) to a matrix of beta values.
-}
-\examples{
-# Example usage:
-# pca_res(beta_top100, scale = TRUE, center = TRUE)
-
+This function applies PCA to a matrix of beta values, visualizes the first four principal
+components (PC1 vs. PC2 and PC3 vs. PC4), and saves the resulting plots.
 }

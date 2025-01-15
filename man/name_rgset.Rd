@@ -4,16 +4,12 @@
 \alias{name_rgset}
 \title{Rename RGSet and Adjust Column Names}
 \usage{
-name_rgset(res, targets, newname = NULL, exclude = NULL, idcol = "barcode")
+name_rgset(res, targets, idcol = "Sample_Name")
 }
 \arguments{
 \item{res}{An RGSet object to be processed.}
 
 \item{targets}{Target information for column renaming.}
-
-\item{newname}{New name for column renaming (optional).}
-
-\item{exclude}{Columns to exclude from the result.}
 
 \item{idcol}{Identifier column for matching with the RGSet columns.}
 }
@@ -22,11 +18,4 @@ Modified RGSet object with adjusted column names and optional renaming.
 }
 \description{
 This function renames an RGSet object and adjusts column names based on target information.
-}
-\examples{
-# Rename RGSet with targets information
-res <- readRDS("inst/extdata/rgSet.rds")
-targets <- readRDS("inst/sample_sheet.rds")
-renamed_data <- name_rgset(res, targets, newname = "new_name", exclude = c("excluded_col1", "excluded_col2"))
-
 }

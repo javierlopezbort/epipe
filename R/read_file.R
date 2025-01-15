@@ -8,11 +8,10 @@
 #'
 #' @importFrom data.table fread
 #' @importFrom readxl read_excel
-#' @examples
-#' # Read a file as RDS, using fread, or readxl
-#' read_file("path/to/your/file")
+# @examples
+# # Read a file as RDS, using fread, or readxl
+# read_file("path/to/your/file")
 #'
-#' @export
 read_file <- function(file_path) {
   if (!requireNamespace("data.table", quietly = TRUE)) {
     stop("Required package 'data.table' is not installed.")

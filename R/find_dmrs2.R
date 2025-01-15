@@ -15,7 +15,6 @@
 #'
 #' @return A data.table containing the identified DMRs.
 #'
-#' @author Izar de Villasante
 #' @export
 #' @import DMRcate
 #' @import S4Vectors
@@ -24,19 +23,13 @@
 #' @import bigstatsr
 #' @import data.table
 #'
-#' @examples
-#' # Example usage:
-#' model <- lm(betas ~ condition, data = beta_data)
-#' dmrs <- find_dmrs(object = NULL, betas = beta_data, model = model)
-#'
+# @examples
+# # Example usage:
+# model <- lm(betas ~ condition, data = beta_data)
+# dmrs <- find_dmrs(object = NULL, betas = beta_data, model = model)
+#
 
 find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = "fdr", bcutoff = 0.3, min.cpg = 5, ncores = NULL) {
-  require(DMRcate)
-  require(S4Vectors)
-  require(GenomicRanges)
-  require(foreach)
-  require(bigstatsr)
-  require(data.table)
 
   # If beta values are provided and object is not, construct the object using DMPextr
   if (!is.null(betas) & is.null(object)) {

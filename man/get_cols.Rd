@@ -17,10 +17,4 @@ Vector with a color palette, same size as levels(factor_variable).
 \description{
 Generates a categorical color palette based on the levels of a factor.
 }
-\examples{
-# Generate a color palette for a factor variable
-factor_var <- factor(c("A", "B", "C", "A", "B"))
-colors <- get_cols(factor_var)
-
-}
 \keyword{internal}

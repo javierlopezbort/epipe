@@ -43,9 +43,5 @@ Filtered RGChannelSet.
 }
 \description{
 This function filters an RGChannelSet based on quality control criteria, including mean detection p-values.
-}
-\examples{
-# Filter RGChannelSet based on quality control criteria
-filter(rgSet, sg = "Sample_Group", sampNames = "Sample_Name")
-
+It removes low-quality samples and probes, and generates a barplot of mean detection p-values.
 }

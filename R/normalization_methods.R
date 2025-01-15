@@ -1,84 +1,101 @@
 
-#' Apply Noob normalization to RGChannelSet.
+#' Apply Noob Normalization to an RGChannelSet Object
 #'
-#' @param rgSet RGChannelSet object to be normalized.
+#' This function applies the Noob normalization method to an RGChannelSet object.The Noob method (Negative Control
+#'  Probe Normalization) is used to preprocess methylation data, adjusting for dye bias in the data.
+#'
+#' @param rgSet RGChannelSet object to normalize.
+#'
 #' @return Normalized RGChannelSet object.
 #'
 #' @importFrom minfi preprocessNoob
+#'
 #' @export
 noob <- function(rgSet){
-  require(minfi)
   minfi::preprocessNoob(rgSet,dyeMethod = 'reference')
 }
 
 ###############################################################################
 
-#' Apply ssNoob normalization to RGChannelSet.
+#' Apply ssNoob Normalization to an RGChannelSet Object
 #'
-#' @param rgSet RGChannelSet object to be normalized.
+#' This function applies the ssNoob (Single Sample Negative Control Probe) normalization method to an RGChannelSet object.
+#' The ssNoob method is a variant of Noob normalization, designed to address dye bias by using a single sample reference.
+#'
+#' @param rgSet RGChannelSet object to normalize.
+#'
 #' @return Normalized RGChannelSet object.
 #'
 #' @importFrom minfi preprocessNoob
+#'
 #' @export
 ssnoob <- function(rgSet){
-  require(minfi)
-  minfi::preprocessNoob(rgSet,dyeMethod = 'single')
+   minfi::preprocessNoob(rgSet,dyeMethod = 'single')
 }
 
 ###############################################################################
 
-#' Apply SWAN normalization to RGChannelSet.
+#' Apply SWAN Normalization to an RGChannelSet Object
 #'
-#' @param rgSet RGChannelSet object to be normalized.
+#' This function applies the SWAN (Subset Within Array Normalization) method to an RGChannelSet object.
+#' SWAN normalization corrects for dye biases and other systematic errors in methylation data, particularly when working with Illumina's BeadArray platform.
+#'
+#' @param rgSet RGChannelSet object to normalize.
+#'
 #' @return Normalized RGChannelSet object.
 #'
 #' @importFrom minfi preprocessSWAN
+#'
 #' @export
 swan <- function(rgSet){
-  require(minfi)
   minfi::preprocessSWAN(rgSet)
 }
 
 ###############################################################################
 
-#' Apply FunNorm normalization to RGChannelSet.
+#' Apply FunNorm normalization to RGChannelSet Object
 #'
-#' @param rgSet RGChannelSet object to be normalized.
+#' This function applies the FunNorm (Functional Normalization) method to an RGChannelSet object. It corrects for biases due to the probe design or other unwanted systematic variations.
+#'
+#' @param rgSet RGChannelSet object to normalize.
+#'
 #' @return Normalized RGChannelSet object.
 #'
 #' @importFrom minfi preprocessFunnorm
+#'
 #' @export
 funn <- function(rgSet){
-  require(minfi)
   minfi::preprocessFunnorm(rgSet)
 }
 
 ##############################################################################
 
-#' Apply Noob followed by Quantile normalization to RGChannelSet.
+#' Apply Noob followed by Quantile normalization to RGChannelSet Object
 #'
-#' @param rgSet RGChannelSet object to be normalized.
+#' @param rgSet RGChannelSet object to normalize.
+#'
 #' @return Normalized RGChannelSet object.
 #'
 #' @importFrom minfi preprocessNoob preprocessQuantile
+#'
 #' @export
 noob_pq <- function(rgSet){
-  require(minfi)
   minfi::preprocessNoob(rgSet) |> minfi::preprocessQuantile()
 }
 
 ##############################################################################
 
-#' Apply Noob followed by SWAN normalization to RGChannelSet.
+#' Apply Noob followed by SWAN normalization to RGChannelSet Object
 #'
-#' @param rgSet RGChannelSet object to be normalized.
+#' @param rgSet  RGChannelSet object to normalize.
+#'
 #' @return Normalized RGChannelSet object.
 #'
 #' @importFrom minfi preprocessNoob preprocessSWAN
+#'
 #' @export
 noob_swan <- function(rgSet){
   set.seed(123)
-  require(minfi)
   Mset<-minfi::preprocessNoob(rgSet)
   swan<- minfi::preprocessSWAN(rgSet,mSet = Mset)
 }
@@ -86,15 +103,16 @@ noob_swan <- function(rgSet){
 
 ###############################################################################
 
-#' Apply Quantile normalization to RGChannelSet.
+#' Apply Quantile normalization to RGChannelSetObject
 #'
-#' @param rgSet RGChannelSet object to be normalized.
+#' @param rgSet RGChannelSet object to normalize.
+#'
 #' @return Normalized RGChannelSet object.
 #'
 #' @importFrom minfi preprocessQuantile
+#'
 #' @export
 quantile <- function(rgSet){
-  require(minfi)
   minfi::preprocessQuantile(rgSet)
 }
 
@@ -108,7 +126,7 @@ quantile <- function(rgSet){
 #'
 #' @importFrom ENmix preprocessENmix QCinfo mpreprocess
 #' @importFrom minfi makeGenomicRatioSetFromMatrix
-#' @export
+
 Em2 <- function(rgSet, arraytype = NULL){
   pd <- rgSet@colData
   qc <- ENmix::QCinfo(rgSet, distplot = FALSE)
@@ -141,7 +159,7 @@ Em2 <- function(rgSet, arraytype = NULL){
 #' @importFrom ENmix preprocessENmix QCinfo
 #' @importFrom minfi mapToGenome
 #' @import SummarizedExperiment
-#' @export
+
 Em <- function(rgSet, arraytype = NULL){
   require(SummarizedExperiment)
   pd <- rgSet@colData
@@ -154,14 +172,23 @@ Em <- function(rgSet, arraytype = NULL){
 
 
 
-#' Function to normalize data by all methods and plot them
+#' Normalize Data Using Multiple Methods and Generate Density Plots
 #'
-#' @param object filtered object to be normalized
-#' @param metadata Sample sheet
-#' @param sampGroups Sample sheet name variable to color plots
-#' @param path  Path to save the plot
-#' @param norm_method Normalization method that want to exlcude
-
+#' This function applies various normalization methods to a given dataset and generates density plots
+#' for each method. The plots are saved to the specified directory. The user can choose to exclude a specific
+#' normalization method by specifying it in the `norm_method` argument.
+#'
+#'
+#' @param object A filtered object (e.g., methylation data) to be normalized
+#' @param metadata @param metadata A data frame containing sample metadata, which includes a column for grouping samples (e.g., treatment or control groups).
+#' @param sampGroups A character string specifying the column in the metadata that contains the grouping variable for coloring.
+#' @param path A character string specifying the path where the density plots will be saved. Default is the current working directory ("./").
+#' @param norm_method A character string specifying the normalization method to exclude from the plot generation. Options include 'noob', 'ssnoob', 'swan', 'funn', 'quantile', 'noob_pq', and 'noob_swan'.
+#'
+#' @import minfi
+#' @import grDevices
+#'
+#' @export
 normalization_all_methods<-function(object,metadata,sampGroups,path="./",norm_method){
 
   Sample_Group <- factor(metadata[[sampGroups]])

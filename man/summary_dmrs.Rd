@@ -4,21 +4,20 @@
 \alias{summary_dmrs}
 \title{Summarize DMRs}
 \usage{
-summary_dmrs(dmrs, path = "/results/dmrs/", write = TRUE)
+summary_dmrs(dmrs, contrast = NULL, path = "/results/dmrs/", write = TRUE)
 }
 \arguments{
-\item{dmrs}{Data.table containing DMR information.}
+\item{dmrs}{A data table containing DMRs, including information on \code{Contrast}, \code{meandiff}, and \code{overlapping.genes}.}
 
-\item{path}{Path to save the summary, defaults to "/results/dmrs/".}
+\item{contrast}{Optional, a specific contrast to summarize (default: NULL).}
 
-\item{write}{Logical, indicating whether to write the summary to a file.}
+\item{path}{Path to save the summary file (default: "/results/dmrs/").}
+
+\item{write}{Logical, whether to save the summary to file (default: TRUE).}
 }
 \value{
-A data.table summarizing DMRs by contrast.
+A data table summarizing DMRs with counts of Hyper and Hypo DMRs, and associated genes.
 }
 \description{
-This function summarizes Differentially Methylated Regions (DMRs) by contrast.
-}
-\author{
-Izar de Villasante
+Summarizes the information of DMRs, calculating the total number of DMRs, Hyper and Hypo DMRs, and the associated genes for each contrast. Optionally, writes the summary to a specified file.
 }

@@ -2,6 +2,7 @@
 #'
 #' This function renders a DataTable and handles download events for CSV and Excel formats.
 #' It is intended for internal use within the package and should not be exported to the end user.
+#' @name dtable
 #' @title Dynamic table with download buttons
 #' @param data A data frame to be rendered in the DataTable.
 #'
@@ -14,7 +15,6 @@
 #'
 #' @return A DataTable with formatted data and handlers for CSV and Excel downloads.
 #'
-#' @export
 #' @examples
 #' \dontrun{
 #' dtable(my_data)

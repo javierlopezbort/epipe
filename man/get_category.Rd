@@ -7,11 +7,23 @@
 get_category(object)
 }
 \arguments{
-\item{object}{data.table or data.frame, sample sheet.}
+\item{object}{A \code{data.table} or \code{data.frame} representing the sample sheet.}
 }
 \value{
-A vector with each column's category.
+The input object with an added \code{category} attribute that categorizes each column.
 }
 \description{
-Sets the category for each variable in the sample sheet so information in each column is treated properly ("ids", "covs", "batch", "mgroup").
+This function assigns a category to each variable of the sample sheet to ensure proper handling of
+the information. Categories include: "ids" for identifiers, "batch" for batch variables, "covs" for covariates,
+and "mgroups" for metadata groups.
+}
+\details{
+\itemize{
+\item \strong{Identifiers ("ids")}: Columns like \code{Sample_Name}, \code{barcode}, \code{Basename}, and \code{Sentrix_Position}.
+\item \strong{Batch variables ("batch")}: Columns like \code{Sentrix_ID} and \code{batch}.
+\item \strong{Covariates ("covs")}: Columns like \code{Type}, \code{Condition}, \code{Age}, \code{Sex}, \code{predictedSex}, and \code{predictedAge}.
+\item \strong{Metadata groups ("mgroups")}: Columns like \code{Sample_Group}.
+}
+
+If a column cannot be categorized, it is labeled as "unknown" and a warning is issued. At least one column must belong to the "ids" category; otherwise, the function stops with an error.
 }

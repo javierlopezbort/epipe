@@ -7,14 +7,16 @@
 top_beta(beta_values, bidx, what = "betas", n = 1000)
 }
 \arguments{
-\item{beta_values}{A matrix of beta values.}
+\item{beta_values}{A matrix of beta values (rows represent CpG probes, columns represent samples).}
 
-\item{bidx}{A data frame with row and column names for beta_values.}
+\item{bidx}{A data frame with two columns: \code{rn} (row names) and \code{cn} (column names) to set the row and column names for \code{beta_values}.}
+
+\item{what}{A string specifying what to return. If "betas", returns the subset of rows with the highest standard deviations. If "rows", returns the row names (default is "betas").}
 
 \item{n}{Number of top rows to extract (default: 1000).}
 }
 \value{
-A subset of rows from beta_values with the highest standard deviations.
+A matrix of beta values corresponding to the top \code{n} rows with the highest standard deviations
 }
 \description{
 This function takes a matrix of beta values, computes the standard deviation

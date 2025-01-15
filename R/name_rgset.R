@@ -12,21 +12,17 @@
 #' @import SummarizedExperiment
 #' @import data.table
 #'
-#' @examples
-#' # Rename RGSet with targets information
-#' res <- readRDS("inst/extdata/rgSet.rds")
-#' targets <- readRDS("inst/sample_sheet.rds")
-#' renamed_data <- name_rgset(res, targets, newname = "new_name", exclude = c("excluded_col1", "excluded_col2"))
-#'
-#' @export
+# @examples
+# # Rename RGSet with targets information
+# res <- readRDS("inst/extdata/rgSet.rds")
+# targets <- readRDS("inst/sample_sheet.rds")
+# renamed_data <- name_rgset(res, targets, newname = "new_name", exclude = c("excluded_col1", "excluded_col2"))
+#
+
 name_rgset <- function(res, targets, idcol = "Sample_Name") {
   if (!requireNamespace("Biobase", quietly = TRUE) || !requireNamespace("SummarizedExperiment", quietly = TRUE) || !requireNamespace("data.table", quietly = TRUE)) {
     stop("Required packages 'Biobase', 'SummarizedExperiment', or 'data.table' are not installed.")
   }
-
-  requireNamespace("Biobase")
-  requireNamespace("SummarizedExperiment")
-  requireNamespace("data.table")
 
   targets <- as.data.table(targets)
   if(is.null(idcol))idcol <- names(targets)[attributes(targets)$category=="ids"][1]

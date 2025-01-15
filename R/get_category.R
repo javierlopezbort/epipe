@@ -1,14 +1,28 @@
 #' Get Category from Input Sample Sheet
 #'
-#' @description Sets the category for each variable in the sample sheet so information in each column is treated properly ("ids", "covs", "batch", "mgroup").
+#' @description This function assigns a category to each variable of the sample sheet to ensure proper handling of
+#' the information. Categories include: "ids" for identifiers, "batch" for batch variables, "covs" for covariates,
+#' and "mgroups" for metadata groups.
 #'
-#' @param object data.table or data.frame, sample sheet.
-#' @return A vector with each column's category.
-#' @export
+#' @param object A `data.table` or `data.frame` representing the sample sheet.
+#'
+#' @return The input object with an added `category` attribute that categorizes each column.
+#'
+#' @details
+#' - **Identifiers ("ids")**: Columns like `Sample_Name`, `barcode`, `Basename`, and `Sentrix_Position`.
+#' - **Batch variables ("batch")**: Columns like `Sentrix_ID` and `batch`.
+#' - **Covariates ("covs")**: Columns like `Type`, `Condition`, `Age`, `Sex`, `predictedSex`, and `predictedAge`.
+#' - **Metadata groups ("mgroups")**: Columns like `Sample_Group`.
+#'
+#' If a column cannot be categorized, it is labeled as "unknown" and a warning is issued. At least one column must belong to the "ids" category; otherwise, the function stops with an error.
+#'
+#'
 #' @import data.table
+#' @import dplyr
+#'
+#' @export
 get_category <- function(object) {
 
-  library(dplyr)
 
   # Check if SentrixID is in the dataframe and if it is chr
   if ('Sentrix_ID' %in% names(object)) {

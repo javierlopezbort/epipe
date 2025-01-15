@@ -11,12 +11,8 @@
 #'
 #' @return A melted data.table containing the filtered DMRs.
 #'
-#' @author Izar de Villasante
 #' @import ggplot2
 #'
-#' @examples
-#' # Example usage:
-#' filtered_dmrs <- apply_filter_dmrs(dmrs = dmrs_data, plots = TRUE)
 #'
 
 apply_filter_dmrs <- function(dmrs, plots = TRUE, p.value = seq(0.001, 0.11, .025),
@@ -80,17 +76,21 @@ apply_filter_dmrs <- function(dmrs, plots = TRUE, p.value = seq(0.001, 0.11, .02
 
 #' Filter DMRs
 #'
-#' This function filters Differentially Methylated Regions (DMRs) based on specified criteria.
+#' @title Filter DMRs
 #'
-#' @param dmrs Data.table containing DMR information.
-#' @param p.value False Discovery Rate threshold.
-#' @param mDiff Methylation difference threshold.
-#' @param min.cpg Minimum number of CpGs in a DMR.
-#' @param s Logical, indicating whether to generate a summary of filtered DMRs.
+#' @description Filters a data table of DMRs based on user-specified thresholds for False Discovery Rate (FDR), methylation difference, and the minimum number of CpGs. Optionally, a summary of the filtered DMRs is generated.
 #'
-#' @return A data.table containing the filtered DMRs.
+#' @param dmrs A data table containing DMR information.
+#' @param p.value Threshold for the False Discovery Rate (default: 0.05).
+#' @param mDiff Threshold for the absolute mean methylation difference (default: 0.05).
+#' @param min.cpg Minimum number of CpGs in a DMR (default: 3).
+#' @param s Logical indicating whether to generate a summary of filtered DMRs (default: FALSE).
 #'
-#' @author Izar de Villasante
+#' @return A data table containing the filtered DMRs, or a summary if `s = TRUE`.
+#'
+#' @import data.table
+#'
+#' @export
 #'
 
 filter_dmrs <- function(dmrs, p.value = 0.05, mDiff = 0.05, min.cpg = 3, s = FALSE) {
@@ -109,18 +109,20 @@ filter_dmrs <- function(dmrs, p.value = 0.05, mDiff = 0.05, min.cpg = 3, s = FAL
 }
 
 #DMRs
-#' Summarize DMRs
 #'
-#' This function summarizes Differentially Methylated Regions (DMRs) by contrast.
+#' @title Summarize DMRs
 #'
-#' @param dmrs Data.table containing DMR information.
-#' @param path Path to save the summary, defaults to "/results/dmrs/".
-#' @param write Logical, indicating whether to write the summary to a file.
+#' @description Summarizes the information of DMRs, calculating the total number of DMRs, Hyper and Hypo DMRs, and the associated genes for each contrast. Optionally, writes the summary to a specified file.
 #'
-#' @return A data.table summarizing DMRs by contrast.
+#' @param dmrs A data table containing DMRs, including information on `Contrast`, `meandiff`, and `overlapping.genes`.
+#' @param contrast Optional, a specific contrast to summarize (default: NULL).
+#' @param path Path to save the summary file (default: "/results/dmrs/").
+#' @param write Logical, whether to save the summary to file (default: TRUE).
 #'
-#' @author Izar de Villasante
+#' @return A data table summarizing DMRs with counts of Hyper and Hypo DMRs, and associated genes.
 #'
+#' @import data.table
+#' @import dplyr
 
 summary_dmrs <- function(dmrs,contrast=NULL, path = "/results/dmrs/", write = TRUE) {
 
@@ -189,7 +191,7 @@ summary_dmrs <- function(dmrs,contrast=NULL, path = "/results/dmrs/", write = TR
 #'
 #' @examples
 #' # Example usage:
-#' ribbon_names <- make_ribbon_names(var = "min.cpg")
+#' #ribbon_names <- make_ribbon_names(var = "min.cpg")
 #'
 
 make_ribbon_names <- function(var) {
@@ -206,11 +208,10 @@ make_ribbon_names <- function(var) {
 #'
 #' @return A data.table for ribbon plotting.
 #'
-#' @author Izar de Villasante
 #'
 #' @examples
 #' # Example usage:
-#' ribbon_dt <- make_ribbon_dt(var = "min.cpg", dt = dt_data)
+#' #ribbon_dt <- make_ribbon_dt(var = "min.cpg", dt = dt_data)
 #'
 
 make_ribbon_dt <- function(var, dt) {

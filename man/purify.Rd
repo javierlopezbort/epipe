@@ -18,10 +18,12 @@ Purified RGChannelSet.
 This function purifies an RGChannelSet by imputing missing values and applying random forest-based correction.
 }
 \examples{
+\dontrun{
 # Purify RGChannelSet for EPICv2 array
 purify(rgSet, arraytype = "EPICv2")
 
 # Purify RGChannelSet for EPIC or 450K array
 purify(rgSet, arraytype = "EPIC")
+}
 
 }

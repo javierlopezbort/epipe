@@ -4,25 +4,25 @@
 \alias{filter_dmrs}
 \title{Filter DMRs}
 \usage{
-filter_dmrs(dmrs, p.value = 0.01, mDiff = 0.2, min.cpg = 5, s = FALSE)
+filter_dmrs(dmrs, p.value = 0.05, mDiff = 0.05, min.cpg = 3, s = FALSE)
 }
 \arguments{
-\item{dmrs}{Data.table containing DMR information.}
+\item{dmrs}{A data table containing DMR information.}
 
-\item{p.value}{False Discovery Rate threshold.}
+\item{p.value}{Threshold for the False Discovery Rate (default: 0.05).}
 
-\item{mDiff}{Methylation difference threshold.}
+\item{mDiff}{Threshold for the absolute mean methylation difference (default: 0.05).}
 
-\item{min.cpg}{Minimum number of CpGs in a DMR.}
+\item{min.cpg}{Minimum number of CpGs in a DMR (default: 3).}
 
-\item{s}{Logical, indicating whether to generate a summary of filtered DMRs.}
+\item{s}{Logical indicating whether to generate a summary of filtered DMRs (default: FALSE).}
 }
 \value{
-A data.table containing the filtered DMRs.
+A data table containing the filtered DMRs, or a summary if \code{s = TRUE}.
 }
 \description{
-This function filters Differentially Methylated Regions (DMRs) based on specified criteria.
+Filters a data table of DMRs based on user-specified thresholds for False Discovery Rate (FDR), methylation difference, and the minimum number of CpGs. Optionally, a summary of the filtered DMRs is generated.
 }
-\author{
-Izar de Villasante
+\details{
+Filter DMRs
 }

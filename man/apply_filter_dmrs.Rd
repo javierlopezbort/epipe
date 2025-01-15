@@ -32,11 +32,3 @@ A melted data.table containing the filtered DMRs.
 \description{
 This function applies filtering to Differentially Methylated Regions (DMRs) and generates plots.
 }
-\examples{
-# Example usage:
-filtered_dmrs <- apply_filter_dmrs(dmrs = dmrs_data, plots = TRUE)
-
-}
-\author{
-Izar de Villasante
-}

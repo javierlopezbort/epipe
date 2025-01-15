@@ -9,7 +9,6 @@
 #' @param path Directory path for saving the plot (default: "./").
 #' @return The plot object.
 #'
-#' @export
 save_plot <- function(object, filename, width = 480, height = 620, path = "./") {
   # Create the directory if it doesn't exist
   dir.create(path, recursive = TRUE, showWarnings = FALSE)

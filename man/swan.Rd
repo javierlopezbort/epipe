@@ -2,16 +2,17 @@
 % Please edit documentation in R/normalization_methods.R
 \name{swan}
 \alias{swan}
-\title{Apply SWAN normalization to RGChannelSet.}
+\title{Apply SWAN Normalization to an RGChannelSet Object}
 \usage{
 swan(rgSet)
 }
 \arguments{
-\item{rgSet}{RGChannelSet object to be normalized.}
+\item{rgSet}{RGChannelSet object to normalize.}
 }
 \value{
 Normalized RGChannelSet object.
 }
 \description{
-Apply SWAN normalization to RGChannelSet.
+This function applies the SWAN (Subset Within Array Normalization) method to an RGChannelSet object.
+SWAN normalization corrects for dye biases and other systematic errors in methylation data, particularly when working with Illumina's BeadArray platform.
 }

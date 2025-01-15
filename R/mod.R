@@ -1,12 +1,14 @@
 #' Construct Models and Contrasts with limma
 #'
+#'
+#' @description
 #' This function is used to construct models and contrasts for differential expression analysis using limma.
+#' It builds a design matrix based on the group variable and optional covariates, fits the linear model, and generates contrasts
+#' for pairwise or singular group comparisons.
 #'
-#' @title Construct models and contrasts with limma
-#'
-#' @param object Your object containing beta values.
-#' @param betas_idx Index for beta values.
-#' @param group_var The variable used as an independent variable.
+#' @param object A matrix or data frame containing beta values for the analysis.
+#' @param betas_idx A matrix or data frame providing the indices for the beta values
+#' @param group_var  A string specifying the column name for the grouping variable.
 #' @param covs.formula Formula for specifying covariates in the model.
 #' @param contrasts Optional string of semicolon-separated contrasts. If not provided, automatic contrasts are generated.
 #' @param covs A character vector specifying additional covariates.
@@ -20,11 +22,12 @@
 #'
 #' @return A limma eBayes model.
 #'
-#' @author izar de Villasante
-#'
 #' @export
 #'
 #' @import limma
+#' @import data.table
+#' @import bigstatsr
+#' @import stringi
 #'
 mod <- function(object, betas_idx = NULL, group_var = "Sample_Group", covs.formula = NULL,
                 contrasts = NULL, covs = NULL, metadata, set = TRUE, gr = NULL, pairwise = TRUE,
@@ -32,7 +35,6 @@ mod <- function(object, betas_idx = NULL, group_var = "Sample_Group", covs.formu
 
   # Set row and column names for beta values
   if(class(object)[1] == "FBM"){
-    library(bigstatsr)
     beta_values <- object[]
     rownames(beta_values) <- betas_idx$rn
     colnames(beta_values) <- betas_idx$cn
@@ -67,7 +69,7 @@ mod <- function(object, betas_idx = NULL, group_var = "Sample_Group", covs.formu
   }
 
   colnames(design) <- make.names(colnames(design))
-  
+
   # Remove group_var prefix
   out <- tryCatch(
     {
@@ -82,8 +84,8 @@ mod <- function(object, betas_idx = NULL, group_var = "Sample_Group", covs.formu
       message(cond)
     }
   )
-  
- 
+
+
   # Fit linear model
   fit <- limma::lmFit(object, design)
 

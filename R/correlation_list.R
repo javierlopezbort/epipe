@@ -1,14 +1,22 @@
-#' Correlation analysis
+#' Correlation Analysis
 #'
-#' @param clean_object Rgset object
-#' @param path Path to save the correlation plot
+#' @description This function performs correlation analysis on a Rgset object. It identifies correlated variables, and generates plots.
 #'
-
+#' @param clean_object A Rgset object.
+#' @param path The path to save plots.
+#' @param variables A vector of variable names to include in the analysis, or "ALL" to include all variables.
+#' @param sg A grouping variable to color the correlation plot.
+#'
+#' @return A list of correlated variable pairs.
+#'
+#' @import ggplot2
+#' @import GGally
+#' @importFrom stats cor.test t.test aov chisq.test prop.test
+#' @import data.table
+#' @export
 
 # path<-custom_paths$qc_folder
-#
-#x<-correlation_analysis(clean_EPICv2,
- #                        path=custom_paths$qc_folder)
+# x<-correlation_analysis(clean_EPICv2,path=custom_paths$qc_folder)
 
 
 correlation_analysis<-function(clean_object,path,variables,sg){
@@ -29,22 +37,24 @@ correlation_analysis<-function(clean_object,path,variables,sg){
 
 
 
-
-
+#############################################################################################
 
 #' Sample sheet check and preparation
 #'
-#' @description Check and prepare the sample sheet for correlation analysis
+#' @description Check and prepare the sample sheet for correlation analysis by filtering and processing relevant metadata variables.
 #'
-#' @param object Clean object (Rgset)
+#' @param object RgSet object that includes metadata
+#'
 #' @import S4Vectors
 #' @import Biobase
+#' @import data.table
+#'
+#' @return A data.table containing the processed and relevant variables for correlation analysis.
 
 # Punt de partida-->clean object (includes sex variable)
 
 preparation<-function(object){
-  library(S4Vectors)
-  library(Biobase)
+
   # Just select the variables that may be correlated (not all the variables that we have)
   ###### Ex: Sample_name is irrelevant
 
@@ -76,7 +86,6 @@ preparation<-function(object){
 
   # Can happen that some variables have more levels than what they truly have (ex: Type variable: covs, case,control)-->covs is not a level
 
-  library(data.table)
 
   # Iterate over each column in the data.table
   for (col in names(ss_new_subset)) {
@@ -96,7 +105,18 @@ preparation<-function(object){
 }
 
 
-#' Select variables of the dataset
+
+#############################################################################################################################
+
+#' Select Variables from the Dataset
+#'
+#' @description This function selects specified variables from a dataset. If no variables are specified, the full dataset is returned.
+#'
+#' @param dataset A data.table or data.frame containing the dataset.
+#' @param variables A vector of variable names to select. If set to `'ALL'`, the full dataset is returned.
+#'
+#' @return A subset of the dataset containing only the specified variables, or the full dataset if `'ALL'` is specified.
+#' @import data.table
 
 dataset_var<-function(dataset,variables=NULL){
 
@@ -111,13 +131,17 @@ dataset_var<-function(dataset,variables=NULL){
 }
 
 
+
+#####################################################################################################################
+
 #' List of correlated variables
 #'
 #' @description Obtain a list of variables that are correlated or its design is not well balanced, depending on each type of variables(numerical/categorical)
 #'
-#' @param dataset Sample sheet
+#' @param dataset A data.frame or data.table containing the data to be analyzed.
 #'
-#' @return A list with correlated variables
+#' @return A list where each element contains a pair of correlated variables and their correlation score or p-value.
+#' @import stats
 
 correlated_list<-function(dataset){
 

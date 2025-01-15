@@ -2,19 +2,18 @@
 #'
 #' This function generates various plots to visualize different aspects of differentially methylated probes (DMPs).
 #'
-#' @title Plot DMPs
 #' @param DMPann A data.table containing DMP annotations.
 #' @param names A character vector specifying the names for saving the plots.
 #' @param path Path to save the plots. If NULL, plots won't be saved.
 #'
 #' @return A list of ggplot2 objects representing the generated plots.
 #'
-#' @author Original version by unknown author, modifications and documentation by ChatGPT.
 #' @export
 #' @import ggplot2
 #' @import data.table
 #'
 #' @examples
+#' \dontrun{
 #' # Example usage:
 #' DMP_annotations <- data.table(
 #'   Contrast = c("Group1", "Group1", "Group2", "Group2"),
@@ -23,12 +22,15 @@
 #'   UCSC_RefGene_Group = c("Gene1;Gene2", "Gene3", "Gene4", ""),
 #'   UCSC_RefGene_Group_short = c("Gene1", "Gene3", "Gene4", ".")
 #' )
-#' plot_list <- plotDMP(DMPann = DMP_annotations, names = "DMP_plots", path = "analysis/DNA_methylation/")
+#' plot_list <- plotDMP(
+#' DMPann = DMP_annotations,
+#' names = "DMP_plots",
+#' path = "analysis/DNA_methylation/"
+#' )
+#'}
 #'
 plotDMP <- function(DMPann, names= c( "DMP_count.png","DMP_count_facet.png","DMP_annCGI.png", "DMP_annGenomic.png"), path = NULL) {
   if (nrow(DMPann) > 0) {
-    library(ggplot2)
-    library(data.table)
     data.table::setDT(DMPann)
 
     # Plot DMPs (hypo/hyper)
@@ -65,10 +67,10 @@ plotDMP <- function(DMPann, names= c( "DMP_count.png","DMP_count_facet.png","DMP
     DMPann$UCSC_RefGene_Group[which(DMPann$UCSC_RefGene_Group == "")] <- "."
     DMP_annGenomic <- DMPann[, .(UCSC_RefGene_Group_short = unlist(lapply(strsplit(UCSC_RefGene_Group, ";"), '['))),
                              by = c("Contrast", "Type")]
-    
+
     DMP_annGenomic$USCS_refgene_Group_summary<-ifelse(startsWith(DMP_annGenomic$UCSC_RefGene_Group_short,'exon'),'EXON',DMP_annGenomic$UCSC_RefGene_Group_short)
     #DMP_annGenomic$USCS_refgene_Group_summary<-ifelse(DMP_annGenomic$USCS_refgene_Group_summary=='.','NO INFORMATION',DMP_annGenomic$USCS_refgene_Group_summary)
-    
+
     g4 <- ggplot2::ggplot(DMP_annGenomic, aes(Contrast, fill = USCS_refgene_Group_summary)) +
       facet_wrap(. ~ Type, scales = "free_x") +
       geom_bar(position = "fill", width = 0.8) +
