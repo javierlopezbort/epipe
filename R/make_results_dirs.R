@@ -9,6 +9,7 @@
 #'
 #' @return A list of folder paths created for different purposes.
 #'
+#' @export
 # @examples
 # # Create directories with default paths
 # make_results_dirs(subf = "sample_analysis")
