@@ -1,4 +1,4 @@
-#' Age prediction function
+#' Age prediction
 #'
 #' This function predicts biological age from DNA methylation data.
 #'
@@ -6,17 +6,14 @@
 #' @param clock_name Name of the age clock used to predict age. Default=Horvath (horvath 2013). Currently "Hannum", "Levine", "BNN", "skinHorvath", "PedBE", "Wu", "TL", "BLUP", "EN" and "all" are available.
 #' @param predict_age Logical value, whether to predict age or not. Default=TRUE
 #'
-#' @return Data frame with a column containing the predicted age values.
+#' @return mSet object with predicted age values in colData().
 #' @import methylclock
 #' @import minfi
 #' @export
-
-# Example:
-# clock_name<-'skinHorvath'
-# x<-ageprediction(object,clock_name)
-
-
-# Com a millora es podria posar que es poguessin utilitzar varis clocks alhora.
+#'
+#' @examples
+#' data("mSet_normalized")
+#' ageprediction(mSet_normalized,clock_name='Horvath')
 
 ageprediction<-function(object,clock_name='Horvath',predict_age=TRUE){
   if (predict_age==TRUE){
@@ -37,6 +34,3 @@ ageprediction<-function(object,clock_name='Horvath',predict_age=TRUE){
 
   return(object)
 }
-
-#clean<-ageprediction(clean_EPICv2)
-

@@ -1,15 +1,14 @@
 #' Filter RGChannelSet based on Quality Control Criteria
 #'
-#' This function filters an RGChannelSet based on quality control criteria, including mean detection p-values.
+#' This function filters an RGChannelSet based on quality control criteria.
 #' It removes low-quality samples and probes, and generates a barplot of mean detection p-values.
 #'
 #' @param rgSet RGChannelSet object to be filtered.
-#' @param sg Column name indicating sample groups.
+#' @param sampGroups Column name indicating sample groups.
 #' @param sampNames Column name in 'rgSet@colData' containing sample names.
 #' @param save_barplot Logical, whether to save the barplot of mean detection p-values.
 #' @param frac Fraction of probes not passing the p-value filter for sample exclusion.
 #' @param pval P-value threshold for sample and probe filtering.
-#' @param remove_sex Logical, whether to remove sex chromosomes.
 #' @param arraytype Array type, used to update annotation for Illumina arrays.
 #' @param cols Vector of colors for sample groups. If NULL, colors are generated using get_cols.
 #' @param qc_folder Folder path for saving quality control plots.
@@ -22,17 +21,20 @@
 #'
 #' @export
 #'
-# @examples
-# # Filter RGChannelSet based on quality control criteria
-# filter(rgSet, sg = "Sample_Group", sampNames = "Sample_Name")
-#
+#' @examples
+#'
+#' data("rgSet")
+#'
+#' # Filter RGChannelSet based on quality control criteria
+#' rgSet_filtered<-filter(rgSet, sampGroups = 'Type', sampNames = "Sample_Name",qc_folder = './')
+#'
 
-filter <- function(rgSet, sg = NULL, sampNames = "Sample_Name", save_barplot = TRUE,
-                   frac = 0.1, pval = 0.01, remove_sex = FALSE, arraytype = NULL, cols = NULL,
+filter <- function(rgSet, sampGroups = NULL, sampNames = "Sample_Name", save_barplot = TRUE,
+                   frac = 0.1, pval = 0.01, arraytype = NULL, cols = NULL,
                    qc_folder = "analysis/intermediate/QC") {
   metadata(rgSet)$bad_samples <- character(0)
   metadata(rgSet)$bad_probes <- character(0)
-  targets <- data.table::as.data.table(rgSet@colData, keep.rownames = "rn")
+  targets <- data.table::as.data.table(colData(rgSet), keep.rownames = "rn")
   # Check if 'sampNames' is in 'rgSet@colData', otherwise use colnames(rgSet)
   if (!(sampNames %in% names(targets))){
     sampNames <- colnames(rgSet)
@@ -45,10 +47,10 @@ filter <- function(rgSet, sg = NULL, sampNames = "Sample_Name", save_barplot = T
   # Create 'qc_folder' if it doesn't exist
   dir.create(qc_folder, recursive = TRUE, showWarnings = FALSE)
 
-  if (length(sg) > 1) sg <- sg[1]
-  if (is.null(sg) | !(sg %in% names(targets))) {
+  if (length(sampGroups) > 1) sampGroups <- sampGroups[1]
+  if (is.null(sampGroups) | !(sampGroups %in% names(targets))) {
     SampGroups <- rep(1, ncol(rgSet))
-  } else {sampGroups <- as.factor(targets[[sg]])}
+  } else {sampGroups <- as.factor(targets[[sampGroups]])}
 
   names(sampGroups) <- sampNames
 
@@ -87,7 +89,7 @@ filter <- function(rgSet, sg = NULL, sampNames = "Sample_Name", save_barplot = T
   bad_probes <- which(rowSums(detP < pval) < ncol(rgSet) * (1 - frac))
   rgSet <- rgSet[-c(bad_probes), ]
   if (length(bad_probes) > 0) {
-    warning("The following probes will be discarded since more than", frac * 100,
+    warning("The following probes will be discarded since more than ", frac * 100,
             "% of the samples have detection p-values > ", pval, "): \n ", paste(bad_probes, collapse = ", "))
   } else {
     cat("All samples passed detection P-value filter")

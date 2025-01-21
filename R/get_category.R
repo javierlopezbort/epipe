@@ -15,10 +15,16 @@
 #' - **Metadata groups ("mgroups")**: Columns like `Sample_Group`.
 #'
 #' If a column cannot be categorized, it is labeled as "unknown" and a warning is issued. At least one column must belong to the "ids" category; otherwise, the function stops with an error.
-#'
+#' If `Sentrix_ID` column is not found, it is extracted from `barcode`.
 #'
 #' @import data.table
 #' @import dplyr
+#'
+#' @examples
+#' samplesheet_path <- system.file("extdata", "EPICv2/samplesheet_EPICv2.rds", package = "epipe")
+#' res <- readRDS(samplesheet_path)
+#' sample_sheet <- get_category(res)
+#' attributes(sample_sheet)
 #'
 #' @export
 get_category <- function(object) {

@@ -24,6 +24,7 @@ for each row, and extracts the top rows with the highest standard deviations.
 }
 \examples{
 # Example usage:
-# top_beta(matrix_data, data.frame(rn = rownames(matrix_data), cn = colnames(matrix_data)), n = 500)
+#data("beta_matrix")
+#top_beta(beta_matrix, data.frame(rn = rownames(beta_matrix), cn = colnames(beta_matrix)), n = 500)
 
 }

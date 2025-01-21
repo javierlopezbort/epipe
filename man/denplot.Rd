@@ -7,7 +7,7 @@
 denplot(object, metadata, sampGroups, path = "./", norm_method)
 }
 \arguments{
-\item{object}{An object containing intensity values (not betas).}
+\item{object}{An object containing normalized values (not betas, they are computed internally).}
 
 \item{metadata}{A data frame containing sample metadata.}
 
@@ -15,11 +15,17 @@ denplot(object, metadata, sampGroups, path = "./", norm_method)
 
 \item{path}{A character string specifying the output directory for the density plot image. Defaults to "./".}
 
-\item{norm_method}{A character string specifying the normalization method used.}
+\item{norm_method}{A character string specifying the normalization method used for normalization.}
 }
 \value{
 Generates a PNG file with the density plot in the specified path.
 }
 \description{
-This function calculates beta values and generates a density plot.
+This function generates a density plot.
+}
+\examples{
+data(samplesheet)
+data(mSet_normalized)
+denplot(mSet_normalized,samplesheet,sampGroups='Type',norm_method='swan')
+
 }

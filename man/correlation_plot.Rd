@@ -4,7 +4,7 @@
 \alias{correlation_plot}
 \title{Correlation analysis plot}
 \usage{
-correlation_plot(correlation_list, dataset, sg, path = "./")
+correlation_plot(correlation_list, dataset, sampGroups, path = "./")
 }
 \arguments{
 \item{correlation_list}{A list of correlated variable pairs, where each entry is a vector containing:
@@ -16,7 +16,7 @@ correlation_plot(correlation_list, dataset, sg, path = "./")
 
 \item{dataset}{A data frame containing the sample sheet with variables to analyze.}
 
-\item{sg}{A string specifying the grouping variable for coloring points.}
+\item{sampGroups}{A string specifying the grouping variable for coloring points.}
 
 \item{path}{A string specifying the path to save the correlation plot (default: './').}
 }

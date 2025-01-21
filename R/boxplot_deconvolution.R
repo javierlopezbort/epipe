@@ -8,13 +8,17 @@
 #' @param path A character string specifying the directory to save the plot (default: "./").
 #' @param filename A character string specifying the file name for the saved plot (default: "Cell_type_prop.png").
 #'
-#' @return Saves a boxplot as a PNG file and returns the plot as a `ggplot` object.
+#' @return Saves a boxplot as a PNG file.
 #'
 #' @import tidyr
 #' @import ggpubr
 #' @import rstatix
 #'
 #' @export
+#'
+#' @examples
+#' data("ss_all_variables")
+#' ttest_boxplot(ss_all_variables,sampGroup = 'Condition')
 
 ttest_boxplot<-function(data,sampGroup,path = "./",filename='Cell_type_prop.png'){
 
@@ -63,7 +67,3 @@ ttest_boxplot<-function(data,sampGroup,path = "./",filename='Cell_type_prop.png'
   ggsave(file_path, plot, width = 10, height = 7)
 
 }
-
-# Use:
-
-#ttest_boxplot(ss_clean_allvariables_ex_quantile_sex,sampGroup = 'condition')

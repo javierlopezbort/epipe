@@ -15,6 +15,11 @@
 #' @import minfi
 #'
 #' @export
+#' @examples
+#' data(rgSet)
+#' data("mSet_normalized")
+#' deconvoluted<-celldeconvolution(rgSet,mSet_normalized,arraytype='EPICv2')
+#' colData(deconvoluted)
 
 
 #Steps:
@@ -34,10 +39,10 @@ celldeconvolution<-function(raw_object, object, arraytype){
     Betas<-getBeta(MSet)
     Betas<- sesame::betasCollapseToPfx(Betas)
 
-    IDOLOptimizedCpGsBloodv2<- IDOLOptimizedCpGs[which(IDOLOptimizedCpGs%in%rownames(Betas))]
+    IDOLOptimizedCpGsBloodv2<- FlowSorted.Blood.EPIC::IDOLOptimizedCpGs[which(FlowSorted.Blood.EPIC::IDOLOptimizedCpGs%in%rownames(Betas))]
     cell.type.prop <- projectCellType_CP(
       Betas[IDOLOptimizedCpGsBloodv2, ],
-      IDOLOptimizedCpGs.compTable[IDOLOptimizedCpGsBloodv2,],
+      FlowSorted.Blood.EPIC::IDOLOptimizedCpGs.compTable[IDOLOptimizedCpGsBloodv2,],
       contrastWBC = NULL, nonnegative = TRUE,
       lessThanOne = FALSE
     )

@@ -16,9 +16,13 @@ ttest_boxplot(data, sampGroup, path = "./", filename = "Cell_type_prop.png")
 \item{filename}{A character string specifying the file name for the saved plot (default: "Cell_type_prop.png").}
 }
 \value{
-Saves a boxplot as a PNG file and returns the plot as a \code{ggplot} object.
+Saves a boxplot as a PNG file.
 }
 \description{
 This function performs a t-test to check for statistical differences in cell type proportions between two groups
 and creates a boxplot with statistical annotations.
+}
+\examples{
+data("ss_all_variables")
+ttest_boxplot(ss_all_variables,sampGroup = 'Condition')
 }

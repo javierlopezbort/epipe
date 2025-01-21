@@ -12,7 +12,7 @@ purify(rgSet, arraytype = NULL)
 \item{arraytype}{Array type, specifying the type of Illumina array.}
 }
 \value{
-Purified RGChannelSet.
+Purity estimation
 }
 \description{
 This function purifies an RGChannelSet by imputing missing values and applying random forest-based correction.
@@ -20,7 +20,9 @@ This function purifies an RGChannelSet by imputing missing values and applying r
 \examples{
 \dontrun{
 # Purify RGChannelSet for EPICv2 array
+data(rgSet)
 purify(rgSet, arraytype = "EPICv2")
+
 
 # Purify RGChannelSet for EPIC or 450K array
 purify(rgSet, arraytype = "EPIC")

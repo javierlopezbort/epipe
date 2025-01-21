@@ -10,14 +10,12 @@
 #' @import ggplot2
 #' @export
 #' @examples
-#' \dontrun{
 #' data <- data.frame(
 #'   Group = factor(c("A", "B", "A", "B", "A", "B")),
 #'   Age = c(30, 25, 40, 35, 28, 45),
 #'   Gender = factor(c("M", "F", "M", "F", "M", "F"))
 #' )
 #' distribution_plots(data, variable_interest = "Group")
-#'}
 
 distribution_plots<-function(data,variable_interest,path = "./"){
 

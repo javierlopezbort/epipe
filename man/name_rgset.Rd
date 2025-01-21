@@ -2,7 +2,7 @@
 % Please edit documentation in R/name_rgset.R
 \name{name_rgset}
 \alias{name_rgset}
-\title{Rename RGSet and Adjust Column Names}
+\title{Adjust Column Names}
 \usage{
 name_rgset(res, targets, idcol = "Sample_Name")
 }
@@ -14,8 +14,8 @@ name_rgset(res, targets, idcol = "Sample_Name")
 \item{idcol}{Identifier column for matching with the RGSet columns.}
 }
 \value{
-Modified RGSet object with adjusted column names and optional renaming.
+Modified RGSet object with adjusted column names.
 }
 \description{
-This function renames an RGSet object and adjusts column names based on target information.
+This function adjusts column names based on target information.
 }

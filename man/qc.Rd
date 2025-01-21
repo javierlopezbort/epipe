@@ -7,10 +7,9 @@
 qc(
   rgSet,
   sampGroups = NULL,
-  sampNames = "Sample_Name",
+  idcol = "Sample_Name",
   pal = NULL,
-  qc_folder = "analysis/intermediate/QC/",
-  idcol = "barcode"
+  qc_folder = "analysis/intermediate/QC/"
 )
 }
 \arguments{
@@ -18,16 +17,14 @@ qc(
 
 \item{sampGroups}{A variable to use for coloring groups in the plots. Must match a column name in \code{rgSet@colData}.}
 
-\item{sampNames}{A variable containing barcodes or ids matching colnames of the rgsetdata}
+\item{idcol}{A column name in \code{rgSet@colData} used as an identifier. Defaults to "Sample_Name".}
 
 \item{pal}{A color palette to use for group coloring. Defaults to \code{NULL} (uses the default palette).}
 
 \item{qc_folder}{A character string specifying the path to the folder where plots will be saved.}
-
-\item{idcol}{A column name in \code{rgSet@colData} used as an identifier. Defaults to "barcode".}
 }
 \value{
-@return The function saves QC plots as image files in the specified folder.
+The function saves QC plots as image files in the specified folder.
 }
 \description{
 This function generates various quality control (QC) plots for signal distribution to assess the quality of the data before normalization.
@@ -39,4 +36,15 @@ This function generates:
 \item A density plot showing beta value distributions before normalization.
 \item A mean QC plot showing the mean signal intensities.
 }
+}
+\examples{
+
+data("rgSet")
+
+qc(rgSet,
+sampGroups = 'Type',
+idcol='Sample_Name',
+qc_folder = './')
+
+
 }

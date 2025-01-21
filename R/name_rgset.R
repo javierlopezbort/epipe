@@ -1,12 +1,12 @@
-#' Rename RGSet and Adjust Column Names
+#' Adjust Column Names
 #'
-#' This function renames an RGSet object and adjusts column names based on target information.
+#' This function adjusts column names based on target information.
 #'
 #' @param res An RGSet object to be processed.
 #' @param targets Target information for column renaming.
 #' @param idcol Identifier column for matching with the RGSet columns.
 #'
-#' @return Modified RGSet object with adjusted column names and optional renaming.
+#' @return Modified RGSet object with adjusted column names.
 #'
 #' @import Biobase
 #' @import SummarizedExperiment
@@ -16,7 +16,7 @@
 # # Rename RGSet with targets information
 # res <- readRDS("inst/extdata/rgSet.rds")
 # targets <- readRDS("inst/sample_sheet.rds")
-# renamed_data <- name_rgset(res, targets, newname = "new_name", exclude = c("excluded_col1", "excluded_col2"))
+# renamed_data <- name_rgset(res, targets, idcol='basename')
 #
 
 name_rgset <- function(res, targets, idcol = "Sample_Name") {

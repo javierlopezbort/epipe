@@ -10,7 +10,7 @@
 #' @param sexplot_folder Path to save the sex plot
 #' @param predict_sex Logical, whether to predict and plot sex. Default is TRUE.
 #'
-#' @return Preprocessed MethylSet object.
+#' @return Preprocessed MethylSet object with predictedSex added in the colData()
 #'
 #' @import minfi
 #' @import maxprobes
@@ -18,6 +18,12 @@
 #' @import qs
 #'
 #' @export
+#'
+#' @examples
+#' data("mSet_normalized")
+#' prep(mSet_normalized,remove_sex = TRUE,arraytype='EPICv2',predict_sex = TRUE,sexplot_folder = "./")
+#'
+#'
 prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL,sexplot_folder= NULL,predict_sex=TRUE) {
   # Save the initial set of probe IDs
   probeID_start <- rownames(mSetSqn)
@@ -82,7 +88,8 @@ remove_cross_reactive_probes <- function(mSetSqn, sexchr) {
   probeID_start <- rownames(mSetSqn)
   if (annotation(mSetSqn)[1] == "IlluminaHumanMethylationEPICv2") {
     # Read the cross-reactive probe mask for EPICv2
-    mask <- qs::qread("reference/EPICv2_xreactive.qs")
+    mask <- qs::qread(system.file("extdata", "EPICv2_xreactive.qs", package = "epipe"))
+    #mask <- qs::qread("inst/extdata/EPICv2_xreactive.qs")
     mSetSqn <- mSetSqn[!rownames(mSetSqn) %in% mask, ]
   } else {
     # For other arrays, use maxprobes::dropXreactiveLoci

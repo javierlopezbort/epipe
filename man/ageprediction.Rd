@@ -2,7 +2,7 @@
 % Please edit documentation in R/ageprediction.R
 \name{ageprediction}
 \alias{ageprediction}
-\title{Age prediction function}
+\title{Age prediction}
 \usage{
 ageprediction(object, clock_name = "Horvath", predict_age = TRUE)
 }
@@ -14,8 +14,12 @@ ageprediction(object, clock_name = "Horvath", predict_age = TRUE)
 \item{predict_age}{Logical value, whether to predict age or not. Default=TRUE}
 }
 \value{
-Data frame with a column containing the predicted age values.
+mSet object with predicted age values in colData().
 }
 \description{
 This function predicts biological age from DNA methylation data.
+}
+\examples{
+data("mSet_normalized")
+ageprediction(mSet_normalized,clock_name='Horvath')
 }

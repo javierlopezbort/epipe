@@ -18,9 +18,9 @@ read_idats(
 
 \item{arraytype}{A character string specifying the array platform used. (options: "450K", "EPIC", "EPICv2"). If \code{NULL}, the array type will be inferred from the sample sheet if available.}
 
-\item{idats_folder}{A character string specifying the path to the folder containing IDAT files.}
+\item{idats_folder}{Optional. A character string specifying the path to the folder containing IDAT files, if it is not correctly specified in the \code{Basename} column of the samplesheet.}
 
-\item{idcol}{The column name in the sample sheet that contains unique identifiers for samples.}
+\item{idcol}{The column name in the sample sheet that contains unique identifiers for samples.(eg. Sample_Name)}
 
 \item{description}{A description for the rgSet (default: "").}
 
@@ -30,9 +30,37 @@ read_idats(
 A SummarizedExperiment object.
 }
 \description{
-Loads IDAT files into an rgSet, names them correctly, and annotates them based on the array type.
+Load IDAT files into a rgSet, names them correctly, and annotates them based on the array type.
 }
 \details{
-The function will automatically generate the "Basename" column in the sample sheet if it does not already exist,
-by combining the \code{idats_folder}, \code{Sentrix_ID}, and \code{Sentrix_Position} columns. It then reads the methylation data and annotates the resulting \code{rgSet} with metadata such as description, author, and category.
+The "Basename" column contains the path to the idat files (without _Red.idat and Grn.idat)
+If idats_folder is provided, it will generate the "Basename" column by combining the \code{idats_folder}, \code{Sentrix_ID},
+and \code{Sentrix_Position} columns.
+If idats_folder is not provided, the function reads the methylation data with the path that is in the \code{Basename} column.
+}
+\examples{
+\dontrun{
+
+# EXAMPLE 1: Basename column in the samplesheet
+# Load the sample sheet
+data("samplesheet")
+
+rgSet <- read_idats(ss = samplesheet,
+                    arraytype = 'EPICv2',
+                    idats_folder = NULL,
+                    idcol = "Sample_Name")
+
+
+# EXAMPLE 2: Idats_folder is provided
+
+data("samplesheet")
+
+# Define the path to the folder containing the IDAT files
+idats_folder <-system.file("extdata/EPICv2/idats/", package = "epipe")
+
+rgSet <- read_idats(ss = samplesheet,
+                    arraytype = 'EPICv2',
+                    idats_folder = idats_folder,
+                    idcol = "Sample_Name")
+}
 }

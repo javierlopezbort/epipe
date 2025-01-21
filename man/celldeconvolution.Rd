@@ -20,3 +20,9 @@ A MethylSet object containing deconvolution results in the colData slot.
 This function performs deconvolution based on DNA methylation data, estimating cell type proportions
 using raw and normalized methylation datasets. It supports both HM450 and EPIC platforms.
 }
+\examples{
+data(rgSet)
+data("mSet_normalized")
+deconvoluted<-celldeconvolution(rgSet,mSet_normalized,arraytype='EPICv2')
+colData(deconvoluted)
+}

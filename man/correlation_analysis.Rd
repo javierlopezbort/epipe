@@ -4,20 +4,24 @@
 \alias{correlation_analysis}
 \title{Correlation Analysis}
 \usage{
-correlation_analysis(clean_object, path, variables, sg)
+correlation_analysis(clean_object, path, variables = "ALL", sampGroups)
 }
 \arguments{
 \item{clean_object}{A Rgset object.}
 
-\item{path}{The path to save plots.}
+\item{path}{The path to save plots (without '/' at the end).}
 
 \item{variables}{A vector of variable names to include in the analysis, or "ALL" to include all variables.}
 
-\item{sg}{A grouping variable to color the correlation plot.}
+\item{sampGroups}{A grouping variable to color the correlation plot.}
 }
 \value{
-A list of correlated variable pairs.
+A list of correlated variable pairs, and plots.
 }
 \description{
 This function performs correlation analysis on a Rgset object. It identifies correlated variables, and generates plots.
+}
+\examples{
+data(mSet_normalized)
+correlation_analysis(mSet_normalized,path='./',sampGroups='Condition')
 }

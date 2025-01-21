@@ -25,6 +25,6 @@ normalization_all_methods(
 }
 \description{
 This function applies various normalization methods to a given dataset and generates density plots
-for each method. The plots are saved to the specified directory. The user can choose to exclude a specific
+for each method. The plots are saved to the specified directory. The user has choose to exclude a specific
 normalization method by specifying it in the \code{norm_method} argument.
 }

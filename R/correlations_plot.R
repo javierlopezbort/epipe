@@ -8,7 +8,7 @@
 #'   - The correlation score or p-value as a string (e.g., "0.05").
 #'
 #' @param dataset A data frame containing the sample sheet with variables to analyze.
-#' @param sg A string specifying the grouping variable for coloring points.
+#' @param sampGroups A string specifying the grouping variable for coloring points.
 #' @param path A string specifying the path to save the correlation plot (default: './').
 #'
 #' @import GGally
@@ -23,7 +23,7 @@
 #correlation_list<-list(c('Sample_Group','Sentrix_ID'),c('Condition','Sentrix_ID'),c('Type','arraytype'))
 
 
-correlation_plot<-function(correlation_list,dataset,sg,path = "./"){
+correlation_plot<-function(correlation_list,dataset,sampGroups,path = "./"){
 
   # Initialize ggpairs plot
   pm <- ggpairs(dataset, upper = 'blank')
@@ -58,7 +58,7 @@ correlation_plot<-function(correlation_list,dataset,sg,path = "./"){
 
     if (select_variable=='red'){
       #print(select_variable)
-      p <- p + geom_point(aes(color = !!rlang::sym(sg)))
+      p <- p + geom_point(aes(color = !!rlang::sym(sampGroups)))
       p<-p+ggplot2::theme(plot.background = ggplot2::element_rect(colour = 'red',size=2))
 
       # Get correlation score
@@ -69,7 +69,7 @@ correlation_plot<-function(correlation_list,dataset,sg,path = "./"){
 
     }else{
       # Add aesthetics
-      p <- p + aes(fill = !!rlang::sym(sg))
+      p <- p + aes(fill = !!rlang::sym(sampGroups))
       #p <- p + aes(fill = !!rlang::sym(select_variable))###this variable can change or can be specified by a color ex: 'red'
       p<-p+ggplot2::theme(plot.background = ggplot2::element_rect(fill = 'red',size=3))
 
@@ -101,7 +101,6 @@ correlation_plot<-function(correlation_list,dataset,sg,path = "./"){
 }
 
 
-#correlation_plot(listed_variables,data_prepared,path=custom_paths$qc_folder)
 
 
 

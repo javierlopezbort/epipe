@@ -27,9 +27,15 @@ prep(
 \item{predict_sex}{Logical, whether to predict and plot sex. Default is TRUE.}
 }
 \value{
-Preprocessed MethylSet object.
+Preprocessed MethylSet object with predictedSex added in the colData()
 }
 \description{
 This function performs preprocessing steps on a MethylSet object, such as removing probes with known SNPs,
 removing cross-reactive probes, predicting and plotting sex, and optionally removing sex chromosomes.
+}
+\examples{
+data("mSet_normalized")
+prep(mSet_normalized,remove_sex = TRUE,arraytype='EPICv2',predict_sex = TRUE,sexplot_folder = "./")
+
+
 }

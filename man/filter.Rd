@@ -6,12 +6,11 @@
 \usage{
 filter(
   rgSet,
-  sg = NULL,
+  sampGroups = NULL,
   sampNames = "Sample_Name",
   save_barplot = TRUE,
   frac = 0.1,
   pval = 0.01,
-  remove_sex = FALSE,
   arraytype = NULL,
   cols = NULL,
   qc_folder = "analysis/intermediate/QC"
@@ -20,7 +19,7 @@ filter(
 \arguments{
 \item{rgSet}{RGChannelSet object to be filtered.}
 
-\item{sg}{Column name indicating sample groups.}
+\item{sampGroups}{Column name indicating sample groups.}
 
 \item{sampNames}{Column name in 'rgSet@colData' containing sample names.}
 
@@ -29,8 +28,6 @@ filter(
 \item{frac}{Fraction of probes not passing the p-value filter for sample exclusion.}
 
 \item{pval}{P-value threshold for sample and probe filtering.}
-
-\item{remove_sex}{Logical, whether to remove sex chromosomes.}
 
 \item{arraytype}{Array type, used to update annotation for Illumina arrays.}
 
@@ -42,6 +39,14 @@ filter(
 Filtered RGChannelSet.
 }
 \description{
-This function filters an RGChannelSet based on quality control criteria, including mean detection p-values.
+This function filters an RGChannelSet based on quality control criteria.
 It removes low-quality samples and probes, and generates a barplot of mean detection p-values.
+}
+\examples{
+
+data("rgSet")
+
+# Filter RGChannelSet based on quality control criteria
+rgSet_filtered<-filter(rgSet, sampGroups = 'Type', sampNames = "Sample_Name",qc_folder = './')
+
 }

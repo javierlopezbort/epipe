@@ -20,7 +20,7 @@ library(IlluminaHumanMethylationEPICv2anno.20a1.hg38)
 max_ncores=RcppParallel::defaultNumThreads() # Not in use but may be useful
 
 # Run the R scripts in the R/ folder with your custom functions:
-tar_source()
+tar_source( )
 
 source("config.R") # Source other scripts as needed. # nolint
 
@@ -85,12 +85,11 @@ targets <- tarchetypes::tar_map(
   tar_target(ss, get_category(samplesheet)),
 
   # Read idats:
-  tar_target(rgSet, read_idats(ss,idats_folder=idat_folder,arraytype = arraytype,idcol=idcol, author= author, description = description)), # makes rgChannelset object using minfi and annotates according to arraytype
+  tar_target(rgSet, read_idats(ss,arraytype = arraytype,idcol=idcol, author= author, description = description)), # makes rgChannelset object using minfi and annotates according to arraytype
 
   # Qc report:
   tar_target(QC_plotss, qc(rgSet,
                           sampGroups = sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
-                          sampNames=idcol,
                           idcol=idcol,
                           pal=pal_discrete,
                           qc_folder = custom_paths[["qc_folder"]]
@@ -100,7 +99,8 @@ targets <- tarchetypes::tar_map(
   # Filters:  -probes: pval<0.01, -samples: 10% probes fail, Plots: Sample p.values barplot (colMeans)
   tar_target(filtered, filter(
     rgSet=rgSet,
-    sg= sg, #names(ss)[attributes(ss)$category == "mgroups"][1],
+    sampGroups= sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
+    sampNames = idcol,
     qc_folder = custom_paths[["qc_folder"]],
     save_barplot=T)),
 
@@ -141,7 +141,7 @@ targets <- tarchetypes::tar_map(
 
   # Correlation analysis
   tar_target(cor_analysis, correlation_analysis(clean_all_deconv,
-                                                path=custom_paths[["qc_folder"]],variables=variables,sg=sg)),
+                                                path=custom_paths[["qc_folder"]],variables=variables,sampGroups=sampGroups)),
 
   # Create a data frame with all the variables predicted
   tar_target(ss_clean,{colData(clean_age)}),

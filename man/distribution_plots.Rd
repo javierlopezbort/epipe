@@ -18,12 +18,10 @@ This function generates either boxplots or barplots for all variables in a data 
 colored by the variable of interest (such as sample groups or conditions).
 }
 \examples{
-\dontrun{
 data <- data.frame(
   Group = factor(c("A", "B", "A", "B", "A", "B")),
   Age = c(30, 25, 40, 35, 28, 45),
   Gender = factor(c("M", "F", "M", "F", "M", "F"))
 )
 distribution_plots(data, variable_interest = "Group")
-}
 }

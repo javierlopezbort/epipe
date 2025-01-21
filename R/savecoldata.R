@@ -18,9 +18,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Example usage:
-#' data("ex_EPIC", package = "epipe")
-#' savecoldata(ex_EPIC)
+#' data("mSet_normalized")
+#' savecoldata(mSet_normalized)
 #' }
 #'
 #' @import S4Vectors

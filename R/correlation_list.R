@@ -3,33 +3,35 @@
 #' @description This function performs correlation analysis on a Rgset object. It identifies correlated variables, and generates plots.
 #'
 #' @param clean_object A Rgset object.
-#' @param path The path to save plots.
+#' @param path The path to save plots (without '/' at the end).
 #' @param variables A vector of variable names to include in the analysis, or "ALL" to include all variables.
-#' @param sg A grouping variable to color the correlation plot.
+#' @param sampGroups A grouping variable to color the correlation plot.
 #'
-#' @return A list of correlated variable pairs.
+#' @return A list of correlated variable pairs, and plots.
 #'
 #' @import ggplot2
 #' @import GGally
 #' @importFrom stats cor.test t.test aov chisq.test prop.test
 #' @import data.table
 #' @export
+#'
+#' @examples
+#' data(mSet_normalized)
+#' correlation_analysis(mSet_normalized,path='./',sampGroups='Condition')
 
-# path<-custom_paths$qc_folder
-# x<-correlation_analysis(clean_EPICv2,path=custom_paths$qc_folder)
 
 
-correlation_analysis<-function(clean_object,path,variables,sg){
+correlation_analysis<-function(clean_object,path,variables='ALL',sampGroups){
   data_prepared<-preparation(clean_object)
   dataset_df<-dataset_var(data_prepared,variables)
   listed_variables<-correlated_list(dataset_df)
-  correlation_plot(listed_variables,dataset_df,sg,path)
+  correlation_plot(listed_variables,dataset_df,sampGroups,path)
   return(listed_variables)
 }
 
 ## EXAMPLES:
 
-#x<-correlation_analysis(clean_EPICv2)
+# x<-correlation_analysis(clean_EPICv2)
 #
 # data_prepared<-preparation(clean_EPICv2)
 # listed_variables<-correlated_list(data_prepared)
@@ -118,7 +120,7 @@ preparation<-function(object){
 #' @return A subset of the dataset containing only the specified variables, or the full dataset if `'ALL'` is specified.
 #' @import data.table
 
-dataset_var<-function(dataset,variables=NULL){
+dataset_var<-function(dataset,variables='ALL'){
 
   if (length(variables) == 1 && variables == 'ALL') {
     # Do nothing, use the full dataset
@@ -279,8 +281,3 @@ correlated_list<-function(dataset){
   return(cor_data)
 
 }
-
-
-
-# How to use:
-#coorrelated_l<-correlated_list(tips)

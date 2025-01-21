@@ -5,7 +5,7 @@
 #' @param rgSet RGChannelSet object to be purified.
 #' @param arraytype Array type, specifying the type of Illumina array.
 #'
-#' @return Purified RGChannelSet.
+#' @return Purity estimation
 #'
 #' @importFrom randomForest randomForest
 #' @importFrom impute impute.knn
@@ -15,7 +15,9 @@
 #' @examples
 #' \dontrun{
 #' # Purify RGChannelSet for EPICv2 array
+#' data(rgSet)
 #' purify(rgSet, arraytype = "EPICv2")
+#'
 #'
 #' # Purify RGChannelSet for EPIC or 450K array
 #' purify(rgSet, arraytype = "EPIC")

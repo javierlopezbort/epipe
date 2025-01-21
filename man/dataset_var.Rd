@@ -4,7 +4,7 @@
 \alias{dataset_var}
 \title{Select Variables from the Dataset}
 \usage{
-dataset_var(dataset, variables = NULL)
+dataset_var(dataset, variables = "ALL")
 }
 \arguments{
 \item{dataset}{A data.table or data.frame containing the dataset.}
