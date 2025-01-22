@@ -13,7 +13,7 @@
 #'
 #' @export
 #'
-betas_disk <- function(rgSet) {
+betas_disk <- function(rgSet, ...) {
 
   # Extract beta matrix from rgSet
   beta_normalized <- minfi::getBeta(rgSet)
