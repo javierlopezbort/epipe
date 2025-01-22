@@ -25,8 +25,6 @@ idats_folder <- system.file("extdata/EPICv2/idats/", package = "epipe")
 results_folder <- "results/"
 analysis_folder <- "analysis/"
 
-
-
 ################################################################################
 
 ## Metadata:
@@ -48,37 +46,39 @@ sex_prediction<-TRUE
 
 
 ################################################################################
+
 ### Color palettes:
 
 pal_discrete =  c("#1B9E77","#7570B3","#D95F02", "#E7298A", "#66A61E", "#E6AB02", "#A6761D", "#666666","#FF0010")
 
+
 ################################################################################
-### Deconvolution:
+
+## Deconvolution:
 
 # Deconvolution will predict the following cell types proportion:
 # Leukocyte (leuk.prop), neutrophil (Neu), Monocytes (Mono), CD8T, CD4T, Natural Killer (NK), Bcell
 
 
-#######################################################################################################
-### PCA:
+################################################################################
+
+## Variables for correlation analysis:
+# By default: All variables
+# variables='ALL'
+
+# But you can specify the variables that you are interested in:
+variables=c('Sentrix_ID','Condition','predictedAge','predictedSex','CD4T','NK','Bcell','Mono','Neu','leuk.prop')
+
 
 ## PCA top variable:
 topN <- c(100,1000,5000,10000)
 
-# Variables to put in the correlation analysis:
-# By default: All variables
-# variables='ALL'
-# But you can specify the variables that you are interested in.
-
-variables=c('Sentrix_ID','mutation','condition','age','predictedSex','purity','CD4T','NK','Bcell','Mono','Neu','leuk.prop')
-
-
 # Variables to select for the Bplots
-bplots_var<-c('Sentrix_ID','Sentrix_position','mutation','condition','purity','predictedSex','predictedAge',
-              'CD4T','NK','Bcell','Mono','Neu','leuk.prop','age','sex')
+bplots_var<-c('Sentrix_ID','Sentrix_position','Condition','predictedSex','predictedAge',
+              'CD4T','NK','Bcell','Mono','Neu','leuk.prop')
 
 
-########################################################################################
+################################################################################
 #### Model:
 
 group_var = "condition" # variable of interest that we want to model.

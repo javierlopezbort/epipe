@@ -43,42 +43,29 @@ For an example, refer to the provided sample sheet:
 data(samplesheeet)
 ```
 
-### Configuration file: config.R
+### config.R and targets.R files
 
 EPIPE uses a `config.R` file to define key parameters for the pipeline. You can customize the configuration file according to your analysis needs.
 
-Access the configuration file via the following:
+When you install or load the EPIPE package with `library(epipe)`, both files will be automatically copied from the package to your current working directory (if not already present). This allows you to immediately start running your bioinformatics pipeline without needing to manually copy the file. Both files present in your current directory are essential for running the pipeline.
 
-``` r
-# Path to the config.R file
-config_file_path <- system.file("config.R", package = "epipe")
-
-# Open the file in RStudio
-file.edit(config_file_path)
-```
-Once you have the file save it and make a copy.
-
-
-### Targets.R file
-
-When you install or load the EPIPE package with `library(epipe)`, the \_targets.R file will be automatically copied from the package to your current working directory (if it is not already present). This allows you to immediately start running your bioinformatics pipeline without needing to manually copy the file.
-
-However, you can also manually copy the \_targets.R file to your working directory, by using the following R command:
+In case you need to manually copy the files to your working directory, use the following R command:
 
 ``` r
 file.copy(system.file("_targets.R", package = "epipe"),"_targets.R")
+file.copy(system.file("config.R", package = "epipe"),"config.R")
 ```
 
 ## Running the pipeline
 
-Once the `config.R` file is configured, you can run the pipeline as follows:
+Once the `config.R` file is set up, you can run the pipeline as follows:
 
 ``` r
 library(epipe)
 targets::tar_make()
 ```
 
-This will start the pipeline based on the targets defined in the config.R file.
+This will start the pipeline based on the variables defined in the config.R file.
 
 ## Output
 

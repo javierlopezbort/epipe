@@ -1,11 +1,13 @@
 ####### Epigenetics PIPEline Main Workflow #######
 
 # # Load packages required to define the pipeline:
-# library(targets)
-# library(tarchetypes)
-# # library(epipe)
-# library(data.table)
-# library(quarto)
+library(targets)
+library(tarchetypes)
+library(data.table)
+library(quarto)
+library(SummarizedExperiment)
+suppressPackageStartupMessages(library(qs2))
+
 # # Load other packages as needed. # nolint
 # library(crew)
 # library(crew.cluster)
@@ -15,11 +17,7 @@
 # library(IlluminaHumanMethylationEPICv2anno.20a1.hg38)
 #
 # max_ncores=RcppParallel::defaultNumThreads() # Not in use but may be useful
-print('hello')
-
-# Source config.R file
-source(system.file("config.R", package = "epipe"))
-
+print('Control 1')
 
 # Set target options:
 tar_option_set(
@@ -31,6 +29,21 @@ tar_option_set(
   retrieval = "worker"
   # Set other options as needed.
 )
+
+print('Control 2')
+
+# Source scripts files
+#tar_source(system.file(package = "epipe"))
+
+
+print('Control 3')
+
+# Source config.R file
+#source(system.file("config.R", package = "epipe"))
+source("config.R")
+
+print('Control 4')
+
 
 # tar_make_clustermq() configuration (okay to leave alone):
 options(clustermq.scheduler = "multiprocess")
@@ -51,16 +64,16 @@ targets <- tarchetypes::tar_map(
   tar_target(sample_names_config,idcol),
   tar_target(sample_groups_config,sampGroups),
   #tar_target(slices, values, pattern = slice(data_names)),
-  tar_target(custom_paths,make_results_dirs(subf=data_names, results_folder = results_folder, analysis_folder = analysis_folder)),
+  tar_target(custom_paths,epipe::make_results_dirs(subf=data_names, results_folder = results_folder, analysis_folder = analysis_folder)),
   tar_target(samplesheet_path, data_paths, format = "file"),
   tar_target(samplesheet, readRDS(samplesheet_path)),
-  tar_target(ss, get_category(samplesheet)),
+  tar_target(ss, epipe::get_category(samplesheet)),
 
   # Read idats:
-  tar_target(rgSet, read_idats(ss,arraytype = arraytype,idats_folder=idats_folder,idcol=idcol, author= author, description = description)), # makes rgChannelset object using minfi and annotates according to arraytype
+  tar_target(rgSet, epipe::read_idats(ss,arraytype = arraytype,idats_folder=idats_folder,idcol=idcol, author= author, description = description)), # makes rgChannelset object using minfi and annotates according to arraytype
 
   # Qc report:
-  tar_target(QC_plotss, qc(rgSet,
+  tar_target(QC_plotss, epipe::qc(rgSet,
                           sampGroups = sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
                           idcol=idcol,
                           pal=pal_discrete,
@@ -69,7 +82,7 @@ targets <- tarchetypes::tar_map(
              ,packages = "minfi",deployment = "worker" ),
 
   # Filters:  -probes: pval<0.01, -samples: 10% probes fail, Plots: Sample p.values barplot (colMeans)
-  tar_target(filtered, filter(
+  tar_target(filtered, epipe::filter(
     rgSet=rgSet,
     sampGroups= sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
     sampNames = idcol,
@@ -84,13 +97,13 @@ targets <- tarchetypes::tar_map(
   tar_target(save_raw_beta,write.csv(raw_beta, file=file.path(custom_paths$betas_folder,'raw_beta.csv'))),
 
   #Normalization
-  tar_target(normalize, norm(filtered)),
-  tar_target(dplot_normalize,denplot(normalize,
+  tar_target(normalize, epipe::norm(filtered)),
+  tar_target(dplot_normalize,epipe::denplot(normalize,
                                 ss,
                                 sampGroups = sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
                                 path=custom_paths[["qc_folder"]],
                                 norm_method = norm_function)),
-  tar_target(normalize_all, normalization_all_methods(filtered,
+  tar_target(normalize_all, epipe::normalization_all_methods(filtered,
                                                       ss,
                                                       sampGroups = sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
                                                       path=custom_paths[["qc_folder"]],
@@ -102,23 +115,23 @@ targets <- tarchetypes::tar_map(
 
 
   #Preprocessing (probe removal)
-  tar_target(clean, prep(normalize, remove_sex = remove_sex, arraytype = arraytype,sexplot_folder= custom_paths[["sexplot_folder"]],predict_sex=sex_prediction)),
+  tar_target(clean, epipe::prep(normalize, remove_sex = remove_sex, arraytype = arraytype,sexplot_folder= custom_paths[["sexplot_folder"]],predict_sex=sex_prediction)),
 
 
   #Predict age
-  tar_target(clean_age,ageprediction(clean),error='continue'),
+  tar_target(clean_age,epipe::ageprediction(clean),error='continue'),
 
   #Deconvolution
-  tar_target(clean_all_deconv,celldeconvolution(rgSet,clean_age,arraytype = arraytype),error = 'continue'),
+  tar_target(clean_all_deconv,epipe::celldeconvolution(rgSet,clean_age,arraytype = arraytype),error = 'continue'),
 
   # Correlation analysis
-  tar_target(cor_analysis, correlation_analysis(clean_all_deconv,
+  tar_target(cor_analysis, epipe::correlation_analysis(clean_all_deconv,
                                                 path=custom_paths[["qc_folder"]],variables=variables,sampGroups=sampGroups)),
 
   # Create a data frame with all the variables predicted
   tar_target(ss_clean,{colData(clean_age)}),
   tar_target(ss_clean_allvariables,
-             savecoldata(clean_all_deconv,
+             epipe::savecoldata(clean_all_deconv,
                          dir = custom_paths[["ss_clean_path"]], file = "ss_clean.csv",
                          quote = F,sep = ","),
              deployment = "main"),
@@ -144,13 +157,13 @@ targets <- tarchetypes::tar_map(
   # tar_target(betas_path, file.path(custom_paths$temp,"betas.bk"), format = "file"),
 
   #Get beta values and save to dis
-  tar_target(betas, betas_disk(clean_age,backingfile=file.path(custom_paths$temp,"betas")),
+  tar_target(betas, epipe::betas_disk(clean_age,backingfile=file.path(custom_paths$temp,"betas")),
   packages = c("minfi","bigstatsr")),
   # tar_target(betas, minfi::getBeta(clean)),
   tar_target(betas_idx, {b<-minfi::getBeta(clean_age);list(rn=rownames(b),cn=colnames(b))}),
 
   #Select top beta values
-  tar_target(top,top_beta(betas,betas_idx,n=top_betas_N),pattern=map(top_betas_N)),
+  tar_target(top,epipe::top_beta(betas,betas_idx,n=top_betas_N),pattern=map(top_betas_N)),
 
 
   # PCA
@@ -169,7 +182,7 @@ targets <- tarchetypes::tar_map(
   tar_target(bplots, bplot(pca,                                                  # Bi plots for PCA components
                            ss=ss_clean_allvariables,
                            colgroup=plotvars,
-                           s=sg,
+                           s=sampGroups,
                            pal=pal_discrete,
                            alfa=0.7,
                            idcol=idcol,
