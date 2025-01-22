@@ -4,7 +4,7 @@
 \alias{betas_disk}
 \title{Use Betas Object in Parallel and Save to Disk}
 \usage{
-betas_disk(rgSet)
+betas_disk(rgSet, ...)
 }
 \arguments{
 \item{rgSet}{A SummarizedExperiment object containing beta values.}
