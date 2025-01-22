@@ -9,7 +9,7 @@
 #' @param path A character string specifying the directory where plots will be saved (default: "./").
 #' @param scale Logical, indicating whether to scale the variables (default: TRUE).
 #' @param center Logical, indicating whether to center the variables (default: TRUE).
-#' @param filename A prefix for the saved plot filenames (default: "")
+#' @param filename A name for the saved plot filenames (default: "pca_plot_")
 #'
 #' @return A `prcomp` object representing the results of PCA.
 #'
@@ -17,12 +17,13 @@
 #' @import ggfortify
 #' @importFrom stats prcomp
 #'
-# @examples
-# # Example usage:
-# # pca_res(beta_top100, scale = TRUE, center = TRUE)
+#' @examples
+#' data("top_500_beta")
+#' data("samplesheet")
+#' pca_res(top_500_beta,samplesheet,sampGroups='Condition',scale = TRUE, center = TRUE,filename='pca_plot')
 #'
 #' @export
-pca_res <- function(beta_top100,ss,sampGroups,path="./", scale = TRUE, center = TRUE,filename = "") {
+pca_res <- function(beta_top100,ss,sampGroups,path="./", scale = TRUE, center = TRUE,filename = "pca_plot_") {
   library(ggplot2)
   library(ggfortify)
    # Perform PCA on the transposed matrix

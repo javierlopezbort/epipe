@@ -27,8 +27,17 @@
 #' @import ggfortify
 #' @import RColorBrewer
 #'
-bplot <- function(pca, ss, colgroup, s, combs = NULL, pal = NULL, tit = NULL, labs = TRUE, overlap = Inf, alfa = 0.3, folder = "analysis/pca/bplots/", idcol = "Sample_Name") {
+#' @examples
+#' \dontrun{
+#' data("top_500_beta")
+#' data("samplesheet")
+#' pca<-pca_res(top_500_beta,samplesheet,sampGroups='Condition',scale = TRUE, center = TRUE,filename='pca_plot')
+#'
+#' bplots_var<-c('Sentrix_ID','Sentrix_Position','Condition')
+#' bplot(pca,samplesheet,colgroup=bplots_var,s='Condition',folder='prova/')
+#' }
 
+bplot <- function(pca, ss, colgroup, s, combs = NULL, pal = NULL, tit = NULL, labs = TRUE, overlap = Inf, alfa = 0.3, folder = "analysis/pca/bplots/", idcol = "Sample_Name") {
 
   # Ensure ss is a data.table
   ss <- droplevels.data.frame(ss)
@@ -82,8 +91,6 @@ bplot <- function(pca, ss, colgroup, s, combs = NULL, pal = NULL, tit = NULL, la
           legend.text = element_text(size = 5),  # Increase legend text size
           legend.title = element_text(size = 5),  # Increase legend title size
           legend.position = "right",  # Position the legend on the right
-          #legend.background = element_rect(fill = "white", colour = "black"),  # Add background to the legend
-          #legend.box.background = element_rect(colour = "black"),
           legend.margin = margin(6, 6, 6, 6)
         )
 
@@ -106,4 +113,3 @@ bplot <- function(pca, ss, colgroup, s, combs = NULL, pal = NULL, tit = NULL, la
 
   return(folder)
 }
-

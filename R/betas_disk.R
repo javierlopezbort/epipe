@@ -13,6 +13,12 @@
 #'
 #' @export
 #'
+#' @examples
+#' data("mSet_normalized")
+#' betas_disk(mSet_normalized,backingfile=file.path('.',"betas"))
+#'
+#'
+#'
 betas_disk <- function(rgSet, ...) {
 
   # Extract beta matrix from rgSet

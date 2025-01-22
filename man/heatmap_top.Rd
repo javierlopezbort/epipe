@@ -33,14 +33,9 @@ A heatmap object
 This function generates a heatmap of CpG probes using beta values.
 }
 \examples{
-\dontrun{
-# Example usage
-top_beta_1000 <- matrix(rnorm(1000), nrow = 1000, ncol = 10)
-metadata <- data.frame(
- Sample_ID = paste0("Sample", 1:10),
- Group = rep(c("Control", "Treatment"), each = 5)
- )
-heatmap_top(top_beta_1000, metadata, sampGroups = "Group", path = "./plots/")
-}
+data("top_500_beta")
+data("samplesheet")
+heatmap_top(top_500_beta, samplesheet, sampGroups = "Condition")
+
 
 }

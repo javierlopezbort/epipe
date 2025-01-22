@@ -11,7 +11,7 @@ pca_res(
   path = "./",
   scale = TRUE,
   center = TRUE,
-  filename = ""
+  filename = "pca_plot_"
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ pca_res(
 
 \item{center}{Logical, indicating whether to center the variables (default: TRUE).}
 
-\item{filename}{A prefix for the saved plot filenames (default: "")}
+\item{filename}{A name for the saved plot filenames (default: "pca_plot_")}
 }
 \value{
 A \code{prcomp} object representing the results of PCA.
@@ -35,4 +35,10 @@ A \code{prcomp} object representing the results of PCA.
 \description{
 This function applies PCA to a matrix of beta values, visualizes the first four principal
 components (PC1 vs. PC2 and PC3 vs. PC4), and saves the resulting plots.
+}
+\examples{
+data("top_500_beta")
+data("samplesheet")
+pca_res(top_500_beta,samplesheet,sampGroups='Condition',scale = TRUE, center = TRUE,filename='pca_plot')
+
 }

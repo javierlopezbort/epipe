@@ -18,3 +18,10 @@ bigstatsr::FBM (Filebacked Big Matrix) for parallel processing. This can help
 in efficient storage and manipulation of beta values, especially when the
 matrix is large. The betas are saved to disk using the bigstatsr package.
 }
+\examples{
+data("mSet_normalized")
+betas_disk(mSet_normalized,backingfile=file.path('.',"betas"))
+
+
+
+}

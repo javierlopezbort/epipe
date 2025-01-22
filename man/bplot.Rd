@@ -53,3 +53,13 @@ Generate PCA bi-plots
 \details{
 This function generates PCA bi-plots using ggplot2 and related packages.
 }
+\examples{
+\dontrun{
+data("top_500_beta")
+data("samplesheet")
+pca<-pca_res(top_500_beta,samplesheet,sampGroups='Condition',scale = TRUE, center = TRUE,filename='pca_plot')
+
+bplots_var<-c('Sentrix_ID','Sentrix_Position','Condition')
+bplot(pca,samplesheet,colgroup=bplots_var,s='Condition',folder='prova/')
+}
+}

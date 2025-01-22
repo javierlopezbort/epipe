@@ -6,18 +6,25 @@
 #' @param beta_top100 A matrix of beta values (rows are probes, columns are samples).
 #' @param metadata A data frame containing sample metadata.
 #' @param vars A vector of metadata variable names to include in the eigencorplot. If `NULL`, all variables with more than one unique value will be included (default: `NULL`).
-#' @param idcol Column name in `metadata` containing unique identifiers for samples (default: "barcode").
 #' @param path Directory path for saving the plot (default: "./").
-#' @param filename Name of the file to save the plot (default: "").
-#' @param title Title for the eigencorplot (default: 'PC1-6 clinical correlations').
+#' @param filename Name of the file to save the plot (default: "pca_corrplot").
+#' @param title Title for the eigencorplot (default: 'clinical correlations').
 #'
 #' @return A PCAtools eigencorplot object.
 #'
 #' @importFrom PCAtools pca eigencorplot getComponents
 #'
 #' @export
-corpca <- function(beta_top100, metadata, vars = NULL, idcol = "barcode",
-                   path = "./", filename = "", title = 'PC1-6 clinical correlations') {
+#'
+#' @examples
+#' \dontrun{
+#' data("top_500_beta")
+#' data("samplesheet")
+#' corpca(top_500_beta,samplesheet)
+#'}
+#'
+corpca <- function(beta_top100, metadata, vars = NULL,
+                   path = "./", filename = "pca_corrplot", title = 'clinical correlations') {
 
   #Check if the columns are present in the data frame and remove them if they are.
   if ("Basename" %in% colnames(metadata)) {
@@ -47,7 +54,7 @@ corpca <- function(beta_top100, metadata, vars = NULL, idcol = "barcode",
 
   # Convert metadata to data frame
   metadata <- data.frame(metadata, stringsAsFactors = TRUE)
-  #rownames(metadata) <- metadata[[idcol]]
+
   colnames(beta_top100) <- rownames(metadata)
 
   # Perform PCA with PCAtools package

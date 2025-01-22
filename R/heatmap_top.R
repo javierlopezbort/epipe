@@ -17,15 +17,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Example usage
-#' top_beta_1000 <- matrix(rnorm(1000), nrow = 1000, ncol = 10)
-#' metadata <- data.frame(
-#'  Sample_ID = paste0("Sample", 1:10),
-#'  Group = rep(c("Control", "Treatment"), each = 5)
-#'  )
-#' heatmap_top(top_beta_1000, metadata, sampGroups = "Group", path = "./plots/")
-#' }
+#' data("top_500_beta")
+#' data("samplesheet")
+#' heatmap_top(top_500_beta, samplesheet, sampGroups = "Condition")
+#'
 #'
 heatmap_top<-function(beta_values_matrix,metadata,sampGroups,pal = RColorBrewer::brewer.pal(8, "Dark2"),
                       path = "./",filename = "heatmap"){
@@ -33,7 +28,7 @@ heatmap_top<-function(beta_values_matrix,metadata,sampGroups,pal = RColorBrewer:
 
   # Add top annotations
 
-  Condition <- factor(ss[[sampGroups]])
+  Condition <- factor(metadata[[sampGroups]])
   unique_conditions <- unique(Condition)
   color_palette <- pal[1:length(unique_conditions)]
 

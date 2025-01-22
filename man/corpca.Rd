@@ -8,10 +8,9 @@ corpca(
   beta_top100,
   metadata,
   vars = NULL,
-  idcol = "barcode",
   path = "./",
-  filename = "",
-  title = "PC1-6 clinical correlations"
+  filename = "pca_corrplot",
+  title = "clinical correlations"
 )
 }
 \arguments{
@@ -21,13 +20,11 @@ corpca(
 
 \item{vars}{A vector of metadata variable names to include in the eigencorplot. If \code{NULL}, all variables with more than one unique value will be included (default: \code{NULL}).}
 
-\item{idcol}{Column name in \code{metadata} containing unique identifiers for samples (default: "barcode").}
-
 \item{path}{Directory path for saving the plot (default: "./").}
 
-\item{filename}{Name of the file to save the plot (default: "").}
+\item{filename}{Name of the file to save the plot (default: "pca_corrplot").}
 
-\item{title}{Title for the eigencorplot (default: 'PC1-6 clinical correlations').}
+\item{title}{Title for the eigencorplot (default: 'clinical correlations').}
 }
 \value{
 A PCAtools eigencorplot object.
@@ -35,4 +32,12 @@ A PCAtools eigencorplot object.
 \description{
 This function performs correlation-based Principal Component Analysis (PCA) on beta values
 and generates an eigencorplot to visualize correlations between clinical variables and the principal components.
+}
+\examples{
+\dontrun{
+data("top_500_beta")
+data("samplesheet")
+corpca(top_500_beta,samplesheet)
+}
+
 }

@@ -4,7 +4,7 @@
 #' for each row, and extracts the top rows with the highest standard deviations.
 #'
 #' @param beta_values A matrix of beta values (rows represent CpG probes, columns represent samples).
-#' @param bidx A data frame with two columns: `rn` (row names) and `cn` (column names) to set the row and column names for `beta_values`.
+#' @param bidx A list with two elements: `rn` (row names) and `cn` (column names) to set the row and column names for `beta_values`.
 #' @param what A string specifying what to return. If "betas", returns the subset of rows with the highest standard deviations. If "rows", returns the row names (default is "betas").
 #' @param n Number of top rows to extract (default: 1000).
 #'
@@ -15,8 +15,8 @@
 #'
 #' @examples
 #' # Example usage:
-#' #data("beta_matrix")
-#' #top_beta(beta_matrix, data.frame(rn = rownames(beta_matrix), cn = colnames(beta_matrix)), n = 500)
+#' data("beta_matrix")
+#' top_beta(beta_matrix, list(rn=rownames(beta_matrix),cn=colnames(beta_matrix)), n = 500)
 #'
 
 
