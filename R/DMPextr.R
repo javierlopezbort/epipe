@@ -67,8 +67,6 @@ DMPextr <- function(
 
   ann <- data.table::as.data.table(ann, keep.rownames = "ProbeID")
 
-  #data.table::setkey(ann2, "ProbeID")
-
   ann$rn <- 1:nrow(ann)
 
   # Set the number of cores for parallel processing

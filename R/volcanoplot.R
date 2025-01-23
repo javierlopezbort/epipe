@@ -42,7 +42,7 @@ volcanoplot<-function(object,path="./"){
     # IF there are DMPS with an adjusted.pvalue less than 0.05. Use the adj.P.Val as a treshold.
 
 
-    if (!is.null(nrow(df[df$adj.P.Val < 0.05, ]))){
+    if (nrow(df[df$adj.P.Val < 0.05, ]) != 0){
       threshold<-'adj.P.Val'
     }else{
       threshold<-'P.Value'
@@ -162,7 +162,7 @@ manhattanplot<-function(object,path="./"){
 
     contrast_name<-names(df_contrasts)[list_element]
 
-    if (!is.null(nrow(df[df$adj.P.Val < 0.05, ]))){
+    if (nrow(df[df$adj.P.Val < 0.05, ]) != 0){
       threshold<-'adj.P.Val'
     }else{
       threshold<-'P.Value'
@@ -215,30 +215,4 @@ manhattanplot<-function(object,path="./"){
   }
 
 }
-
-
-
-#manhattanplot(dmps_ex_EPICv2,path)
-
-
-
-
-
-###############
-
-# library(qqman)
-#
-# df_1$chr<-as.numeric(sub('chr','',df_1$chr))
-#
-# threshold1 <- -log10(0.000005)
-#
-# manhattan(df_1, chr = "chr", bp = "pos", p = "adj.P.Val",snp='ProbeID',
-#           col=c('blue4','orange3'),genomewideline = F,suggestiveline = F,cex=0.5,cex.axis=0.6)
-#
-# abline(h = threshold1, col = "red", lty = 1)
-
-
-
-
-
 

@@ -1,13 +1,12 @@
 #' Construct Models and Contrasts with limma
 #'
-#'
 #' @description
 #' This function is used to construct models and contrasts for differential expression analysis using limma.
 #' It builds a design matrix based on the group variable and optional covariates, fits the linear model, and generates contrasts
 #' for pairwise or singular group comparisons.
 #'
 #' @param object A matrix or data frame containing beta values for the analysis.
-#' @param betas_idx A matrix or data frame providing the indices for the beta values
+#' @param betas_idx A matrix or data frame providing the indices for the beta values if object class is FBM.
 #' @param group_var  A string specifying the column name for the grouping variable.
 #' @param covs.formula Formula for specifying covariates in the model.
 #' @param contrasts Optional string of semicolon-separated contrasts. If not provided, automatic contrasts are generated.
@@ -18,7 +17,6 @@
 #' @param pairwise Logical indicating whether to create pairwise group comparisons (default: TRUE).
 #' @param singular Logical indicating whether to create singular group comparisons (default: FALSE).
 #' @param rename Character vector to rename the contrasts.
-#' @param idcol Column name for the sample ID (default: "barcode").
 #'
 #' @return A limma eBayes model.
 #'
@@ -29,9 +27,14 @@
 #' @import bigstatsr
 #' @import stringi
 #'
+#' @examples
+#' data("beta_matrix")
+#' data("samplesheet")
+#' mod(beta_matrix,group_var='Condition',contrasts='Treated-Untreated',metadata=samplesheet)
+#'
 mod <- function(object, betas_idx = NULL, group_var = "Sample_Group", covs.formula = NULL,
                 contrasts = NULL, covs = NULL, metadata, set = TRUE, gr = NULL, pairwise = TRUE,
-                singular = FALSE, rename = NULL, idcol = "barcode") {
+                singular = FALSE, rename = NULL) {
 
   # Set row and column names for beta values
   if(class(object)[1] == "FBM"){
