@@ -62,7 +62,8 @@ Imports:
     itertools,
     qs,
     rlang,
-    stringi
+    stringi,
+    parallel
 Depends: 
     R (>= 2.10)
 LazyData: true
