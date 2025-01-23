@@ -70,7 +70,7 @@ filter_dmps <- function(dmps, adj.p.value=0.05,p.value = 0.01, mDiff = 0.3, s = 
 
   dmps <- data.table::as.data.table(dmps)
 
-  if (nrow(df[df$adj.P.Val < 0.05, ]) != 0){
+  if (nrow(dmps[dmps$adj.P.Val < 0.05, ]) != 0){
     dmps_f <- dmps[dmps$adj.P.Val <= adj.p.value &
                      abs(dmps$diff_meanMeth) >= mDiff, ]
   }else{
