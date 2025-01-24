@@ -260,7 +260,10 @@ normalization_all_methods<-function(object,metadata,sampGroups,path="./",norm_me
 }
 
 
-# Transform norm_function name to a character
+#' Transform norm_function name to a character
+#'
+#' @export
+
 makelist<-function(vals){
   vals$norm<-as.character(vals$norm)
   return(vals)
