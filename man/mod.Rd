@@ -16,14 +16,13 @@ mod(
   gr = NULL,
   pairwise = TRUE,
   singular = FALSE,
-  rename = NULL,
-  idcol = "barcode"
+  rename = NULL
 )
 }
 \arguments{
 \item{object}{A matrix or data frame containing beta values for the analysis.}
 
-\item{betas_idx}{A matrix or data frame providing the indices for the beta values}
+\item{betas_idx}{A matrix or data frame providing the indices for the beta values if object class is FBM.}
 
 \item{group_var}{A string specifying the column name for the grouping variable.}
 
@@ -44,8 +43,6 @@ mod(
 \item{singular}{Logical indicating whether to create singular group comparisons (default: FALSE).}
 
 \item{rename}{Character vector to rename the contrasts.}
-
-\item{idcol}{Column name for the sample ID (default: "barcode").}
 }
 \value{
 A limma eBayes model.
@@ -54,4 +51,10 @@ A limma eBayes model.
 This function is used to construct models and contrasts for differential expression analysis using limma.
 It builds a design matrix based on the group variable and optional covariates, fits the linear model, and generates contrasts
 for pairwise or singular group comparisons.
+}
+\examples{
+data("beta_matrix")
+data("samplesheet")
+mod(beta_matrix,group_var='Condition',contrasts='Treated-Untreated',metadata=samplesheet)
+
 }
