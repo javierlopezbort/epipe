@@ -104,6 +104,8 @@ filter_dmps <- function(dmps, adj.p.value=0.05,p.value = 0.01, mDiff = 0.3, s = 
 #'
 #' @import data.table
 #' @import dplyr
+#'
+#' @export
 
 summary_dmps <- function(DMPextr_object, dir = "./results/dmps/", name = "raw", write = FALSE) {
 

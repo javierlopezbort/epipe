@@ -36,7 +36,7 @@ find_dmrs(
 A data.table containing the identified DMRs.
 }
 \description{
-Find Differentially Methylated Regions (DMRs)
+Find Differentially Methylated Regions (DMRs) -2
 }
 \details{
 This function identifies differentially methylated regions (DMRs) from beta values and a linear model.

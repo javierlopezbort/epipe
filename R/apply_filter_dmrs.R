@@ -102,7 +102,7 @@ filter_dmrs <- function(dmrs, p.value = 0.05, mDiff = 0.05, min.cpg = 3, s = FAL
     require(data.table)
     dmrs <- data.table::as.data.table(dmrs)
     #out <- dmrs[abs(meandiff) >= mDiff & no.cpgs >= min.cpg, ]
-    out <- dmrs[HMFDR <= p.value & abs(meandiff) >= mDiff & no.cpgs >= min.cpg, ]
+    out <- dmrs[dmrs$HMFDR <= p.value & abs(dmrs$meandiff) >= mDiff & dmrs$no.cpgs >= min.cpg, ]
     if (s) out <- summary_dmrs(out, write = FALSE)
     return(out)
   }
@@ -123,6 +123,8 @@ filter_dmrs <- function(dmrs, p.value = 0.05, mDiff = 0.05, min.cpg = 3, s = FAL
 #'
 #' @import data.table
 #' @import dplyr
+#'
+#' @export
 
 summary_dmrs <- function(dmrs,contrast=NULL, path = "/results/dmrs/", write = TRUE) {
 

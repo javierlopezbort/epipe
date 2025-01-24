@@ -1,4 +1,4 @@
-#' Find Differentially Methylated Regions (DMRs)
+#' Find Differentially Methylated Regions (DMRs) -2
 #'
 #' This function identifies differentially methylated regions (DMRs) from beta values and a linear model.
 #'
@@ -24,6 +24,7 @@
 #' @import data.table
 #' @import parallel
 #'
+#'
 # @examples
 # # Example usage:
 # model <- lm(betas ~ condition, data = beta_data)
@@ -31,13 +32,6 @@
 #
 
 find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = "fdr", bcutoff = 0.3, min.cpg = 5, ncores = NULL) {
-
-  require(DMRcate)
-  require(S4Vectors)
-  require(GenomicRanges)
-  require(foreach)
-  require(bigstatsr)
-  require(data.table)
 
   # If beta values are provided and object is not, construct the object using DMPextr
   if (!is.null(betas) & is.null(object)) {
@@ -51,7 +45,7 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
     )
   }
 
-  conts <- colnames(model$contrasts)
+  conts <-unique(object$Contrast)  #colnames(model$contrasts)
 
   # If ncores is not provided, set it to a default value
   if (is.null(ncores)) ncores <- min(RcppParallel::defaultNumThreads(), 124, 22 * length(conts))
@@ -60,7 +54,7 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
   cl <- parallel::makeCluster(ncores, outfile = "", useXDR = FALSE, type = "FORK")
   parallel::clusterEvalQ(
     cl, {
-      requireNamespace(c("limma", "data.table", "DMRcate", "S4Vectors"))
+      requireNamespace(c("limma", "data.table", "DMRcate", "S4Vectors","GenomicRanges"))
     }
   )
 
@@ -70,10 +64,11 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
   message("Processing ", length(conts), " contrasts. Using ", ncores, " cores.")
   results <- foreach::foreach(
     i = conts,
-    .combine = 'rbind',
+    .combine =  'rbind',
     .inorder = FALSE,
-    .errorhandling = "pass"
-  ) %dopar% {
+    .errorhandling = "pass",
+   .packages = c("data.table", "DMRcate", "GenomicRanges", "S4Vectors")
+  ) %do% {
 
     myAnnotation <- object
     out <- tryCatch(
@@ -85,14 +80,14 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
         object_sub <- object_sub[object_sub$chr %in% chromosomes,]
 
         if (nrow(object_sub) < 1) {
-          return(data.table(
+          return(data.table::data.table(
             seqnames = character(), start = numeric(), end = numeric(), width = numeric(),
             strand = character(), no.cpgs = integer(), min_smoothed_fdr = numeric(),
             Stouffer = numeric(), HMFDR = numeric(), Fisher = numeric(), maxdiff = numeric(),
             meandiff = numeric(), overlapping.genes = character(), Contrast = character()
           ))
         } else {
-          if (is.null(nrow(dmps_f[,dmps_f$adj.P.Val<0.05]))){
+          if (is.null(nrow(object_sub[,object_sub$adj.P.Val<0.05]))){
             annotated <- GenomicRanges::GRanges(
               as.character(object_sub$chr),
               IRanges(object_sub$pos, object_sub$pos),
@@ -153,7 +148,7 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
       results.ranges <- DMRcate::extractRanges(out)
       results.ranges$Contrast = i
     } else {
-      return(data.table(
+      return(data.table::data.table(
         seqnames = character(), start = numeric(), end = numeric(), width = numeric(),
         strand = character(), no.cpgs = integer(), min_smoothed_fdr = numeric(),
         Stouffer = numeric(), HMFDR = numeric(), Fisher = numeric(), maxdiff = numeric(),
@@ -163,6 +158,6 @@ find_dmrs <- function(object = NULL, betas = NULL, model, fdr = 0.05, p.value = 
     data.table::as.data.table(results.ranges)
   }
 
-  results[HMFDR <= fdr, ]  # Filter the results based on the specified FDR threshold
+  #results[HMFDR <= fdr, ]  # Filter the results based on the specified FDR threshold
   return(results)
 }
