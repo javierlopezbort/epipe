@@ -10,7 +10,7 @@ description <- 'Dna methylation analysis in PIK3CA mutations'
 ################################################################################
 
 ## Sample sheet path:
-data_paths<-c(example_EPICv2_8=system.file("extdata/EPICv2/samplesheet_EPICv2.rds", package = "epipe")) # Substitute system.file for the path to your samplesheet
+data_paths<-c(example_EPICv2=system.file("extdata/EPICv2/samplesheet_EPICv2.rds", package = "epipe")) # Substitute system.file for the path to your samplesheet
 data_names <- c(names(data_paths))
 
 arraytype <- "EPICv2"
@@ -29,13 +29,13 @@ analysis_folder <- "analysis/"
 
 ## Metadata:
 idcol= "Sample_Name" #column with unique sample ids.
-sampGroups='Sample_Group' # Column name indicating Sample group or the variable of interest
+sampGroups='Condition' # Column name indicating Sample group or the variable of interest
 
 
 ## Normalization:
 # Choose a method for normalization:
 # noob, ssnoob, swan, funn, noob_pq, noob_swan, quantile
-norm_function <-'noob'
+norm_function <-'quantile'
 
 
 ## Filters:
@@ -67,34 +67,36 @@ pal_discrete =  c("#1B9E77","#7570B3","#D95F02", "#E7298A", "#66A61E", "#E6AB02"
 # variables='ALL'
 
 # But you can specify the variables that you are interested in:
-variables=c('Sample_Group','Sentrix_ID','Condition','predictedAge','predictedSex','CD4T','NK','Bcell','Mono','Neu','leuk.prop')
+variables=c('Sentrix_ID','Condition','predictedAge','predictedSex','CD4T','NK','Bcell','Mono','Neu','leuk.prop')
 
 
 ## PCA top variable:
 topN <- c(100,1000,5000,10000)
 
 # Variables to select for the Bplots
-bplots_var<-c('Sample_Group','Sentrix_ID','Sentrix_Position','Condition','predictedSex','predictedAge',
+bplots_var<-c('Sentrix_ID','Sentrix_position','Condition','predictedSex','predictedAge',
               'CD4T','NK','Bcell','Mono','Neu','leuk.prop')
 
 
 ################################################################################
+#### Model:
 
-## Model:
-group_var = "Sample_Group" # variable of interest
+group_var = "condition" # variable of interest that we want to model.
 
-# Define the contrast interested in.
-#Contrasts <- 'Control-Treated'
-Contrasts <- NULL
+# Define the contrast we are interested in. If NULL, the function will automatically generate them.
+#Contrasts<-NULL
+Contrasts <- 'lymphatic-control'
 
 # Covariates:
 # covs<-c('Neu','predictedSex','age')
-covs=NULL
+# covs<-c('predictedSex','age','mutation')
+# covs=NULL
+covs='predictedSex'
+# covs=c('Gestational_obesity_group','Pregestational.obesity_group','Sex')
 
 
 ########################################################################################
-
-## Differential methylation analysis:
+##### Differential methylation analysis:
 
 # Parameters for DMP:
 mDiffDMP = 0.01
@@ -123,6 +125,8 @@ values <- values[,.(norm=rlang::syms(norm_function)),by=data_names][values,on=.(
 
 
 ### Advanced functions:
+
+
 # models (In case a more specific model is desired). Overrides group_var & covs:
 
 # A) Specific model for each sample_sheet:

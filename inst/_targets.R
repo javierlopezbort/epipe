@@ -9,7 +9,7 @@ library(SummarizedExperiment)
 suppressPackageStartupMessages(library(qs2))
 
 # # Load other packages as needed. # nolint
- library(crew)
+# library(crew)
 # library(crew.cluster)
 #
 # # Libraries from Illumina
@@ -17,6 +17,7 @@ suppressPackageStartupMessages(library(qs2))
 # library(IlluminaHumanMethylationEPICv2anno.20a1.hg38)
 #
 # max_ncores=RcppParallel::defaultNumThreads() # Not in use but may be useful
+print('Control 1')
 
 # Set target options:
 tar_option_set(
@@ -29,13 +30,19 @@ tar_option_set(
   # Set other options as needed.
 )
 
+print('Control 2')
+
 # Source scripts files
 #tar_source(system.file(package = "epipe"))
 
 
+print('Control 3')
+
 # Source config.R file
 #source(system.file("config.R", package = "epipe"))
 source("config.R")
+
+print('Control 4')
 
 
 # tar_make_clustermq() configuration (okay to leave alone):
@@ -136,12 +143,12 @@ targets <- tarchetypes::tar_map(
 
 
   # T.test and boxplot for deconvoluted data
-  tar_target(boxplot,epipe::ttest_boxplot(data=ss_clean_allvariables,
-                                   sampGroup = sampGroups,pal=pal_discrete,
+  tar_target(boxplot,ttest_boxplot(data=ss_clean_allvariables,
+                                   sampGroup = sampGroups,
                                    path = custom_paths[["qc_folder"]])),
 
   # Distribution plots:
-  tar_target(distribution_pl,epipe::distribution_plots(data=ss_clean_allvariables,
+  tar_target(distribution_pl,distribution_plots(data=ss_clean_allvariables,
                                                 variable_interest = sampGroups,
                                                 path = custom_paths[["qc_folder"]])),
 
@@ -160,19 +167,19 @@ targets <- tarchetypes::tar_map(
 
 
   # PCA
-  tar_target(pca, epipe::pca_res(top,
+  tar_target(pca, pca_res(top,
                           ss,
                           sampGroups = sampGroups,
                           filename=paste0(data_names,"_pc_plot",NROW(top)),
                           path=custom_paths[["bplots_folder"]]),pattern=map(top)),
-  tar_target(pca_corrplot,epipe::corpca(beta_top100 = top,                              # Correlation plot
+  tar_target(pca_corrplot,corpca(beta_top100 = top,                              # Correlation plot
                                  metadata=ss_clean_allvariables,
                                  path=paste0(custom_paths$corrplot_folder,"/",NROW(top),"/"),
                                  filename=paste0(data_names,"_pca_corrplot",NROW(top),".png"),
                                  title=paste0("PC1-6 correlations with ",data_names," clinical vars(top ",NROW(top)," )")
                                  ),
              pattern=map(top)),
-  tar_target(bplots, epipe::bplot(pca,                                                  # Bi plots for PCA components
+  tar_target(bplots, bplot(pca,                                                  # Bi plots for PCA components
                            ss=ss_clean_allvariables,
                            colgroup=plotvars,
                            s=sampGroups,
@@ -185,7 +192,7 @@ targets <- tarchetypes::tar_map(
   ),
 
   # Heatmaps
-  tar_target(heatmap, epipe::heatmap_top(top,
+  tar_target(heatmap, heatmap_top(top,
                                   ss,
                                   sampGroups = sampGroups,
                                   path=custom_paths[["heatmap_folder"]],
@@ -194,10 +201,10 @@ targets <- tarchetypes::tar_map(
 
   #Create the Models
   tar_target(model_covs,covs),
-  tar_target(model, epipe::mod(object = betas, betas_idx = betas_idx, group_var = group_var, contrasts = Contrasts, metadata = ss_clean_allvariables,covs=covs),
+  tar_target(model, mod(object = betas, betas_idx = betas_idx, group_var = group_var, contrasts = Contrasts, metadata = ss_clean_allvariables,covs=covs),
                         packages=c("limma","stats","bigstatsr")
   ),
-  tar_target(dmps, epipe::DMPextr( fit= model,
+  tar_target(dmps, DMPextr( fit= model,
                             betas_idx=betas_idx,
                             ContrastsDM = colnames(model$contrasts),
                             beta_normalized = betas,
@@ -217,17 +224,17 @@ targets <- tarchetypes::tar_map(
              ),
 
   # volcano plot
-  tar_target(volcano,epipe::volcanoplot(dmps,path = custom_paths[["dmpplots_folder"]])),
+  tar_target(volcano,volcanoplot(dmps,path = custom_paths[["dmpplots_folder"]])),
 
   # manhattan plot
-  tar_target(manhattan,epipe::manhattanplot(dmps,path = custom_paths[["dmpplots_folder"]])),
+  tar_target(manhattan,manhattanplot(dmps,path = custom_paths[["dmpplots_folder"]])),
 
   # tar_target(dmp_battery,priority = 1,                                           # DMPs distribution along params.
   #            apply_filter_dmps(
   #              dmps = dmps,path=file.path(paste0(custom_paths$dmp_folder,data_names))),
   #            error ="continue",deployment = "worker",memory = "transient"),
 
-  tar_target(dmps_f , epipe::filter_dmps(dmps, adj.p.value=adjp.valueDMP,p.value = p.valueDMP, mDiff = mDiffDMP)),      # Choose filter for DMPs
+  tar_target(dmps_f , filter_dmps(dmps, adj.p.value=adjp.valueDMP,p.value = p.valueDMP, mDiff = mDiffDMP)),      # Choose filter for DMPs
   tar_target(save_dmps_f,
              write.table(dmps_f,
                          file.path(
@@ -246,10 +253,10 @@ targets <- tarchetypes::tar_map(
       dmp_genes<-data.table::data.table(meandiff=numeric(0),Contrast=character(0),Gene=character(0))
       }
   }),
-  tar_target(dmp_pathways, epipe::get_pathways(dmp_genes,res.folder =paste0(custom_paths$pathway_folder,"/DMPS"),savefile=TRUE)),
+  tar_target(dmp_pathways, get_pathways(dmp_genes,res.folder =paste0(custom_paths$pathway_folder,"/DMPS"),savefile=TRUE)),
   tar_target(dmps_summary,                                                       # Summary statistics for DMPs
-            epipe::summary_dmps(dmps_f, dir = custom_paths$dmp_folder,name=data_names,write=TRUE),error ="continue"),
-  tar_target(dmpplots, epipe::plotDMP(dmps_f,path=custom_paths$dmpplots_folder),error ="continue"),   # Barplots hipo/hyper, genomic region, CpG islands.
+            summary_dmps(dmps_f, dir = custom_paths$dmp_folder,name=data_names,write=TRUE),error ="continue"),
+  tar_target(dmpplots, plotDMP(dmps_f,path=custom_paths$dmpplots_folder),error ="continue"),   # Barplots hipo/hyper, genomic region, CpG islands.
 
   # DMRS
 
@@ -262,20 +269,17 @@ targets <- tarchetypes::tar_map(
   # ),
 
   tar_target(dmrs,                                                              # Finds DMRs with dmrcate can be relaxed here and filter by HMFDR later
-             epipe::find_dmrs(object=dmps_f,model=model,
-                       fdr = fdrDMR,bcutoff = 0.05, min.cpg=min.cpgDMR),deployment = "worker"),
-
-
-
-
+             find_dmrs(object=dmps_f,model=model,
+                       fdr = fdrDMR,bcutoff = 0.05, min.cpg=min.cpgDMR),
+             deployment = "worker"),
   #tar_target(dmrs_battery,  priority = 1, error ="continue",                                       # DMRs distribution along params
              # apply_filter_dmrs(
              #   dmrs = dmrs,path=paste0(custom_paths$dmrs_folder,data_names))),
-  tar_target(dmrs_f, epipe::filter_dmrs(dmrs,p.value = 'FDR', mDiff = mdiffDMR, min.cpg=min.cpgDMR)),
+  tar_target(dmrs_f, filter_dmrs(dmrs,p.value = 'FDR', mDiff = mdiffDMR, min.cpg=min.cpgDMR)),
   tar_target(save_dmrs,                                                          # Saves DMRs
              writexl::write_xlsx(
                dmrs, paste0(custom_paths$dmrs_folder,"_",data_names,".xlsx"))),
-  tar_target(sumaries,epipe::summarize(dmrs = dmrs_f, dmps = dmps_f,path = paste0(custom_paths$results_folder,"/",data_names,"/"))),
+  tar_target(sumaries,summarize(dmrs = dmrs_f, dmps = dmps_f,path = paste0(custom_paths$results_folder,"/",data_names,"/"))),
   tar_target(dmr_genes,{
     if(nrow(dmrs_f)>0){
       dt <- data.table::setDT(dmrs_f)
@@ -287,9 +291,9 @@ targets <- tarchetypes::tar_map(
     }
   }),
 
-  tar_target(dmr_pathways, epipe::get_pathways(dmr_genes,res.folder =paste0(custom_paths$pathway_folder,"/DMRs/"),savefile=TRUE)),
+  tar_target(dmr_pathways, get_pathways(dmr_genes,res.folder =paste0(custom_paths$pathway_folder,"/DMRs/"),savefile=TRUE)),
   tar_target(dmrs_summary,                                                       # Summary stats for DMRs
-              epipe::summary_dmrs(
+              summary_dmrs(
                 dmrs,path=file.path(custom_paths$dmrs_folder,paste0("full_dmrs_summary",data_names,".csv"))),
               error = "continue"),
 
@@ -308,7 +312,7 @@ targets <- tarchetypes::tar_map(
   #####################################################################
   tar_target(valss,{
     nrow(dmrs_summary)
-    valueslist = epipe::makelist(vals)
+    valueslist = makelist(vals)
     return(valueslist)
   }),
   tar_target(ep,tibble::tibble(report_parameters,
