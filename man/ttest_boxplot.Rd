@@ -4,12 +4,20 @@
 \alias{ttest_boxplot}
 \title{Boxplot and statistical test}
 \usage{
-ttest_boxplot(data, sampGroup, path = "./", filename = "Cell_type_prop.png")
+ttest_boxplot(
+  data,
+  sampGroup,
+  pal = NULL,
+  path = "./",
+  filename = "Cell_type_prop.png"
+)
 }
 \arguments{
 \item{data}{A data frame containing metadata and cell type proportions.}
 
 \item{sampGroup}{A character string specifying the name of the variable in the metadata that refers to the sample groups or condition.}
+
+\item{pal}{Color palette to use}
 
 \item{path}{A character string specifying the directory to save the plot (default: "./").}
 
@@ -24,5 +32,5 @@ and creates a boxplot with statistical annotations.
 }
 \examples{
 data("ss_all_variables")
-ttest_boxplot(ss_all_variables,sampGroup = 'Condition')
+ttest_boxplot(ss_all_variables,sampGroup = 'Sample_Group')
 }
