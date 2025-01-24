@@ -2,8 +2,9 @@ Package: epipe
 Title: Automated (E)pigenetic (PIPE)line with Targets
 Version: 0.0.0.9000
 Authors@R: 
-    person(c("Izar", "Llaquet"), "de Villasante", , "idevillasante@carrerasresearch.org", role = c("aut", "cre"),
+    person(c("Izar", "Llaquet"), "de Villasante", , "idevillasante@carrerasresearch.org", role = c("aut"),
            comment = c(ORCID = "https://orcid.org/0000-0001-7325-0631 "))
+    person(c("Marina", "Lladó"), "Vilardell", , "mvilardell@carrerasresearch.org", role = c("aut","cre"))
 Description: The package implements a differential methylation analysis pipline managed with targets in order to automate the job.
 License: MIT + file LICENSE
 Encoding: UTF-8
