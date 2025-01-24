@@ -5,6 +5,7 @@
 #'
 #' @param data A data frame containing metadata and cell type proportions.
 #' @param sampGroup A character string specifying the name of the variable in the metadata that refers to the sample groups or condition.
+#' @param pal Color palette to use
 #' @param path A character string specifying the directory to save the plot (default: "./").
 #' @param filename A character string specifying the file name for the saved plot (default: "Cell_type_prop.png").
 #'
@@ -18,9 +19,9 @@
 #'
 #' @examples
 #' data("ss_all_variables")
-#' ttest_boxplot(ss_all_variables,sampGroup = 'Condition')
+#' ttest_boxplot(ss_all_variables,sampGroup = 'Sample_Group')
 
-ttest_boxplot<-function(data,sampGroup,path = "./",filename='Cell_type_prop.png'){
+ttest_boxplot<-function(data,sampGroup,pal=NULL,path = "./",filename='Cell_type_prop.png'){
 
   column_names <- c(sampGroup,"CD8T", "CD4T", "NK", "Bcell", "Mono", "Neu", "leuk.prop")
   selected_data <- data[, column_names]
@@ -52,9 +53,17 @@ ttest_boxplot<-function(data,sampGroup,path = "./",filename='Cell_type_prop.png'
     add_xy_position(x = 'cell_type', dodge = 0.8)
 
   # Create the boxplot
+  if (is.null(pal)) {
+    # Default palette with 9 distinct colors
+    pal <- c("#1B9E77", "#7570B3", "#D95F02", "#E7298A", "#66A61E",
+                 "#E6AB02", "#A6761D", "#666666", "#FF0010")
+  }
+
+  palette_colors <- pal[seq_along(unique(df_long$condition))]
+
   bxp <- ggboxplot(
     df_long, x = "cell_type", y = "value",
-    fill = "condition", palette = c("#00AFBB", "#FF7777")
+    fill = "condition", palette = palette_colors
   )
 
   # Add statistical test results to the plot
