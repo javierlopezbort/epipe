@@ -1,4 +1,9 @@
 <!-- # Generate a dynamic step title -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE)
+```
+
 ## `r "Step 2: Exploratory analysis"`
 
 Exploratory analysis allows to understand better the underlying data structure, distribution (outliers), relationships amongst variables and allows to identify potential trends. 
@@ -40,19 +45,12 @@ paths$corrplot_folder
 
 
 
-Variables with significant correlation for PC1 and PC2: Leukocyte, Neutrophil, Age, Sex, purity,mutation
+Bi-plots created with the top 100, 5000 and 1000 most variable CpGs are stored in the following directory: 
 
-![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.leuk.prop_shape.condition1_10000.png'))`){#fig-Biplot}
-
-![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.Neu_shape.condition1_10000.png'))`){#fig-Biplot}
-
-![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.age_shape.condition1_10000.png'))`){#fig-Biplot}
-
-![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.predictedSex_shape.condition1_10000.png'))`){#fig-Biplot}
-
-![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.purity_shape.condition1_10000.png'))`){#fig-Biplot}
-
-![Bi-plots](`r file.path(paths$bplots_folder, paste0('/10000/','colored.by.mutation_shape.condition1_10000.png'))`){#fig-Biplot}
+```{r}
+# Display the Heatmap folder path
+paths$bplots_folder
+```
 
 
 
