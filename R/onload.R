@@ -1,4 +1,13 @@
 .onAttach <- function(libname, pkgname) {
+  # Suppress startup messages from libraries
+  suppressPackageStartupMessages({
+    library(GGally)
+    library(ggpp)
+    library(ggpmisc)
+  })
+
+
+.onAttach <- function(libname, pkgname) {
   # Path to _targets.R in the package
   targets_file <- system.file("_targets.R", package = pkgname)
 

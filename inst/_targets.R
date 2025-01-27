@@ -7,9 +7,9 @@ library(data.table)
 library(quarto)
 library(SummarizedExperiment)
 suppressPackageStartupMessages(library(qs2))
+library(crew)
 
-# # Load other packages as needed.
- library(crew)
+
 # library(crew.cluster)
 #
 # # Libraries from Illumina
@@ -319,7 +319,7 @@ targets <- tarchetypes::tar_map(
   # ))
   )),
   tar_quarto_rep(report,
-                 path = "_qmd/report.qmd",
+                 path = system.file("_qmd/report.qmd", package = "epipe"),
                  execute_params = ep,
                  priority = 0
   )
