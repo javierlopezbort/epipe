@@ -200,7 +200,7 @@ paths <- jsonlite::fromJSON(params$paths)
 # paths <- jsonlite::fromJSON(params$paths)
 
 cat("\n")
-a <- knitr::knit_child('_qmd/_quality_control_analyst.qmd', quiet = TRUE)
+a <- knitr::knit_child(system.file("_qmd/_quality_control_analyst.qmd", package = "epipe"), quiet = TRUE)
 cat(a, sep = "\n")
 
 
@@ -214,7 +214,7 @@ cat(a, sep = "\n")
 # paths <- jsonlite::fromJSON(params$paths)
 
 cat("\n")
-a <- knitr::knit_child('_qmd/_quality_control_collab.qmd', quiet = TRUE)
+a <- knitr::knit_child(system.file("_qmd/_quality_control_collab.qmd", package = "epipe"), quiet = TRUE)
 cat(a, sep = "\n")
 
 ```
@@ -229,7 +229,7 @@ cat(a, sep = "\n")
 
 # paths <- jsonlite::fromJSON(params$paths)
 cat("\n")
-b <- knitr::knit_child('_qmd/_exploratory_analysis.qmd', quiet = TRUE)
+b <- knitr::knit_child(system.file("_qmd/_exploratory_analysis.qmd", package = "epipe"), quiet = TRUE)
 cat(b, sep = "\n")
 
 
@@ -242,7 +242,7 @@ cat(b, sep = "\n")
 
 # paths <- jsonlite::fromJSON(params$paths)
 cat("\n")
-c <- knitr::knit_child('_qmd/_DMPs.qmd', quiet = TRUE)
+c <- knitr::knit_child(system.file("_qmd/_DMPs.qmd", package = "epipe"), quiet = TRUE)
 cat(c, sep = "\n")
 
 ```
@@ -254,7 +254,7 @@ cat(c, sep = "\n")
 
 # paths <- jsonlite::fromJSON(params$paths)
 cat("\n")
-d <- knitr::knit_child('_qmd/_DMRs.qmd', quiet = TRUE)
+d <- knitr::knit_child(system.file("_qmd/_DMPs.qmd", package = "epipe"), quiet = TRUE)
 cat(d, sep = "\n")
 #N<-NULL
 ```
