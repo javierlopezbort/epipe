@@ -47,10 +47,28 @@ future::plan(future.callr::callr)
 
 
 
-# Replace the target list below with your own:
+# Some preprocessing of the variables of the config.R file: 
+data_names <- c(names(data_paths))
+values <- data.table(cbind(data_names,data_paths,arraytype,project_name,mDiffDMP,adjp.valueDMP,p.valueDMP,fdrDMR,mdiffDMR,min.cpgDMR))
+values$mDiffDMP=as.numeric(values$mDiffDMP)
+values$p.valueDMP=as.numeric(values$p.valueDMP)
+values$adjp.valueDMP=as.numeric(values$adjp.valueDMP)
+values$min.cpgDMR=as.numeric(values$min.cpgDMR)
+values$fdrDMR=as.numeric(values$fdrDMR)
+values$mdiffDMR=as.numeric(values$mdiffDMR)
+
+values <- values[,.(norm=rlang::syms(norm_function)),by=data_names][values,on=.(data_names)]
+
+
+
+
+
+########## PIPELINE ########
+
 top_betas_N_target <- tar_target(top_betas_N,topN)
 
 targets <- tarchetypes::tar_map(
+
   values = values,
   names = data_names, #"data_source", # Select columns from `values` for target names.
   tar_target(vals,values[data_names,,on="data_names"]),
@@ -61,6 +79,7 @@ targets <- tarchetypes::tar_map(
   tar_target(samplesheet_path, data_paths, format = "file"),
   tar_target(samplesheet, readRDS(samplesheet_path)),
   tar_target(ss, epipe::get_category(samplesheet)),
+
 
   # Read idats:
   tar_target(rgSet, epipe::read_idats(ss,arraytype = arraytype,idats_folder=idats_folder,idcol=idcol, author= author, description = description)), # makes rgChannelset object using minfi and annotates according to arraytype

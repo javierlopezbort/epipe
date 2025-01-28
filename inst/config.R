@@ -10,8 +10,8 @@ description <- 'Dna methylation analysis in PIK3CA mutations'
 ################################################################################
 
 ## Sample sheet path:
-data_paths<-c(example_EPICv2=system.file("extdata/EPICv2/samplesheet_EPICv2.rds", package = "epipe")) # Substitute system.file for the path to your samplesheet
-data_names <- c(names(data_paths))
+data_paths<-c(example_EPICv2_10=system.file("extdata/EPICv2/samplesheet_EPICv2.rds", package = "epipe")) # Substitute system.file for the path to your samplesheet
+#data_names <- c(names(data_paths))
 
 arraytype <- "EPICv2"
 
@@ -108,44 +108,19 @@ mdiffDMR = 0.05
 
 
 # DO NOT MODIFY:
-values <- data.table(cbind(data_names,data_paths,arraytype,project_name,mDiffDMP,adjp.valueDMP,p.valueDMP,fdrDMR,mdiffDMR,min.cpgDMR))
-values$mDiffDMP=as.numeric(values$mDiffDMP)
-values$p.valueDMP=as.numeric(values$p.valueDMP)
-values$adjp.valueDMP=as.numeric(values$adjp.valueDMP)
-values$min.cpgDMR=as.numeric(values$min.cpgDMR)
-values$fdrDMR=as.numeric(values$fdrDMR)
-values$mdiffDMR=as.numeric(values$mdiffDMR)
-
-values <- values[,.(norm=rlang::syms(norm_function)),by=data_names][values,on=.(data_names)]
-
-
-
-### Advanced functions:
-# models (In case a more specific model is desired). Overrides group_var & covs:
-
-# A) Specific model for each sample_sheet:
-# models<- c(
-#   m1 = "~ 0 + Condition",
-#   m2 = "~ 0 + Type"
-# )
-# values <- values$models<-models
-
-# B) Multiple models for each sample_sheet:
-# models<- c(
-#   m1 = "~ 0 + Type * Condition",
-#   m2 = "~ 0 + Condition",
-#   m3 = "~ 0 + Type"
-# )
-# values <- values[,.(models=models),by=data_names][values,on=.(data_names)]
-
-# Singular is one against all the rest of variables in Sample_Group
-# Pairwise is all against all
-# gr: groups together multiple values making the mean.
-# Subset: Type == Control, subset the sample_sheet so only a subgroup is left
-
+# values <- data.table(cbind(data_names,data_paths,arraytype,project_name,mDiffDMP,adjp.valueDMP,p.valueDMP,fdrDMR,mdiffDMR,min.cpgDMR))
+# values$mDiffDMP=as.numeric(values$mDiffDMP)
+# values$p.valueDMP=as.numeric(values$p.valueDMP)
+# values$adjp.valueDMP=as.numeric(values$adjp.valueDMP)
+# values$min.cpgDMR=as.numeric(values$min.cpgDMR)
+# values$fdrDMR=as.numeric(values$fdrDMR)
+# values$mdiffDMR=as.numeric(values$mdiffDMR)
+# 
+# values <- values[,.(norm=rlang::syms(norm_function)),by=data_names][values,on=.(data_names)]
 
 
 ################################################################################################
+
 # Report options:
 
 report_colab <- tibble::tibble(
