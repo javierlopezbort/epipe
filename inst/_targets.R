@@ -115,7 +115,7 @@ targets <- tarchetypes::tar_map(
   tar_target(clean_age,epipe::ageprediction(clean),error='continue'),
 
   #Deconvolution
-  tar_target(clean_all_deconv,epipe::celldeconvolution(rgSet,clean_age,arraytype = arraytype),error = 'continue'),
+  tar_target(clean_all_deconv,epipe::celldeconvolution(rgSet,clean_age,arraytype = arraytype)),
 
   # Correlation analysis
   tar_target(cor_analysis, epipe::correlation_analysis(clean_all_deconv,
