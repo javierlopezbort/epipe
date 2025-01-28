@@ -151,8 +151,8 @@ if (nrow(dmps_f)>0){
 if (nrow(dmps_f)>0){
  # paths <- jsonlite::fromJSON(params$paths)
   cat("\n")
-  d <- knitr::knit_child('_qmd/_genomic_context.qmd', quiet = TRUE)
-  cat(d, sep = "\n")
+  d <- knitr::knit_child(system.file("_qmd/_genomic_context.qmd", package = "epipe"), quiet = TRUE)
+  cat(d, sep = "\n")  
 }
 ```
 

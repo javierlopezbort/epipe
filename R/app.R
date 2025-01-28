@@ -3,7 +3,7 @@
 #' This Shiny app creates a DataTable with custom options, including download buttons for the entire dataset.
 #'
 #' @param data A data frame to be displayed in the DataTable.
-#'
+#' @name Dtable
 #' @import DT
 #' @import shiny
 #' @importFrom shiny downloadHandler observeEvent showModal

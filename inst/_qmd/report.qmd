@@ -254,7 +254,7 @@ cat(c, sep = "\n")
 
 # paths <- jsonlite::fromJSON(params$paths)
 cat("\n")
-d <- knitr::knit_child(system.file("_qmd/_DMPs.qmd", package = "epipe"), quiet = TRUE)
+d <- knitr::knit_child(system.file("_qmd/_DMRs.qmd", package = "epipe"), quiet = TRUE)
 cat(d, sep = "\n")
 #N<-NULL
 ```
