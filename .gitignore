@@ -6,6 +6,7 @@
 .httr-oauth
 .DS_Store
 .quarto
+epipe.Rproj
 renv.lock
 renv/
 results/
