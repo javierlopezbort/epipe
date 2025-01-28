@@ -73,7 +73,7 @@ DMPextr <- function(
   if (is.null(ncores)) ncores <- length(ContrastsDM)
 
   # Initialize parallel cluster
-  cl <- parallel::makeCluster(ncores, outfile = "", useXDR = FALSE, type = "PSOCK")
+  cl <- parallel::makeCluster(ncores, outfile = "", useXDR = FALSE, type = "FORK")
   parallel::clusterEvalQ(
     cl, {
       requireNamespace(c("limma", "data.table"))
