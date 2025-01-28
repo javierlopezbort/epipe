@@ -11,6 +11,7 @@
 #'
 #' @return A modal dialog with download buttons.
 #'
+#' @export
 #' @examples
 #' \dontrun{
 #' myModal()

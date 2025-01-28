@@ -200,7 +200,7 @@ paths <- jsonlite::fromJSON(params$paths)
 # paths <- jsonlite::fromJSON(params$paths)
 
 cat("\n")
-a <- knitr::knit_child(system.file("_qmd/_quality_control_analyst.qmd", package = "epipe"), quiet = TRUE)
+a <- knitr::knit_child(system.file("_qmd/_quality_control_analyst.qmd", package = "epipe"), quiet = FALSE)
 cat(a, sep = "\n")
 
 
