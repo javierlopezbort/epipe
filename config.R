@@ -120,6 +120,8 @@ values <- values[,.(norm=rlang::syms(norm_function)),by=data_names][values,on=.(
 
 
 
+
+
 ### Advanced functions:
 # models (In case a more specific model is desired). Overrides group_var & covs:
 
@@ -142,6 +144,13 @@ values <- values[,.(norm=rlang::syms(norm_function)),by=data_names][values,on=.(
 # Pairwise is all against all
 # gr: groups together multiple values making the mean.
 # Subset: Type == Control, subset the sample_sheet so only a subgroup is left
+
+
+### Raw data paths (Genomics Unit):
+path_to_Samples_on_array_excel = "W://GENOMICS_UNIT/SampleDB/Samples_on_array_last.xls"
+path_to_SDNA.xls = "W://GENOMICS_UNIT/DBB/SDNA.xls"
+path_to_storage = "/ijc/LABS/GENOMICS/RAW/Arrays/"
+path_to_LTS = "/ijc/LABS/GENOMICS/LTS"
 
 
 
@@ -175,5 +184,10 @@ report_analyst <- tibble::tibble(
 report_opts <- rbind(report_colab,report_analyst)
 
 report_parameters <- tibble::tibble(
-  report_opts)
+  report_opts,
+  path_to_Samples_on_array_excel = path_to_Samples_on_array_excel,
+  path_to_SDNA.xls = path_to_SDNA.xls,
+  path_to_storage = path_to_storage,
+  path_to_LTS = path_to_LTS
+)
 
