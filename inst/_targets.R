@@ -88,9 +88,6 @@ targets <- tarchetypes::tar_map(
     qc_folder = custom_paths[["qc_folder"]],
     save_barplot=T)),
 
-  #Tumor purity
-  #tar_target(purity, purify(rgSet = rgSet, arraytype = arraytype),error = "continue"),
-
   #Get raw beta values (before normalization)
   tar_target(raw_beta, minfi::getBeta(filtered)),
   tar_target(save_raw_beta,write.csv(raw_beta, file=file.path(custom_paths$betas_folder,'raw_beta.csv'))),
