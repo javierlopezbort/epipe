@@ -22,7 +22,6 @@ Imports:
     crew,
     dplyr,
     DT,
-    ENmix,
     FlowSorted.Blood.EPIC,
     IlluminaHumanMethylationEPICmanifest,
     IlluminaHumanMethylationEPICanno.ilm10b2.hg19,

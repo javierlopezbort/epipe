@@ -116,61 +116,6 @@ quantile <- function(rgSet){
   minfi::preprocessQuantile(rgSet)
 }
 
-##############################################################################
-
-#' Apply ENmix normalization to RGChannelSet.
-#'
-#' @param rgSet RGChannelSet object to be normalized.
-#' @param arraytype Type of array used for preprocessing. If provided, array-specific annotation is used.
-#' @return Normalized GenomicRatioSet object.
-#'
-#' @importFrom ENmix preprocessENmix QCinfo mpreprocess
-#' @importFrom minfi makeGenomicRatioSetFromMatrix
-
-Em2 <- function(rgSet, arraytype = NULL){
-  pd <- rgSet@colData
-  qc <- ENmix::QCinfo(rgSet, distplot = FALSE)
-  mdat <- ENmix::preprocessENmix(rgSet, QCinfo = qc)
-  mSetSqn <- ENmix::mpreprocess(rgSet = rgSet, impute = TRUE)
-  if(is.null(arraytype)){
-    arraytype <- ifelse(500000 < nrow(mSetSqn), "EPIC", "450K" )
-  }
-
-  if(arraytype == "EPIC"){
-    mSetSqn <- minfi::makeGenomicRatioSetFromMatrix(
-      mat = mSetSqn,
-      array = "IlluminaHumanMethylationEPIC",
-      annotation = "ilm10b4.hg19"
-    )
-  } else {
-    mSetSqn <- minfi::makeGenomicRatioSetFromMatrix(mSetSqn)
-  }
-
-  mSetSqn@colData <- pd
-  return(mSetSqn)
-}
-
-#' Apply ENmix normalization to RGChannelSet and map to genome.
-#'
-#' @param rgSet RGChannelSet object to be normalized.
-#' @param arraytype Type of array used for preprocessing. If provided, array-specific annotation is used.
-#' @return Normalized GenomicRatioSet object.
-#'
-#' @importFrom ENmix preprocessENmix QCinfo
-#' @importFrom minfi mapToGenome
-#' @import SummarizedExperiment
-
-Em <- function(rgSet, arraytype = NULL){
-  require(SummarizedExperiment)
-  pd <- rgSet@colData
-  qc <- ENmix::QCinfo(rgSet, distplot = FALSE)
-  mdat <- ENmix::preprocessENmix(rgSet, QCinfo = qc)
-  mSetSqn <- minfi::mapToGenome(mdat)
-  mSetSqn@colData <- pd
-  return(mSetSqn)
-}
-
-
 
 #' Normalize Data Using Multiple Methods and Generate Density Plots
 #'
