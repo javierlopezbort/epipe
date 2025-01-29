@@ -58,7 +58,7 @@ top_betas_N_target <- tar_target(top_betas_N,topN)
 targets <- tarchetypes::tar_map(
 
   values = values,
-  names = data_names, #"data_source", # Select columns from `values` for target names.
+  names = data_names,
   tar_target(vals,values[data_names,,on="data_names"]),
   tar_target(sample_names_config,idcol),
   tar_target(sample_groups_config,sampGroups),
@@ -73,7 +73,7 @@ targets <- tarchetypes::tar_map(
 
   # Qc report:
   tar_target(QC_plotss, epipe::qc(rgSet,
-                          sampGroups = sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
+                          sampGroups = sampGroups,
                           idcol=idcol,
                           pal=pal_discrete,
                           qc_folder = custom_paths[["qc_folder"]]
@@ -83,7 +83,7 @@ targets <- tarchetypes::tar_map(
   # Filters:  -probes: pval<0.01, -samples: 10% probes fail, Plots: Sample p.values barplot (colMeans)
   tar_target(filtered, epipe::filter(
     rgSet=rgSet,
-    sampGroups= sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
+    sampGroups= sampGroups,
     sampNames = idcol,
     qc_folder = custom_paths[["qc_folder"]],
     save_barplot=T)),
@@ -96,12 +96,12 @@ targets <- tarchetypes::tar_map(
   tar_target(normalize, epipe::norm(filtered)),
   tar_target(dplot_normalize,epipe::denplot(normalize,
                                 ss,
-                                sampGroups = sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
+                                sampGroups = sampGroups,
                                 path=custom_paths[["qc_folder"]],
                                 norm_method = norm_function)),
   tar_target(normalize_all, epipe::normalization_all_methods(filtered,
                                                       ss,
-                                                      sampGroups = sampGroups, #names(ss)[attributes(ss)$category == "mgroups"][1],
+                                                      sampGroups = sampGroups,
                                                       path=custom_paths[["qc_folder"]],
                                                       norm_method = norm_function)),
 
@@ -168,14 +168,14 @@ targets <- tarchetypes::tar_map(
                           sampGroups = sampGroups,
                           filename=paste0(data_names,"_pc_plot",NROW(top)),
                           path=custom_paths[["bplots_folder"]]),pattern=map(top)),
-  tar_target(pca_corrplot,epipe::corpca(beta_top100 = top,                              # Correlation plot
+  tar_target(pca_corrplot,epipe::corpca(beta_top100 = top,
                                  metadata=ss_clean_allvariables,
                                  path=paste0(custom_paths$corrplot_folder,"/",NROW(top),"/"),
                                  filename=paste0(data_names,"_pca_corrplot",NROW(top),".png"),
                                  title=paste0("PC1-6 correlations with ",data_names," clinical vars(top ",NROW(top)," )")
                                  ),
              pattern=map(top)),
-  tar_target(bplots, epipe::bplot(pca,                                                  # Bi plots for PCA components
+  tar_target(bplots, epipe::bplot(pca,
                            ss=ss_clean_allvariables,
                            colgroup=plotvars,
                            s=sampGroups,
@@ -226,7 +226,7 @@ targets <- tarchetypes::tar_map(
   tar_target(manhattan,epipe::manhattanplot(dmps,path = custom_paths[["dmpplots_folder"]])),
 
 
-  tar_target(dmps_f , epipe::filter_dmps(dmps, adj.p.value=adjp.valueDMP,p.value = p.valueDMP, mDiff = mDiffDMP)),      # Choose filter for DMPs
+  tar_target(dmps_f , epipe::filter_dmps(dmps, adj.p.value=adjp.valueDMP,p.value = p.valueDMP, mDiff = mDiffDMP)),
   tar_target(save_dmps_f,
              write.table(dmps_f,
                          file.path(
@@ -246,13 +246,13 @@ targets <- tarchetypes::tar_map(
       }
   }),
   tar_target(dmp_pathways, epipe::get_pathways(dmp_genes,res.folder =paste0(custom_paths$pathway_folder,"/DMPS"),savefile=TRUE)),
-  tar_target(dmps_summary,                                                       # Summary statistics for DMPs
+  tar_target(dmps_summary,
             epipe::summary_dmps(dmps_f, dir = custom_paths$dmp_folder,name=data_names,write=TRUE),error ="continue"),
-  tar_target(dmpplots, epipe::plotDMP(dmps_f,path=custom_paths$dmpplots_folder),error ="continue"),   # Barplots hipo/hyper, genomic region, CpG islands.
+  tar_target(dmpplots, epipe::plotDMP(dmps_f,path=custom_paths$dmpplots_folder),error ="continue"),
 
   # DMRS
 
-  tar_target(dmrs,                                                              # Finds DMRs with dmrcate can be relaxed here and filter by HMFDR later
+  tar_target(dmrs,
              epipe::find_dmrs(object=dmps_f,model=model,
                        fdr = fdrDMR,bcutoff = 0.05, min.cpg=min.cpgDMR),deployment = "worker"),
 
@@ -260,7 +260,7 @@ targets <- tarchetypes::tar_map(
 
 
   tar_target(dmrs_f, epipe::filter_dmrs(dmrs,p.value = 'FDR', mDiff = mdiffDMR, min.cpg=min.cpgDMR)),
-  tar_target(save_dmrs,                                                          # Saves DMRs
+  tar_target(save_dmrs,
              writexl::write_xlsx(
                dmrs, paste0(custom_paths$dmrs_folder,"_",data_names,".xlsx"))),
   tar_target(sumaries,epipe::summarize(dmrs = dmrs_f, dmps = dmps_f,path = paste0(custom_paths$results_folder,"/",data_names,"/"))),
@@ -276,7 +276,7 @@ targets <- tarchetypes::tar_map(
   }),
 
   tar_target(dmr_pathways, epipe::get_pathways(dmr_genes,res.folder =paste0(custom_paths$pathway_folder,"/DMRs/"),savefile=TRUE)),
-  tar_target(dmrs_summary,                                                       # Summary stats for DMRs
+  tar_target(dmrs_summary,
               epipe::summary_dmrs(
                 dmrs,path=file.path(custom_paths$dmrs_folder,paste0("full_dmrs_summary",data_names,".csv"))),
               error = "continue"),
@@ -312,7 +312,7 @@ targets <- tarchetypes::tar_map(
                  priority = 0
   )
 )
-# quarto::quarto_render(input = "report.qmd",execute_params = tar_read("report_params_ex_EPIC")[1,])
+
 
 combined <- tarchetypes::tar_combine(
   combined_summary,

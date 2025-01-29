@@ -10,7 +10,7 @@ description <- 'Dna methylation analysis in PIK3CA mutations'
 ################################################################################
 
 ## Sample sheet path:
-data_paths<-c(example_EPICv2_10=system.file("extdata/EPICv2/samplesheet_EPICv2.rds", package = "epipe")) # Substitute system.file for the path to your samplesheet
+data_paths<-c(example_EPICv2=system.file("extdata/EPICv2/samplesheet_EPICv2.rds", package = "epipe")) # Substitute system.file for the path to your samplesheet
 
 arraytype <- "EPICv2"
 
