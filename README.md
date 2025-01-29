@@ -1,20 +1,12 @@
 # EPIPE: (E)pigenetics (PIPE)line
 
-**EPIPE** is a bioinformatics pipeline designed to analyze methylation data from microarrays. It automates the entire workflow, from processing raw data to identifying and annotating Differentially Methylated Positions (DMPs) and Regions (DMRs).
+**EPIPE** is a bioinformatics pipeline designed to analyze methylation data from microarrays. It automates the entire workflow, from processing raw data to identifying and annotating differentially methylated positions (DMPs) and regions (DMRs).
 
-Key Features:
-
--   Fully automated pipeline for methylation analysis
-
--   Built on the targets framework for efficient and reproducible execution
-
--   Customizable configuration file for easy parameter adjustments
-
--   Users can modify and extend the pipeline for custom workflows
+Based on the `targets` toolkit, EPIPE ensures efficient and reproducible execution of every analysis step. It includes a customizable configuration file for easy parameter adjustments, allowing users to modify and extend the pipeline to fit their specific analysis needs.
 
 ## Installation
 
-You can install the development version of epipe with:
+Install the development version of epipe with:
 
 ``` r
 # install.packages("devtools")
