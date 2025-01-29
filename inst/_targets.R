@@ -80,7 +80,7 @@ targets <- tarchetypes::tar_map(
                           )
              ,packages = "minfi",deployment = "worker" ),
 
-  # Filters:  -probes: pval<0.01, -samples: 10% probes fail, Plots: Sample p.values barplot (colMeans)
+  # Filters:
   tar_target(filtered, epipe::filter(
     rgSet=rgSet,
     sampGroups= sampGroups,
@@ -88,17 +88,21 @@ targets <- tarchetypes::tar_map(
     qc_folder = custom_paths[["qc_folder"]],
     save_barplot=T)),
 
-  #Get raw beta values (before normalization)
+  # Get raw beta values (before normalization)
   tar_target(raw_beta, minfi::getBeta(filtered)),
   tar_target(save_raw_beta,write.csv(raw_beta, file=file.path(custom_paths$betas_folder,'raw_beta.csv'))),
 
-  #Normalization
+  # Normalization by the user specified option
   tar_target(normalize, epipe::norm(filtered)),
+
+  # Density plot after normalization
   tar_target(dplot_normalize,epipe::denplot(normalize,
                                 ss,
                                 sampGroups = sampGroups,
                                 path=custom_paths[["qc_folder"]],
                                 norm_method = norm_function)),
+
+  # Normalization by all methods (visualizations)
   tar_target(normalize_all, epipe::normalization_all_methods(filtered,
                                                       ss,
                                                       sampGroups = sampGroups,
@@ -110,14 +114,14 @@ targets <- tarchetypes::tar_map(
   tar_target(save_norm_beta,write.csv(norm_beta, file=file.path(custom_paths$betas_folder,'norm_beta.csv'))),
 
 
-  #Preprocessing (probe removal)
+  # Preprocessing (probe removal)
   tar_target(clean, epipe::prep(normalize, remove_sex = remove_sex, arraytype = arraytype,sexplot_folder= custom_paths[["sexplot_folder"]],predict_sex=sex_prediction)),
 
 
-  #Predict age
+  # Predict age
   tar_target(clean_age,epipe::ageprediction(clean),error='continue'),
 
-  #Deconvolution
+  # Deconvolution
   tar_target(clean_all_deconv,epipe::celldeconvolution(rgSet,clean_age,arraytype = arraytype)),
 
   # Correlation analysis
@@ -134,6 +138,8 @@ targets <- tarchetypes::tar_map(
 
 
   tar_target(ss_clean_dt,data.table::as.data.table(data.frame(ss_clean)),deployment = "main"),
+
+  # Get variables to plot from the config file
   tar_target(plotvars,bplots_var,
              packages = "SummarizedExperiment"),
 
@@ -143,16 +149,16 @@ targets <- tarchetypes::tar_map(
                                    sampGroup = sampGroups,pal=pal_discrete,
                                    path = custom_paths[["qc_folder"]])),
 
-  # Distribution plots:
+  # Distribution plots of metadata (exploratory analysis)
   tar_target(distribution_pl,epipe::distribution_plots(data=ss_clean_allvariables,
                                                 variable_interest = sampGroups,
                                                 path = custom_paths[["qc_folder"]])),
 
-  #Get annotation
+  # Annotation
   tar_target(ann, minfi::getAnnotation(clean_age)),
   # tar_target(betas_path, file.path(custom_paths$temp,"betas.bk"), format = "file"),
 
-  #Get beta values and save to dis
+  # Get beta values and save to disk
   tar_target(betas, epipe::betas_disk(clean_age,backingfile=file.path(custom_paths$temp,"betas")),
   packages = c("minfi","bigstatsr")),
   # tar_target(betas, minfi::getBeta(clean)),
@@ -168,6 +174,8 @@ targets <- tarchetypes::tar_map(
                           sampGroups = sampGroups,
                           filename=paste0(data_names,"_pc_plot",NROW(top)),
                           path=custom_paths[["bplots_folder"]]),pattern=map(top)),
+
+  # Correlation plots for PCA
   tar_target(pca_corrplot,epipe::corpca(beta_top100 = top,
                                  metadata=ss_clean_allvariables,
                                  path=paste0(custom_paths$corrplot_folder,"/",NROW(top),"/"),
@@ -175,6 +183,8 @@ targets <- tarchetypes::tar_map(
                                  title=paste0("PC1-6 correlations with ",data_names," clinical vars(top ",NROW(top)," )")
                                  ),
              pattern=map(top)),
+
+  # Bi-plots for PCA
   tar_target(bplots, epipe::bplot(pca,
                            ss=ss_clean_allvariables,
                            colgroup=plotvars,
@@ -195,11 +205,13 @@ targets <- tarchetypes::tar_map(
                                   filename=paste0(data_names,"_heatmap_",NROW(top))),pattern = map(top)),
 
 
-  #Create the Models
+  # Create the Models
   tar_target(model_covs,covs),
   tar_target(model, epipe::mod(object = betas, betas_idx = betas_idx, group_var = group_var, contrasts = Contrasts, metadata = ss_clean_allvariables,covs=covs),
                         packages=c("limma","stats","bigstatsr")
   ),
+
+  # Find DMPS
   tar_target(dmps, epipe::DMPextr( fit= model,
                             betas_idx=betas_idx,
                             ContrastsDM = colnames(model$contrasts),
@@ -226,6 +238,7 @@ targets <- tarchetypes::tar_map(
   tar_target(manhattan,epipe::manhattanplot(dmps,path = custom_paths[["dmpplots_folder"]])),
 
 
+  # Filter DMPS
   tar_target(dmps_f , epipe::filter_dmps(dmps, adj.p.value=adjp.valueDMP,p.value = p.valueDMP, mDiff = mDiffDMP)),
   tar_target(save_dmps_f,
              write.table(dmps_f,
@@ -235,6 +248,8 @@ targets <- tarchetypes::tar_map(
                          )
              )
   ),
+
+  # Get genes associated with DMPS
   tar_target(dmp_genes,{
     if(nrow(dmps_f)>0){
       dt <- data.table::setDT(dmps_f)
@@ -245,25 +260,35 @@ targets <- tarchetypes::tar_map(
       dmp_genes<-data.table::data.table(meandiff=numeric(0),Contrast=character(0),Gene=character(0))
       }
   }),
+
+  # Pathway enrichment analysis for DMPS
   tar_target(dmp_pathways, epipe::get_pathways(dmp_genes,res.folder =paste0(custom_paths$pathway_folder,"/DMPS"),savefile=TRUE)),
+
+  # Summary of DMPS
   tar_target(dmps_summary,
             epipe::summary_dmps(dmps_f, dir = custom_paths$dmp_folder,name=data_names,write=TRUE),error ="continue"),
+
+  # DMPS plots
   tar_target(dmpplots, epipe::plotDMP(dmps_f,path=custom_paths$dmpplots_folder),error ="continue"),
 
-  # DMRS
 
+  # DMRS
   tar_target(dmrs,
              epipe::find_dmrs(object=dmps_f,model=model,
                        fdr = fdrDMR,bcutoff = 0.05, min.cpg=min.cpgDMR),deployment = "worker"),
 
 
 
-
+  # Filter DMRS
   tar_target(dmrs_f, epipe::filter_dmrs(dmrs,p.value = 'FDR', mDiff = mdiffDMR, min.cpg=min.cpgDMR)),
   tar_target(save_dmrs,
              writexl::write_xlsx(
                dmrs, paste0(custom_paths$dmrs_folder,"_",data_names,".xlsx"))),
+
+  # Summarize Dmrs and dmps
   tar_target(sumaries,epipe::summarize(dmrs = dmrs_f, dmps = dmps_f,path = paste0(custom_paths$results_folder,"/",data_names,"/"))),
+
+  # Get DMRS genes
   tar_target(dmr_genes,{
     if(nrow(dmrs_f)>0){
       dt <- data.table::setDT(dmrs_f)
@@ -275,20 +300,13 @@ targets <- tarchetypes::tar_map(
     }
   }),
 
+
+  # Pathway enrichment for DMRS
   tar_target(dmr_pathways, epipe::get_pathways(dmr_genes,res.folder =paste0(custom_paths$pathway_folder,"/DMRs/"),savefile=TRUE)),
   tar_target(dmrs_summary,
               epipe::summary_dmrs(
                 dmrs,path=file.path(custom_paths$dmrs_folder,paste0("full_dmrs_summary",data_names,".csv"))),
               error = "continue"),
-
-
-
-
-
-
-
-
-
 
 
 
@@ -299,13 +317,16 @@ targets <- tarchetypes::tar_map(
     valueslist = epipe::makelist(vals)
     return(valueslist)
   }),
+
+  # Get parameters to render html reports
   tar_target(ep,tibble::tibble(report_parameters,
                                values_row=jsonlite::toJSON(valss),
                                paths=jsonlite::toJSON(custom_paths),
                                output_file = file.path(custom_paths$report_folder,paste0(report_parameters$report_name,".html"))
 
-  # ))
   )),
+
+  # Reports
   tar_quarto_rep(report,
                  path = system.file("_qmd/report.qmd", package = "epipe"),
                  execute_params = ep,
