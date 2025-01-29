@@ -11,7 +11,6 @@ description <- 'Dna methylation analysis in PIK3CA mutations'
 
 ## Sample sheet path:
 data_paths<-c(example_EPICv2_10=system.file("extdata/EPICv2/samplesheet_EPICv2.rds", package = "epipe")) # Substitute system.file for the path to your samplesheet
-#data_names <- c(names(data_paths))
 
 arraytype <- "EPICv2"
 
@@ -107,17 +106,6 @@ fdrDMR = 0.01
 mdiffDMR = 0.05
 
 
-# DO NOT MODIFY:
-# values <- data.table(cbind(data_names,data_paths,arraytype,project_name,mDiffDMP,adjp.valueDMP,p.valueDMP,fdrDMR,mdiffDMR,min.cpgDMR))
-# values$mDiffDMP=as.numeric(values$mDiffDMP)
-# values$p.valueDMP=as.numeric(values$p.valueDMP)
-# values$adjp.valueDMP=as.numeric(values$adjp.valueDMP)
-# values$min.cpgDMR=as.numeric(values$min.cpgDMR)
-# values$fdrDMR=as.numeric(values$fdrDMR)
-# values$mdiffDMR=as.numeric(values$mdiffDMR)
-# 
-# values <- values[,.(norm=rlang::syms(norm_function)),by=data_names][values,on=.(data_names)]
-
 
 ################################################################################################
 
@@ -146,9 +134,4 @@ report_analyst <- tibble::tibble(
   shows_message = TRUE
 
 )
-
-report_opts <- rbind(report_colab,report_analyst)
-
-report_parameters <- tibble::tibble(
-  report_opts)
 

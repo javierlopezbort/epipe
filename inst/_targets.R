@@ -10,14 +10,6 @@ suppressPackageStartupMessages(library(qs2))
 library(crew)
 
 
-# library(crew.cluster)
-#
-# # Libraries from Illumina
-# library(IlluminaHumanMethylationEPICv2manifest)
-# library(IlluminaHumanMethylationEPICv2anno.20a1.hg38)
-#
-# max_ncores=RcppParallel::defaultNumThreads() # Not in use but may be useful
-
 # Set target options:
 tar_option_set(
   packages = c("tibble","data.table","S4Vectors"), # packages that your targets need to run
@@ -29,12 +21,8 @@ tar_option_set(
   # Set other options as needed.
 )
 
-# Source scripts files
-#tar_source(system.file(package = "epipe"))
-
 
 # Source config.R file
-#source(system.file("config.R", package = "epipe"))
 source("config.R")
 
 
@@ -47,7 +35,7 @@ future::plan(future.callr::callr)
 
 
 
-# Some preprocessing of the variables of the config.R file: 
+# Some preprocessing of the variables of the config.R file:
 data_names <- c(names(data_paths))
 values <- data.table(cbind(data_names,data_paths,arraytype,project_name,mDiffDMP,adjp.valueDMP,p.valueDMP,fdrDMR,mdiffDMR,min.cpgDMR))
 values$mDiffDMP=as.numeric(values$mDiffDMP)
@@ -59,7 +47,7 @@ values$mdiffDMR=as.numeric(values$mdiffDMR)
 
 values <- values[,.(norm=rlang::syms(norm_function)),by=data_names][values,on=.(data_names)]
 
-
+report_parameters <- tibble::tibble(rbind(report_colab,report_analyst))
 
 
 
@@ -74,7 +62,6 @@ targets <- tarchetypes::tar_map(
   tar_target(vals,values[data_names,,on="data_names"]),
   tar_target(sample_names_config,idcol),
   tar_target(sample_groups_config,sampGroups),
-  #tar_target(slices, values, pattern = slice(data_names)),
   tar_target(custom_paths,epipe::make_results_dirs(subf=data_names, results_folder = results_folder, analysis_folder = analysis_folder)),
   tar_target(samplesheet_path, data_paths, format = "file"),
   tar_target(samplesheet, readRDS(samplesheet_path)),
@@ -241,10 +228,6 @@ targets <- tarchetypes::tar_map(
   # manhattan plot
   tar_target(manhattan,epipe::manhattanplot(dmps,path = custom_paths[["dmpplots_folder"]])),
 
-  # tar_target(dmp_battery,priority = 1,                                           # DMPs distribution along params.
-  #            apply_filter_dmps(
-  #              dmps = dmps,path=file.path(paste0(custom_paths$dmp_folder,data_names))),
-  #            error ="continue",deployment = "worker",memory = "transient"),
 
   tar_target(dmps_f , epipe::filter_dmps(dmps, adj.p.value=adjp.valueDMP,p.value = p.valueDMP, mDiff = mDiffDMP)),      # Choose filter for DMPs
   tar_target(save_dmps_f,
@@ -272,14 +255,6 @@ targets <- tarchetypes::tar_map(
 
   # DMRS
 
-  # tar_target(
-  #   dmrs,
-  #   { nrow(dmps_summary)
-  #     load('dmrs_obj.RData')
-  #     return(dmrs_obj)  # Return the dmrs object
-  #   }
-  # ),
-
   tar_target(dmrs,                                                              # Finds DMRs with dmrcate can be relaxed here and filter by HMFDR later
              epipe::find_dmrs(object=dmps_f,model=model,
                        fdr = fdrDMR,bcutoff = 0.05, min.cpg=min.cpgDMR),deployment = "worker"),
@@ -287,9 +262,6 @@ targets <- tarchetypes::tar_map(
 
 
 
-  #tar_target(dmrs_battery,  priority = 1, error ="continue",                                       # DMRs distribution along params
-             # apply_filter_dmrs(
-             #   dmrs = dmrs,path=paste0(custom_paths$dmrs_folder,data_names))),
   tar_target(dmrs_f, epipe::filter_dmrs(dmrs,p.value = 'FDR', mDiff = mdiffDMR, min.cpg=min.cpgDMR)),
   tar_target(save_dmrs,                                                          # Saves DMRs
              writexl::write_xlsx(
