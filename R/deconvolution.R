@@ -58,9 +58,21 @@ celldeconvolution<-function(raw_object, object, arraytype){
 
     #Be sure that row names are correctly named
     rownames(beta_values)<- sub("_.*$", "", rownames(beta_values))
+
+
+    if (!"leukocyte.betas" %in% sesameData::sesameDataList()$Title) {
+      message("Descargando datos de 'leukocyte.betas'...")
+      sesameDataCache("leukocyte.betas")
+    }
+
     leuk.prop<-estimateLeukocyte(beta_values,platform='EPIC')
 
   } else{
+
+    if (!"leukocyte.betas" %in% sesameData::sesameDataList()$Title) {
+      message("Descargando datos de 'leukocyte.betas'...")
+      sesameDataCache("leukocyte.betas")
+    }
     leuk.prop<-estimateLeukocyte(beta_values,platform=arraytype)
   }
 

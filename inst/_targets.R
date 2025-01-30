@@ -119,7 +119,7 @@ targets <- tarchetypes::tar_map(
 
 
   # Predict age
-  tar_target(clean_age,epipe::ageprediction(clean),error='continue'),
+  tar_target(clean_age,epipe::ageprediction(clean)),
 
   # Deconvolution
   tar_target(clean_all_deconv,epipe::celldeconvolution(rgSet,clean_age,arraytype = arraytype)),

@@ -18,7 +18,7 @@
 ageprediction<-function(object,clock_name='Horvath',predict_age=TRUE){
   if (predict_age==TRUE){
 
-    beta_values<-getBeta(object)
+    beta_values<-minfi::getBeta(object)
 
     #Be sure that row names are correctly named (specially for EPICv2 arrays)
     rownames(beta_values)<- sub("_.*$", "", rownames(beta_values))
