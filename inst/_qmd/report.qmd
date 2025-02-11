@@ -121,7 +121,6 @@ library(targets)
 library(DT)
 ```
 
-# \[`r params$report_name` version\]
 
 ```{r}
 #| include: false
@@ -139,8 +138,6 @@ project_name<-values_row[,'project_name']
 ```
 
 Project: `r project_name`
-
-Platform: EPIC
 
 Date: `r format(Sys.time(), '%B %d, %Y')`
 
@@ -195,7 +192,7 @@ paths <- jsonlite::fromJSON(params$paths)
 # paths <- jsonlite::fromJSON(params$paths)
 
 cat("\n")
-a <- knitr::knit_child(system.file("_qmd/_quality_control_analyst.qmd", package = "epipe"), quiet = FALSE)
+a <- knitr::knit_child(system.file("_qmd/_quality_control_analyst.qmd", package = "epipe"), quiet = TRUE)
 cat(a, sep = "\n")
 
 

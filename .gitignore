@@ -12,3 +12,4 @@ renv/
 results/
 analysis/
 _targets/
+inst/doc
