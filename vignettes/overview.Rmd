@@ -8,11 +8,13 @@ vignette: |
   %\VignetteEncoding{UTF-8}
 ---
 
+# What is EPIPE?
+
 EPIPE is an R-based bioinformatics pipeline, specifically designed for analyzing methylation data from microarrays. The primary purpose is to automate the entire workflow of methylation, from raw data processing to identifying and annotating differentially Methylated Positions (DMPs) and differentially Methylated Regions (DMRs). 
 
 The pipeline is built using the targets framework, a workflow management tool  that enhances efficiency, flexibility, reproducibility, and computational optimization. EPIPE ensures that each stage of the analysis is handled in a structured and transparent manner, allowing researchers to focus on interpreting results rather than managing complex workflows. 
 
-Key features:  
+## Key features:  
 
 - Traceability: Users can actively monitor the pipeline's progress, identifying the current step of execution. This allows for real-time tracking of data flow and efficient troubleshooting if needed. 
 

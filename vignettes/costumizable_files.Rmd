@@ -1,0 +1,75 @@
+---
+title: "Configuration files"
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{Configuration files}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+There are two files that are costumizable: 
+
+- Config.R file
+
+- _targets.R file
+
+
+# CONFIGURATION FILE: 
+ 
+Configuration settings are controlled through the config.R file, which is automatically copied to your working directory when you load the epipe package. This means you don't need to manually download or create the configuration file—simply run: 
+
+```{R,eval=FALSE}
+library(epipe) 
+```
+
+This will place the config.R file in your working directory, where you can modify it before running the pipeline, allowing you to customize key analysis parameters to fit your research needs. 
+
+Parameters to modify: 
+
+The config.R file includes several sections that define key aspects of your analysis. Below are the most important sections and parameters you will need to customize. 
+
+## Project configuration: 
+These parameters define basic information about your project.  Customize them to reflect your research details. 
+
+- Project name: Title of your project. This can be any name that represents your study (e.g., "Cancer_Methylation_Study"). 
+
+- Author: Your name or the name of the principal investigator or researcher. 
+
+- Description: A short description of your research or the project focus. 
+
+
+## Sample sheet path:  
+
+```{R,eval=FALSE}
+ data_paths<-c(example_EPICv2=path/to/samplesheet.rds) 
+```
+You can change the name of ‘example_EPICv2’ to any custom name you prefer. For example:  
+
+```{R,eval=FALSE}
+data_paths<-c(my_custom_experiment=path/to/samplesheet.rds) 
+```
+
+This change does not affect the actual sample sheet or its location; it simply gives a different name to the dataset. Renaming this parameter allows you to keep track of different configuration analysis. When you make modifications in the config file, the pipeline will treat this as a new run with the updated settings. This is useful when you want to test multiple configurations or parameters, allowing you to quickly compare results from different analysis setups without confusion. 
+
+
+### EXAMPLE: 
+
+Suppose you want to test the pipeline with two different sets of parameters or sample sheets: 
+
+1.You edit the config.R to set up one configuration with the name experiment_1: 
+      
+```{R,eval=FALSE}
+        data_paths<-c(experiment_1=path/to/samplesheet.rds) 
+```
+
+2.You modify the parameters (e.g., change the normalization method, filter settings, etc.). 
+
+3.Run the pipeline, and it will execute with the updated settings. After completion, you want to run the pipeline again with different parameters. 
+
+4.To do so, modify the configuration file again, change the name to experiment_2, and adjust any parameters: 
+```{R,eval=FALSE}
+ data_paths<-c(experiment_2=path/to/samplesheet.rds) 
+```
+
+This will restart the pipeline with the new settings. By changing the key name (e.g., from experiment_1 to experiment_2), you effectively reset the pipeline, ensuring a fresh run from the beginning, even with different configurations. 

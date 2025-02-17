@@ -14,6 +14,7 @@ Year: 2023
 Suggests: 
     knitr,
     rmarkdown,
+    BiocStyle,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
