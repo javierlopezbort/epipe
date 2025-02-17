@@ -11,7 +11,7 @@ Install the development version of epipe with:
 ``` r
 # install.packages("devtools")
 options(timeout = 600)
-devtools::install_github("ijcBIT/epipe",ref='development')
+devtools::install_github("ijcBIT/epipe")
 ```
 
 ## Quick start
