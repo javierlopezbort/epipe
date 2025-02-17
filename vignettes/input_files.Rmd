@@ -1,0 +1,52 @@
+---
+title: "INPUT files"
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{INPUT files}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+EPIPE requires two main types of input files:
+
+# IDAT files
+
+A folder containing all the raw IDAT files
+
+# Sample sheet
+
+This file contains metadata and sample information required for processing and analysis. 
+
+Key guidelines for the sample sheet:  
+
+- The sample sheet must be provided in a RDS format (.rds).  
+
+- It must include a ‘Basename’ column that specifies the file paths to the IDAT files. Each entry should provide the full path to the IDAT files for each sample (without the _Grn.idat or _Red.idat extension). For example:  
+
+```{r, eval=FALSE}
+inst/extdata/EPICv2/idats/207505140099_R08C01 
+```
+
+
+
+ 
+
+If the Basename column contains the full paths to the IDAT files, the idats_folder parameter in the configuration file can be set to NULL. 
+
+ 
+
+- Include a Sample_Name column that contains unique identifiers for each sample. 
+
+- Include a Sentrix_ID column. It must contain the Sentrix ID for each sample. 
+
+- Include a Sentrix_Position column. 
+
+- Also ensure there are no spaces or special characters in the column names of the sample sheet 
+
+ 
+
+You can load an example of a sample sheet using the following code:  
+```{r, eval=FALSE}
+data(samplesheet) 
+```

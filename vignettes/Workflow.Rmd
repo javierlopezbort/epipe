@@ -1,0 +1,44 @@
+---
+title: "EPIPE analysis"
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{EPIPE analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The EPIPE pipeline follows a structured workflow, guiding users through a series of well-defined steps for methylation analysis. Below, we outline the main stages the pipeline undergoes by default: 
+
+ 
+
+# Preprocessing steps: Quality control, filtering, and normalization 
+
+The pipeline starts performing an initial quality control check which generates QC reports that visualize data quality, sample distributions, and other relevant information. During the filtering step, low-quality probes and samples (if any) are removed, and problematic probes, including those associated with known SNPs at CpG sites, cross-reactive, and sex chromosome probes, are excluded. Subsequently, the pipeline applies normalization to the filtered data, ensuring adjustment for technical biases across different arrays.  
+
+
+# Exploratory Data analysis  
+
+A principal component analysis (PCA) is performed on the beta values to visualize variation in the data. This helps assess how well the data clusters according to sample groups or other variables of interest. 
+
+The pipeline also conducts a correlation analysis to examine relationships between various variables, such as immune cell types, age, and sex. These insights help identify patterns and potential confounders in the data. Additionally, multiple visualizations are generated throughout the exploratory analysis phase, including boxplots, distribution plots, biplots for PCA, and heatmaps, providing a comprehensive overview of data structure and trends. 
+
+
+
+# Differential methylation analysis  
+
+EPIPE utilizes limma to construct a statistical model for identifying differentially methylated positions (DMPs) and regions (DMRs). The results are then filtered based on key criteria, including adjusted p-values, mean methylation differences, and other relevant parameters to ensure robustness and biological significance.  
+
+
+
+# Annotation and Pathway Enrichment 
+
+The pipeline annotates DMPs and DMRs by mapping them to gene names, genomic locations, and other relevant features. Additionally, it performs pathway enrichment analysis to identify biological processes that are significantly associated with the differentially methylated regions or positions, providing deeper insights into their functional implications. 
+
+
+
+
+
+
+
+

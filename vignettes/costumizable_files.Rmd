@@ -73,3 +73,121 @@ Suppose you want to test the pipeline with two different sets of parameters or s
 ```
 
 This will restart the pipeline with the new settings. By changing the key name (e.g., from experiment_1 to experiment_2), you effectively reset the pipeline, ensuring a fresh run from the beginning, even with different configurations. 
+
+
+
+## IDAT folder path. 
+
+idats_folder: Specify the path to the IDATS folder.   
+
+If the Basename column in your sample sheet already includes the full path to the corresponding green and red IDAT files, you can set idats_folder <- NULL . This is because the sample sheet will already specify the path to the files for each sample, and there’s no need to provide a general folder path. 
+
+## Folder paths
+
+These parameters define the folders for storing results and intermediate analysis files. 
+
+- results_folder: The directory where analysis outputs (e.g., DMPs, DMRs, plots) will be stored. You can change this to any folder name you prefer. 
+
+- analysis_folder: A folder for storing intermediate data files generated during the analysis. This helps keep your directory organized. 
+
+ 
+
+## Metadata
+
+Define the columns in your sample sheet that contain important identifiers and group information. 
+
+- idcol: The name of the column in the sample sheet that contains unique sample identifiers (e.g., "Sample_Name"). 
+
+- sampGroups: The name of the column in the sample sheet that indicates the group or condition of each sample.  
+
+ 
+
+## Normalization method:  
+
+norm_function: The normalization method to apply to the methylation data. Options include: noob, ssnoob, swan, funn, noob_pq, noob_swan, quantile 
+
+ 
+
+## Filters: These settings control various data filtering options. 
+
+- remove_sex: Whether to exclude sex chromosomes from the analysis.  
+
+- sex_prediction: Whether to predict the biological sex of samples based on methylation data.  
+
+
+## Palette: This parameter defines a set of colors to be used in various visualizations, such as plots or graphs. The colors are represented in hexadecimal format. 
+
+Pal_discrete: vector contains a sequence of color codes. 
+
+ 
+
+## Variables for correlation analysis:  
+
+Variables: defines which variables will be included in the correlation analysis. These could include experimental factors (variables in the sample sheet), demographic information like predictedAge or predictedSex, or cell type proportions like CD4T, NK, Bcell, etc.  
+
+ 
+
+## PCA Variables: Define variables to be used in the principal component analysis 
+
+- TopN: defines the number of CpGs to be considered for PCA. 
+
+- bplots_var: define which variables will be used for B-plot visualizations. These could include experimental factors (variables in the sample sheet), demographic information like predictedAge or predictedSex, or cell type proportions like CD4T, NK, Bcell, etc. 
+
+ 
+
+## Model Settings: specify the grouping variable and define the contrasts for differential analysis. 
+
+- group_var: Main variable of interest, which will be used to compare groups. 
+
+- Contrasts: If you're comparing two groups (e.g., Control vs. Treated), you can define the contrast here. If no contrast is specified, it is left as NULL. 
+
+- covs: Additional variables that may influence the analysis (e.g., age, sex). Are included in the model to adjust for potential confounders. 
+
+ 
+
+ 
+
+## Differential Methylation Analysis: Parameters for identifying differentially methylated positions (DMPs) and regions (DMRs). 
+
+### Differentially Methylated Positions (DMPs) 
+
+- mDiffDMP: Minimum methylation difference required for a position to be considered differentially methylated. 
+
+- adjp.valueDMP: Adjusted p-value threshold for significance. It controls the false discovery rate (FDR). 
+
+- p.valueDMP:  p-value threshold for statistical significance (in case no DMPs with the adjusted p-value threshold are found). 
+
+ 
+
+### Differentially Methylated Positions (DMPs) 
+
+- min.cpgDMR: Minimum number of CpG sites required to define a region as differentially methylated. 
+
+- fdrDMR: False discovery rate threshold for DMRs. 
+
+- mdiffDMR: Minimum methylation difference required for a region to be considered differentially methylated. 
+
+ 
+
+ 
+
+##  Report Generation Options: Control which elements to include in your reports. 
+
+report_colab and report_analyst: These parameters define the content of the generated reports, such as the report name, including quality control plots, correlation plots, or parameter tuning plots. Adjust these options based on your needs for the report format. 
+
+
+
+
+# TARGETS FILE
+
+The _targets.R file contains the main code for the pipeline, which includes the sequence of tasks and functions that will be executed. When you load the EPIPE package with 
+
+```{R, eval=FALSE}
+library(epipe)
+```
+
+the _targets.R file is automatically copied to your current working directory (if it's not already present). 
+
+Notice that for running the pipeline you always need to have the _targets.R file in the currently working directory.  
+
+The _targets.R file is fully customizable, allowing you to tailor the pipeline to your specific needs. Users can modify the existing functions, add new analysis steps, or extend the pipeline with custom code. This feature makes it very flexible, enabling users to adapt the pipeline for different research projects or data types. 

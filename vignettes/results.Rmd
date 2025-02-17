@@ -1,0 +1,222 @@
+---
+title: "EPIPE results"
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{EPIPE results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The pipeline generates various output files that are systematically organized into folders to facilitate easy access and interpretation. The main output files are HTML reports designed for different audiences:  
+
+- Collaborator report: A concise overview highlighting key findings and summaries. 
+
+- Analyst report: A detailed report containing comprehensive data, visualizations, and in-depth analysis.  
+
+These reports are stored in the reports/ folder. 
+
+
+
+In the results/ folder you will find:  
+
+- Summary.csv: an overview of differentially methylated positions (DMPs) and differentially methylated regions (DMRs) detected in the analysis. It contains summary statistics for each experimental comparison, detailing the number of differentially methylated sites and associated genes. 
+
+
+
+Next, it is detailed the folder's structure and its contents.
+
+
+
+# QUALITY CONTROL (QC/) 
+
+This folder contains plots and reports that assess the quality of the data at different stages of the pipeline. These outputs help identify potential issues such as batch effects, outliers, and poor-quality samples, ensuring that only high-quality data is used for downstream analysis. 
+
+## Main QC Report 
+
+- Report.pdf: QC report summarizing quality metrics and visualizations. 
+
+ 
+## Beta-Value Density Plots 
+
+These plots display the distribution of beta values before and after normalization. Beta values range from 0 (unmethylated) to 1 (fully methylated), and proper normalization ensures comparability across samples. 
+
+- Density_plot_before_nrom.png: Beta-value density distribution before applying any normalization.  
+
+- Density_plot_after_norm.png: Beta-value density distribution after the selected normalization method. 
+
+- Density_plot_*method*.png: eta-value density plots for all other available normalization methods allowing the user to verify if the selected method is the most appropriate. 
+
+
+
+## Quality Metrics and Outlier Detection 
+
+- Mean_detection_pvalues.jpeg: Mean detection p-values across all samples, used to identify low-quality probes or samples. 
+
+- mean_qc.png: Summary of QC metrics for all samples. 
+
+
+
+
+## Cell Composition Estimation 
+
+- Cell_type_prop.png: Estimated cell type proportions based on deconvolution methods. 
+
+
+
+## Exploratory and Correlation Analysis 
+
+- correlation_analysis.png: Correlation heatmap of key variables in the dataset to check for batch effects or associations between variables. 
+
+
+
+## Sample Distribution and Group Comparisons 
+
+- These barplots visualize the distribution of samples across different metadata categories, providing an overview of sample grouping. Each bar represents a category (e.g., condition, sample type) and is colored according to sample groups. 
+
+
+
+
+# BETA VALUES (betas/)
+
+Stores raw and normalized beta values (DNA methylation levels): 
+
+- Raw_beta.csv: Beta values before normalization.  
+
+- Norm_beta.csv: Beta values after normalization. 
+
+
+
+
+# PLOTS (plots/) 
+
+This folder contains various visualizations that help in the interpretation of methylation data. These include heatmaps, principal component analysis (PCA) plots, and sex estimation plots.  
+
+
+## Heatmap/
+ 
+Heatmaps help visualize clustering patterns and overall sample similarity based on methylation levels. Different heatmaps are generated based on varying numbers of CpG sites. 
+
+- example_EPICv2_heatmap_100.png: Heatmap using the top 100 most variable CpG sites. 
+
+- example_EPICv2_heatmap_1000.png: Heatmap using the top 1,000 most variable CpG sites. 
+
+- example_EPICv2_heatmap_5000.png: Heatmap using the top 5,000 most variable CpG sites. 
+
+- example_EPICv2_heatmap_10000.png: Heatmap using the top 10,000 most variable CpG sites. 
+
+
+## Principal Component analysis (pca/) 
+
+PCA is used to reduce the dimensionality of the data while preserving key variance components. This folder contains: 
+
+### Bplots/:  
+
+Contains PCA scatter plots visualizing sample distributions based on different principal components. 
+
+- example_EPICv2_pc_plot100PC1PC2.png: PCA plot using 100 most variable CpG sites, showing PC1 vs. PC2. 
+
+- example_EPICv2_pc_plot100PC3PC4.png: PCA plot using 100 most variable CpG sites, showing PC3 vs. PC4. 
+
+- Similar plots exist for 1,000, 5,000, and 10,000 most variable CpG sites. 
+
+
+
+### Corrplot/:
+
+Contains correlation matrices that show the relationship between principal components. These help assess whether specific PCs are capturing meaningful biological variance or technical noise. 
+
+- example_EPICv2_pca_corrplot100.png: Correlation plot based on the top 100 most variable CpG sites. 
+
+- Similar correlation plots exist for 1,000, 5,000, and 10,000 most variable CpG sites. 
+
+
+
+
+## Sex Estimation (sex/) 
+
+This folder contains visualizations assessing the accuracy of predicted sample sex using methylation data. 
+
+- sex_estimation.png: A plot comparing predicted versus expected sex annotations based on methylation markers. This helps verify sample metadata and identify potential mislabeling. 
+
+
+
+
+
+# DMPS (dmps/) 
+
+This folder contains results related to Differentially Methylated Positions (DMPs). DMP analysis identifies CpG sites where methylation levels differ significantly between experimental conditions. The outputs include summary statistics, raw and filtered data, and various visualizations to aid in interpretation. 
+
+
+## Summary and data files:  
+
+- dmp_raw.csv.gz: A compressed CSV file containing raw DMP results, including methylation beta values, statistical significance (p-values), and effect sizes for all tested CpG sites. 
+
+- dmp_summary.txt: A text file summarizing key statistics, such as the number of significant DMPs, mean methylation differences, and comparison details. 
+
+- *method*_dmps.txt: A large text file containing all detected DMPs using the selected method.This file is unfiltered and includes all tested CpG sites. 
+
+- *method*_dmps_filtered.txt: A filtered version of the *method*_dmps.txt file, containing only statistically significant DMPs based on a predefined threshold.  
+
+
+
+## DMP Plots 
+
+
+These plots display the number of DMPs detected for different conditions or comparisons. 
+
+- DMP_count.png_1.png 
+
+- DMP_count.png_2.png 
+
+- DMP_count.png_3.png 
+
+- DMP_count.png_4.png 
+
+Each plot provides a visual summary of how many CpG sites show significant differential methylation across different experimental conditions. 
+
+### Manhattan Plots:  
+
+Manhattan plots visualize the genomic distribution of DMPs along chromosomes. Significant DMPs appear as peaks, helping identify potential regions of interest. 
+
+- Manhattanplot_*contrast*.png 
+
+### Volcano Plots 
+
+Volcano plots highlight the most significant DMPs by plotting statistical significance (-log10 p-value) against effect size (methylation difference). 
+
+- volcanoplot_*contrast*.png 
+
+
+
+# DMRS (dmrs/) 
+
+This folder contains results related to Differentially Methylated Regions (DMRs). 
+
+- full_dmrs_summary.csv: File summarizing DMRs. 
+
+- _*experinment_name*.xlsx: An Excel spreadsheet containing the full list of detected DMRs, including the total number of DMRs detected, genomic coordinates of significant regions, average methylation differences between conditions, and statistical significance (p-values, adjusted p-values). 
+
+
+
+# PATHWAYS (gopath/) 
+
+This folder contains results related to pathway enrichment analysis for differentially methylated positions (DMPs) and differentially methylated regions (DMRs). It includes both interactive and static visualizations, as well as summary tables that provide insights into enriched pathways. 
+
+- Enrichplot_interactive_*contrast*.html: An interactive visualization showing enriched pathways for the specified contrast. 
+
+- Enrichplot_static_*contrast*.html: A static version of the pathway enrichment plot for the specified contrast. 
+
+- full_pathway.csv: A full list of pathways enriched in DMPs. 
+
+- hyper_pathway.csv: Pathways specifically enriched in hypermethylated regions. 
+
+- hypo_pathway.csv: Pathways specifically enriched in hypomethylated regions. 
+
+- table_plot_*contrast*.png: A graphical summary of enriched pathways for the specified contrast.  
+
+
+
+
+
+

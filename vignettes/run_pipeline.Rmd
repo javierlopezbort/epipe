@@ -1,0 +1,43 @@
+---
+title: "Get started"
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{Get started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Install the package
+
+```{r, eval=FALSE}
+# install.packages("devtools")
+options(timeout = 600)
+devtools::install_github("ijcBIT/epipe")
+```
+
+
+# How to run the pipeline
+
+To help you get started with the pipeline, we provide example data located in the inst/extdata/ folder of the epipe package. 
+
+IDATs folder (contains raw intensity data files): 
+
+```{r, eval=FALSE}
+system.file("extdata/EPICv2/idats/", package = "epipe") 
+```
+
+Sample sheet (metadata for the samples being analyzed): 
+
+```{r, eval=FALSE}
+system.file("extdata/EPICv2/samplesheet_EPICv2.rds", package = "epipe") 
+```
+
+These files serve as the default input data for running the pipeline.  
+
+To execute the pipeline using the default config.R file, run the following commands in R: 
+```{r, eval=FALSE}
+library(epipe) 
+
+targets::tar_make() 
+```
