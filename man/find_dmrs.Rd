@@ -5,20 +5,19 @@
 \title{Find DMRs}
 \usage{
 find_dmrs(
-  object = NULL,
-  betas = NULL,
+  beta_values,
   model,
-  fdr = 0.05,
+  fdr = 0.01,
   p.value = "fdr",
-  bcutoff = 0.3,
+  bcutoff = 0.05,
   min.cpg = 5,
-  ncores = NULL
+  pal,
+  output_dir = "./",
+  arraytype
 )
 }
 \arguments{
-\item{object}{DMPextr object or NULL. If NULL, it will be constructed using the model and beta values.}
-
-\item{betas}{Beta values matrix. Ignored if object is provided.}
+\item{beta_values}{Beta values matrix.}
 
 \item{model}{Linear model used for differential methylation analysis.}
 
@@ -30,7 +29,9 @@ find_dmrs(
 
 \item{min.cpg}{Minimum number of CpGs in a DMR.}
 
-\item{ncores}{Number of CPU cores to use.}
+\item{output_dir}{Path to folder to save results.}
+
+\item{arraytype}{Type of array. EPICv2, EPIC or 450K.}
 }
 \value{
 A data.table containing the identified DMRs.
