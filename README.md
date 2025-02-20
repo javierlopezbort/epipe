@@ -20,5 +20,5 @@ You can run the pipeline using the following commands:
 
 ``` r
 library(epipe)
-targets::tar_make()
+epipe::run()
 ```
