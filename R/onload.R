@@ -23,6 +23,8 @@
     packageStartupMessage("_targets.R file already exists in your working directory.")
   }
 
+
+
   # Path to config.R in the package
   config_file <- system.file("config.R", package = pkgname)
 
@@ -38,4 +40,16 @@
   } else {
     packageStartupMessage("config.R file already exists in your working directory.")
   }
+
+
+  # Path to report_files folder in the package
+  if (!dir.exists(report_files_destination)) {
+      dir.create(report_files_destination, recursive = TRUE)
+      file.copy(list.files(report_files_source, full.names = TRUE),
+                report_files_destination, recursive = TRUE)
+      packageStartupMessage("report_files folder has been copied to your current working directory.")
+    } else {
+      packageStartupMessage("report_files folder already exists in your working directory.")
+    }
+
 }
