@@ -71,7 +71,8 @@ Imports:
     qs,
     rlang,
     stringi,
-    parallel
+    parallel,
+    tools
 Depends: 
     R (>= 2.10)
 LazyData: true
