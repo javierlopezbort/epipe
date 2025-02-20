@@ -42,6 +42,11 @@
   }
 
 
+  # Copy report_files folder
+  report_files_source <- system.file("report_files", package = pkgname)
+  report_files_destination <- file.path(getwd(), "report_files")
+
+
   # Path to report_files folder in the package
   if (!dir.exists(report_files_destination)) {
       dir.create(report_files_destination, recursive = TRUE)
