@@ -9,7 +9,7 @@
 #' @param betas_idx A matrix or data frame providing the indices for the beta values if object class is FBM.
 #' @param group_var  A string specifying the column name for the grouping variable.
 #' @param covs.formula Formula for specifying covariates in the model.
-#' @param contrasts Optional string of semicolon-separated contrasts. If not provided, automatic contrasts are generated.
+#' @param contrasts Optional string of semicolon-separated contrasts. If not provided, automatic contrasts are generated. A contrast must have the format "Category1-Category2" because the design variable transforms the category values into column names. Then, limma::makeContrasts function interprets the "contrasts" variable and uses it in the model created by the design matrix. 
 #' @param covs A character vector specifying additional covariates.
 #' @param metadata The metadata or sample sheet.
 #' @param set A boolean vector to subset the observations.
