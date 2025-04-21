@@ -95,7 +95,7 @@ remove_cross_reactive_probes <- function(mSetSqn, sexchr) {
     # For other arrays, use maxprobes::dropXreactiveLoci
     mSetSqn <- maxprobes::dropXreactiveLoci(mSetSqn)
   }
-  metadata(mSetSqn)$removed_sex <- setdiff(probeID_start,rownames(mSetSqn))
+  metadata(mSetSqn)$removed_cross_reactive <- setdiff(probeID_start,rownames(mSetSqn))
   return(mSetSqn)
 }
 
