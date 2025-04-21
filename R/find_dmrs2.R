@@ -31,8 +31,13 @@
 
 
 find_dmrs<-function(beta_values,model,fdr = 0.01, p.value = "fdr", bcutoff = 0.05, min.cpg = 5,pal,output_dir='./',arraytype){
-
-  m_values <- minfi::logit2(beta_values)
+  
+  # CpGs names must be in rownames and not be a column of the beta values matrix
+  beta_values_dmrs <- beta_values[, !(names(beta_values) %in% "X")]
+  rownames(beta_values_dmrs) <- beta_values$X
+  beta_values_dmrs <- as.matrix(beta_values_dmrs)
+  
+  m_values <- minfi::logit2(beta_values_dmrs)
 
   # Contrast matrix
   contrast_matrix <- model$contrasts
