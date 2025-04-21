@@ -44,7 +44,8 @@
 #                   writeOut = FALSE)                    # write output to file
 DMPextr <- function(
     fit, ContrastsDM = colnames(fit$contrasts), p.value, beta_normalized, betas_idx = NULL,
-    mDiff, ann = NULL, writedir = "analysis/DMP_", writeOut = TRUE, ncores = NULL, columns = TRUE
+    mDiff, ann = NULL, writedir = "analysis/DMP_", writeOut = TRUE, ncores = NULL, columns = TRUE,
+    OS = "Linux"
 ) {
 
   # Check if annotation is provided, if not, use Illumina annotation
@@ -73,7 +74,14 @@ DMPextr <- function(
   if (is.null(ncores)) ncores <- length(ContrastsDM)
 
   # Initialize parallel cluster
-  cl <- parallel::makeCluster(ncores, outfile = "", useXDR = FALSE, type = "FORK")
+  if(OS == "Linux"){
+    OS_type <- "FORK"
+  }else if (OS == "Windows"){
+    OS_type <- "PSOCK"
+  }
+  
+  cl <- parallel::makeCluster(ncores, outfile = "", useXDR = FALSE, type = OS_type)
+  
   parallel::clusterEvalQ(
     cl, {
       requireNamespace(c("limma", "data.table"))
